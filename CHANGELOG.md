@@ -30,3 +30,14 @@ until a release is cut.
 - Allow native builds for `better-sqlite3` and `esbuild` under pnpm 10
 - Harden shared protocol: strict `agentStateSchema`, non-null `runId` on run-scoped events, union regression tests, REST path builders
 - Add chat slice to client store, wire canvas tab to Zustand, deduplicate initial state, set document title from i18n
+- Fix session hydrate duplicating chat by treating server `chat` as authoritative over tail replay
+- Fix SSE subscribe/replay race that could drop live events on connect
+- Mirror server comment cascade in optimistic `deleteUserShape` client mutations
+- Move mutation error strings to i18n keys rendered in the app shell
+- Keep resync on `reconnecting` status during gap recovery instead of flashing `down`
+- Accept optional client `messageId` on POST messages for optimistic id alignment
+
+### Changed
+
+- Rebuild client reducer golden fixture from the real mock driver event log
+- Document session state chat/tail contract on `sessionStateResponseSchema`
