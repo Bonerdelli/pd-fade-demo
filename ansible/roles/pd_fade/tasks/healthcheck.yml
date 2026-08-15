@@ -1,0 +1,50 @@
+---
+- name: Wait for pd-fade health endpoint
+  block:
+    - name: Probe server health
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ pd_fade_server_port }}/health"
+        status_code: 200
+      register: pd_fade_health
+      until: pd_fade_health.status == 200
+      retries: "{{ pd_fade_health_retries }}"
+      delay: "{{ pd_fade_health_delay }}"
+
+  rescue:
+    - name: Collect pd-fade service status
+      ansible.builtin.command:
+        argv:
+          - systemctl
+          - status
+          - "{{ pd_fade_systemd_unit }}.service"
+          - --no-pager
+          - -l
+      register: pd_fade_svc_status
+      changed_when: false
+      failed_when: false
+
+    - name: Collect pd-fade service journal
+      ansible.builtin.command:
+        argv:
+          - journalctl
+          - -u
+          - "{{ pd_fade_systemd_unit }}.service"
+          - -n
+          - "80"
+          - --no-pager
+      register: pd_fade_svc_journal
+      changed_when: false
+      failed_when: false
+
+    - name: Fail with pd-fade diagnostics
+      ansible.builtin.fail:
+        msg: |
+          pd-fade health check failed after {{ pd_fade_health_retries }} attempts:
+          http://127.0.0.1:{{ pd_fade_server_port }}/health
+          Last probe: {{ pd_fade_health.msg | default('connection error') }}
+
+          --- systemctl status {{ pd_fade_systemd_unit }}.service ---
+          {{ pd_fade_svc_status.stdout | default('(no output)') }}
+
+          --- journalctl -u {{ pd_fade_systemd_unit }}.service -n 80 ---
+          {{ pd_fade_svc_journal.stdout | default('(no output)') }}

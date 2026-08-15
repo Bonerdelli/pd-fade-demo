@@ -1,12 +1,14 @@
 ---
 # Provision a pd-fade demo/production host (bare Node.js + systemd + nginx).
 #
+# Builds on the controller, deploys a release archive to the target (no git on host).
+#
 # Full run (from ansible/):
 #   ansible-galaxy install -r requirements.yml
 #   ansible-playbook environments/demo/provision.yml
-#   # add --ask-vault-pass (or --vault-password-file) only when vault.yml exists
+#   # add --ask-vault-pass only when vault.yml exists
 #
-# Redeploy app only:
+# Redeploy app only (rebuild on controller + roll release):
 #   ansible-playbook environments/demo/provision.yml --tags pd_fade
 
 - name: Provision pd-fade host

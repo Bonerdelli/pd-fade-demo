@@ -1,4 +1,5 @@
 .vault_pass
+.build/
 .facts_cache/
 .collections/
 **/vault.yml

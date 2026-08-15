@@ -1,0 +1,18 @@
+---
+- name: List deployed releases
+  ansible.builtin.find:
+    paths: "{{ pd_fade_releases_dir }}"
+    file_type: directory
+    depth: 1
+  register: pd_fade_release_dirs
+
+- name: Remove releases beyond retention limit
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: >-
+    {{
+      (pd_fade_release_dirs.files | sort(attribute='mtime', reverse=true))
+      [pd_fade_release_keep | int:]
+    }}
+  when: pd_fade_release_dirs.matched | int > pd_fade_release_keep | int

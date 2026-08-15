@@ -1,0 +1,82 @@
+---
+- name: Skip controller build when operator supplied a release archive
+  ansible.builtin.debug:
+    msg: "Skipping controller build (pd_fade_skip_local_build=true)"
+  when: pd_fade_skip_local_build | bool
+  run_once: true
+
+- name: Build and pack release on controller
+  when: not (pd_fade_skip_local_build | bool)
+  run_once: true
+  delegate_to: localhost
+  become: false
+  block:
+    - name: Check Node.js on controller
+      ansible.builtin.command: node --version
+      register: pd_fade_controller_node
+      changed_when: false
+      failed_when: false
+
+    - name: Fail when Node.js is missing on controller
+      ansible.builtin.fail:
+        msg: >-
+          Node.js 20+ is required on the Ansible controller to build releases.
+          Install Node.js, then: corepack enable && corepack prepare pnpm@{{ pd_fade_pnpm_version }} --activate
+      when: pd_fade_controller_node.rc != 0
+
+    - name: Check pnpm on controller
+      ansible.builtin.command: pnpm --version
+      register: pd_fade_controller_pnpm
+      changed_when: false
+      failed_when: false
+
+    - name: Fail when pnpm is missing on controller
+      ansible.builtin.fail:
+        msg: >-
+          pnpm is required on the Ansible controller.
+          Run: corepack enable && corepack prepare pnpm@{{ pd_fade_pnpm_version }} --activate
+      when: pd_fade_controller_pnpm.rc != 0
+
+    - name: Ensure local build output directory exists
+      ansible.builtin.file:
+        path: "{{ pd_fade_local_build_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Run controller build and pack script
+      ansible.builtin.command:
+        argv:
+          - "{{ playbook_dir }}/../../scripts/build-release-archive.sh"
+          - "{{ pd_fade_repo_root }}"
+          - "{{ pd_fade_local_build_dir }}"
+      register: pd_fade_build_script
+      changed_when: true
+
+- name: Require explicit release archive when skipping local build
+  ansible.builtin.fail:
+    msg: >-
+      pd_fade_skip_local_build=true requires pd_fade_release_archive,
+      pd_fade_release_checksum, and pd_fade_release_id.
+  when:
+    - pd_fade_skip_local_build | bool
+    - pd_fade_release_archive | default('') | trim | length == 0
+      or pd_fade_release_checksum | default('') | trim | length == 0
+      or pd_fade_release_id | default('') | trim | length == 0
+  run_once: true
+
+- name: Publish release metadata to all hosts
+  ansible.builtin.set_fact:
+    pd_fade_release_id: "{{ _pd_fade_release_meta.release_id }}"
+    pd_fade_release_archive: "{{ _pd_fade_release_meta.archive }}"
+    pd_fade_release_checksum: "{{ _pd_fade_release_meta.checksum }}"
+  vars:
+    _pd_fade_release_meta: >-
+      {{
+        (pd_fade_build_script.stdout | trim | from_json)
+        if not (pd_fade_skip_local_build | bool)
+        else {
+          'release_id': pd_fade_release_id,
+          'archive': pd_fade_release_archive,
+          'checksum': pd_fade_release_checksum
+        }
+      }}

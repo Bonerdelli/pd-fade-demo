@@ -9,12 +9,3 @@
 
 # Required when pd_fade_agent_driver: anthropic
 vault_anthropic_api_key: "CHANGE_ME"
-
-# Required when pd_fade_git_deploy_key_enabled: true (private repo over SSH)
-vault_pd_fade_git_deploy_key: |
-  -----BEGIN OPENSSH PRIVATE KEY-----
-  CHANGE_ME
-  -----END OPENSSH PRIVATE KEY-----
-
-# Alternative to deploy key: HTTPS token embedded in pd_fade_repo_url
-# vault_pd_fade_git_token: "CHANGE_ME"

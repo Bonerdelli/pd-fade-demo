@@ -41,9 +41,9 @@
     group: "{{ pd_fade_group }}"
     mode: "0750"
 
-- name: Ensure application root parent exists
+- name: Ensure application base directory exists
   ansible.builtin.file:
-    path: "{{ pd_fade_root | dirname }}"
+    path: "{{ pd_fade_app_base }}"
     state: directory
     owner: root
     group: root

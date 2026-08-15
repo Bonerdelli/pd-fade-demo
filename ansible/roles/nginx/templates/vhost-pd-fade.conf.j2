@@ -49,7 +49,7 @@ server {
     ssl_prefer_server_ciphers on;
     add_header Strict-Transport-Security "max-age=63072000" always;
 
-    root {{ pd_fade_root }}/client/dist;
+    root {{ pd_fade_current_link }}/client/dist;
     index index.html;
 
     {{ app_locations() }}
@@ -69,7 +69,7 @@ server {
         return 301 https://$host$request_uri;
     }
 {% else %}
-    root {{ pd_fade_root }}/client/dist;
+    root {{ pd_fade_current_link }}/client/dist;
     index index.html;
 
     {{ app_locations() }}

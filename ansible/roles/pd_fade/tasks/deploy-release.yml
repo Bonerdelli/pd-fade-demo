@@ -1,0 +1,113 @@
+---
+- name: Stat currently deployed release checksum
+  ansible.builtin.stat:
+    path: "{{ pd_fade_current_link }}/.release-checksum"
+  register: pd_fade_deployed_checksum_stat
+
+- name: Read currently deployed release checksum
+  ansible.builtin.slurp:
+    src: "{{ pd_fade_current_link }}/.release-checksum"
+  register: pd_fade_deployed_checksum_slurp
+  when: pd_fade_deployed_checksum_stat.stat.exists | default(false)
+
+- name: Decide whether release upload is required
+  ansible.builtin.set_fact:
+    pd_fade_release_upload_required: >-
+      {{
+        not (pd_fade_deployed_checksum_stat.stat.exists | default(false))
+        or (
+          pd_fade_deployed_checksum_slurp.content | b64decode | trim
+          != pd_fade_release_checksum | trim
+        )
+      }}
+
+- name: Skip release upload when checksum matches deployed release
+  ansible.builtin.debug:
+    msg: >-
+      Skipping release upload/deploy — checksum {{ pd_fade_release_checksum }}
+      already deployed at {{ pd_fade_current_link }}.
+  when: not (pd_fade_release_upload_required | bool)
+
+- name: Deploy new release archive
+  when: pd_fade_release_upload_required | bool
+  block:
+    - name: Upload release archive
+      ansible.builtin.copy:
+        src: "{{ pd_fade_release_archive }}"
+        dest: "/tmp/pd-fade-{{ pd_fade_release_id }}.tar.gz"
+        mode: "0644"
+
+    - name: Create release directory
+      ansible.builtin.file:
+        path: "{{ pd_fade_releases_dir }}/{{ pd_fade_release_id }}"
+        state: directory
+        owner: "{{ pd_fade_user }}"
+        group: "{{ pd_fade_group }}"
+        mode: "0755"
+
+    - name: Unpack release archive
+      ansible.builtin.unarchive:
+        src: "/tmp/pd-fade-{{ pd_fade_release_id }}.tar.gz"
+        dest: "{{ pd_fade_releases_dir }}/{{ pd_fade_release_id }}"
+        remote_src: true
+        owner: "{{ pd_fade_user }}"
+        group: "{{ pd_fade_group }}"
+
+    - name: Install production dependencies on target (native modules rebuilt for Linux)
+      ansible.builtin.command:
+        argv:
+          - pnpm
+          - install
+          - --frozen-lockfile
+          - --prod
+          - --filter
+          - "@pd-fade/server..."
+          - --store-dir
+          - "{{ pd_fade_pnpm_store_dir }}"
+      args:
+        chdir: "{{ pd_fade_releases_dir }}/{{ pd_fade_release_id }}"
+      become: true
+      become_user: "{{ pd_fade_user }}"
+      environment:
+        HOME: "{{ pd_fade_data_dir }}"
+      register: pd_fade_target_pnpm_install
+      changed_when: true
+
+    - name: Write release checksum marker
+      ansible.builtin.copy:
+        dest: "{{ pd_fade_releases_dir }}/{{ pd_fade_release_id }}/.release-checksum"
+        content: "{{ pd_fade_release_checksum | trim }}\n"
+        owner: "{{ pd_fade_user }}"
+        group: "{{ pd_fade_group }}"
+        mode: "0644"
+
+    - name: Point current release symlink
+      ansible.builtin.file:
+        src: "{{ pd_fade_releases_dir }}/{{ pd_fade_release_id }}"
+        dest: "{{ pd_fade_current_link }}"
+        state: link
+        owner: "{{ pd_fade_user }}"
+        group: "{{ pd_fade_group }}"
+        force: true
+      notify: Restart pd-fade
+
+    - name: Remove uploaded temporary archive
+      ansible.builtin.file:
+        path: "/tmp/pd-fade-{{ pd_fade_release_id }}.tar.gz"
+        state: absent
+
+    - name: Mark release as deployed in this run
+      ansible.builtin.set_fact:
+        pd_fade_release_deployed: true
+
+- name: Record that no new release was deployed
+  ansible.builtin.set_fact:
+    pd_fade_release_deployed: false
+  when: not (pd_fade_release_upload_required | bool)
+
+- name: Apply service restart after new release
+  ansible.builtin.meta: flush_handlers
+  when: pd_fade_release_deployed | default(false) | bool
+
+- name: Prune old releases
+  ansible.builtin.import_tasks: prune-releases.yml

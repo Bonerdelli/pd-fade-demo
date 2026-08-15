@@ -6,6 +6,5 @@ pd_fade_base_prereq_packages:
   - tzdata
 
 pd_fade_base_packages:
-  - git
   - build-essential
   - python3
