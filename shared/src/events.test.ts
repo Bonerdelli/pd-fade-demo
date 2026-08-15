@@ -19,6 +19,7 @@ describe("agent event schemas", () => {
     expectValid(runStartedEventSchema, { ...envelope, type: "RUN_STARTED" });
     expectInvalid(runStartedEventSchema, { ...envelope, type: "RUN_FINISHED" });
     expectInvalid(runStartedEventSchema, { ...envelope, type: "RUN_STARTED", seq: "1" });
+    expectInvalid(runStartedEventSchema, { ...envelope, type: "RUN_STARTED", runId: null });
   });
 
   it("validates RUN_FINISHED", () => {
@@ -113,6 +114,12 @@ describe("agent event schemas", () => {
   it("validates STATE_SNAPSHOT", () => {
     expectValid(stateSnapshotEventSchema, {
       ...envelope,
+      type: "STATE_SNAPSHOT",
+      snapshot: emptyAgentState,
+    });
+    expectValid(stateSnapshotEventSchema, {
+      ...envelope,
+      runId: null,
       type: "STATE_SNAPSHOT",
       snapshot: emptyAgentState,
     });

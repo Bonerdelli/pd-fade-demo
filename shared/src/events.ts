@@ -4,40 +4,47 @@ import { agentStateSchema } from "./state.js";
 
 const eventEnvelopeBaseSchema = z.object({
   seq: z.number().int().nonnegative(),
-  runId: z.string().nullable(),
   ts: z.number(),
 });
 
-export const runStartedEventSchema = eventEnvelopeBaseSchema.extend({
+const runScopedEnvelopeSchema = eventEnvelopeBaseSchema.extend({
+  runId: z.string(),
+});
+
+const optionalRunEnvelopeSchema = eventEnvelopeBaseSchema.extend({
+  runId: z.string().nullable(),
+});
+
+export const runStartedEventSchema = runScopedEnvelopeSchema.extend({
   type: z.literal("RUN_STARTED"),
 });
 
-export const runFinishedEventSchema = eventEnvelopeBaseSchema.extend({
+export const runFinishedEventSchema = runScopedEnvelopeSchema.extend({
   type: z.literal("RUN_FINISHED"),
 });
 
-export const runErrorEventSchema = eventEnvelopeBaseSchema.extend({
+export const runErrorEventSchema = runScopedEnvelopeSchema.extend({
   type: z.literal("RUN_ERROR"),
   message: z.string(),
 });
 
-export const runCancelledEventSchema = eventEnvelopeBaseSchema.extend({
+export const runCancelledEventSchema = runScopedEnvelopeSchema.extend({
   type: z.literal("RUN_CANCELLED"),
 });
 
-export const textDeltaEventSchema = eventEnvelopeBaseSchema.extend({
+export const textDeltaEventSchema = runScopedEnvelopeSchema.extend({
   type: z.literal("TEXT_DELTA"),
   messageId: z.string(),
   delta: z.string(),
 });
 
-export const toolStartEventSchema = eventEnvelopeBaseSchema.extend({
+export const toolStartEventSchema = runScopedEnvelopeSchema.extend({
   type: z.literal("TOOL_START"),
   toolCallId: z.string(),
   name: z.string(),
 });
 
-export const toolArgsEventSchema = eventEnvelopeBaseSchema.extend({
+export const toolArgsEventSchema = runScopedEnvelopeSchema.extend({
   type: z.literal("TOOL_ARGS"),
   toolCallId: z.string(),
   delta: z.string(),
@@ -45,30 +52,30 @@ export const toolArgsEventSchema = eventEnvelopeBaseSchema.extend({
 
 export const toolResultStatusSchema = z.enum(["ok", "error"]);
 
-export const toolResultEventSchema = eventEnvelopeBaseSchema.extend({
+export const toolResultEventSchema = runScopedEnvelopeSchema.extend({
   type: z.literal("TOOL_RESULT"),
   toolCallId: z.string(),
   status: toolResultStatusSchema,
   result: z.unknown(),
 });
 
-export const stateSnapshotEventSchema = eventEnvelopeBaseSchema.extend({
+export const stateSnapshotEventSchema = optionalRunEnvelopeSchema.extend({
   type: z.literal("STATE_SNAPSHOT"),
   snapshot: agentStateSchema,
 });
 
-export const stateDeltaEventSchema = eventEnvelopeBaseSchema.extend({
+export const stateDeltaEventSchema = optionalRunEnvelopeSchema.extend({
   type: z.literal("STATE_DELTA"),
   patch: z.array(jsonPatchOpSchema),
 });
 
-export const viewportGraphCommandEventSchema = eventEnvelopeBaseSchema.extend({
+export const viewportGraphCommandEventSchema = optionalRunEnvelopeSchema.extend({
   type: z.literal("VIEWPORT_COMMAND"),
   target: z.literal("graph"),
   camera: graphCameraSchema,
 });
 
-export const viewportMapCommandEventSchema = eventEnvelopeBaseSchema.extend({
+export const viewportMapCommandEventSchema = optionalRunEnvelopeSchema.extend({
   type: z.literal("VIEWPORT_COMMAND"),
   target: z.literal("map"),
   camera: mapCameraSchema,

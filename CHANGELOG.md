@@ -19,3 +19,4 @@ until a release is cut.
 ### Fixed
 
 - Allow native builds for `better-sqlite3` and `esbuild` under pnpm 10
+- Harden shared protocol: strict `agentStateSchema`, non-null `runId` on run-scoped events, union regression tests, REST path builders

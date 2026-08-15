@@ -3,3 +3,4 @@ export * from "./state.js";
 export * from "./chat.js";
 export * from "./events.js";
 export * from "./api.js";
+export * from "./routes.js";
