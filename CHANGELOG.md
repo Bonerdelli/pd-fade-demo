@@ -42,6 +42,8 @@ until a release is cut.
 
 ### Fixed
 
+- Assert Anthropic driver second stream call includes tool_result in messages payload
+- Align mid-run hydrate E2E with independent live fold and explicit running-state assertions
 - Abort Anthropic SDK streams promptly on run cancellation via signal listener and RequestOptions.signal
 - Add Anthropic driver-level tests for multi-turn loop, cancellation, executor errors and API failures
 - Type Anthropic stream test fixtures against SDK event shapes in `anthropic-stream-fixtures.ts`

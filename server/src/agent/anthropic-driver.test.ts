@@ -138,6 +138,24 @@ describe("AnthropicAgentDriver", () => {
     expect(getCallCount()).toBe(2);
     expect(stream).toHaveBeenCalledTimes(2);
 
+    const secondCall = stream.mock.calls[1]?.[0] as {
+      messages: Array<{ role: string; content: unknown }>;
+    };
+    expect(secondCall.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          role: "user",
+          content: [
+            expect.objectContaining({
+              type: "tool_result",
+              tool_use_id: toolCallId,
+              is_error: false,
+            }),
+          ],
+        }),
+      ]),
+    );
+
     const types = emitted.map((event) => event.type);
     expect(types).toEqual([
       "RUN_STARTED",
@@ -196,12 +214,30 @@ describe("AnthropicAgentDriver", () => {
       buildAssistantMessage([{ type: "text", text: "Retry complete.", citations: null }], "end_turn"),
     );
 
-    const { client, getCallCount } = createMockClient([turnOneStream, turnTwoStream]);
+    const { client, stream, getCallCount } = createMockClient([turnOneStream, turnTwoStream]);
     const { runPromise, emitted, db } = await runDriver(client);
 
     await runPromise;
 
     expect(getCallCount()).toBe(2);
+
+    const secondCall = stream.mock.calls[1]?.[0] as {
+      messages: Array<{ role: string; content: unknown }>;
+    };
+    expect(secondCall.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          role: "user",
+          content: [
+            expect.objectContaining({
+              type: "tool_result",
+              tool_use_id: errorToolId,
+              is_error: true,
+            }),
+          ],
+        }),
+      ]),
+    );
 
     const errorResult = emitted.find(
       (event) => event.type === "TOOL_RESULT" && event.toolCallId === errorToolId,

@@ -31,6 +31,7 @@ function pickComparableReloadState(state: ReducerState, lastSeq: number) {
       runStatus: state.uiState.runStatus,
       currentRunId: state.uiState.currentRunId,
       runErrorMessage: state.uiState.runErrorMessage,
+      runErrorReasonCode: state.uiState.runErrorReasonCode,
       cameraCommand: state.uiState.cameraCommand,
     },
     lastSeq,
@@ -457,6 +458,20 @@ describe("full-fidelity session reload E2E", () => {
     expect(hydrated.uiState.runStatus).toBe("running");
     expect(liveFold.uiState.runStatus).toBe("running");
     expect(hydrated.uiState.currentRunId).toBeTruthy();
+
+    const runningTool = hydrated.chat.find(
+      (message): message is Extract<ChatMessage, { kind: "toolCall" }> =>
+        message.kind === "toolCall" &&
+        (message.status === "running" || message.status === "pending"),
+    );
+    expect(runningTool).toMatchObject({ kind: "toolCall", name: "search_entities" });
+
+    const assistantDraft = hydrated.chat.find(
+      (message): message is Extract<ChatMessage, { kind: "assistant" }> =>
+        message.kind === "assistant" && message.id.includes("assistant"),
+    );
+    expect(assistantDraft?.text.length ?? 0).toBeGreaterThan(0);
+
     expect(
       hydrated.chat.some(
         (message) =>
