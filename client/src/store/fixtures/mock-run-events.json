@@ -1,0 +1,1586 @@
+[
+  {
+    "seq": 1,
+    "ts": 1786783383070,
+    "runId": "run-mock-1",
+    "type": "RUN_STARTED"
+  },
+  {
+    "seq": 2,
+    "ts": 1786783383098,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "I'll"
+  },
+  {
+    "seq": 3,
+    "ts": 1786783383126,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 4,
+    "ts": 1786783383153,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "analyze"
+  },
+  {
+    "seq": 5,
+    "ts": 1786783383181,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 6,
+    "ts": 1786783383208,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "your"
+  },
+  {
+    "seq": 7,
+    "ts": 1786783383236,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 8,
+    "ts": 1786783383263,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "request"
+  },
+  {
+    "seq": 9,
+    "ts": 1786783383289,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 10,
+    "ts": 1786783383316,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "about"
+  },
+  {
+    "seq": 11,
+    "ts": 1786783383344,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 12,
+    "ts": 1786783383373,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "\"show"
+  },
+  {
+    "seq": 13,
+    "ts": 1786783383402,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 14,
+    "ts": 1786783383429,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "berlin\""
+  },
+  {
+    "seq": 15,
+    "ts": 1786783383457,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 16,
+    "ts": 1786783383485,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "and"
+  },
+  {
+    "seq": 17,
+    "ts": 1786783383514,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 18,
+    "ts": 1786783383542,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "explore"
+  },
+  {
+    "seq": 19,
+    "ts": 1786783383570,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 20,
+    "ts": 1786783383597,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "the"
+  },
+  {
+    "seq": 21,
+    "ts": 1786783383624,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 22,
+    "ts": 1786783383651,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "Berlin"
+  },
+  {
+    "seq": 23,
+    "ts": 1786783383678,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 24,
+    "ts": 1786783383706,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "entity"
+  },
+  {
+    "seq": 25,
+    "ts": 1786783383734,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 26,
+    "ts": 1786783383762,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "graph."
+  },
+  {
+    "seq": 27,
+    "ts": 1786783383789,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 28,
+    "ts": 1786783383818,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "Let"
+  },
+  {
+    "seq": 29,
+    "ts": 1786783383845,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 30,
+    "ts": 1786783383872,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "me"
+  },
+  {
+    "seq": 31,
+    "ts": 1786783383898,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 32,
+    "ts": 1786783383924,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "search"
+  },
+  {
+    "seq": 33,
+    "ts": 1786783383951,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 34,
+    "ts": 1786783383978,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "the"
+  },
+  {
+    "seq": 35,
+    "ts": 1786783384006,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 36,
+    "ts": 1786783384032,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "knowledge"
+  },
+  {
+    "seq": 37,
+    "ts": 1786783384060,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 38,
+    "ts": 1786783384087,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "base"
+  },
+  {
+    "seq": 39,
+    "ts": 1786783384115,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": " "
+  },
+  {
+    "seq": 40,
+    "ts": 1786783384142,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant",
+    "delta": "first."
+  },
+  {
+    "seq": 41,
+    "ts": 1786783384142,
+    "runId": "run-mock-1",
+    "type": "TOOL_START",
+    "toolCallId": "run-mock-1-tool-search",
+    "name": "search_entities"
+  },
+  {
+    "seq": 42,
+    "ts": 1786783384174,
+    "runId": "run-mock-1",
+    "type": "TOOL_ARGS",
+    "toolCallId": "run-mock-1-tool-search",
+    "delta": "{\"query\":\"show berlin\",\"kin"
+  },
+  {
+    "seq": 43,
+    "ts": 1786783384206,
+    "runId": "run-mock-1",
+    "type": "TOOL_ARGS",
+    "toolCallId": "run-mock-1-tool-search",
+    "delta": "ds\":[\"company\",\"person\",\"lo"
+  },
+  {
+    "seq": 44,
+    "ts": 1786783384239,
+    "runId": "run-mock-1",
+    "type": "TOOL_ARGS",
+    "toolCallId": "run-mock-1-tool-search",
+    "delta": "cation\"],\"city\":\"Berlin\"}"
+  },
+  {
+    "seq": 45,
+    "ts": 1786783384281,
+    "runId": "run-mock-1",
+    "type": "TOOL_RESULT",
+    "toolCallId": "run-mock-1-tool-search",
+    "status": "ok",
+    "result": {
+      "entities": [
+        {
+          "id": "company-techberlin",
+          "label": "TechBerlin GmbH",
+          "kind": "company"
+        },
+        {
+          "id": "company-spree",
+          "label": "Spree Ventures",
+          "kind": "company"
+        },
+        {
+          "id": "person-anna",
+          "label": "Anna Schmidt",
+          "kind": "person"
+        },
+        {
+          "id": "person-max",
+          "label": "Max Weber",
+          "kind": "person"
+        },
+        {
+          "id": "loc-brandenburg",
+          "label": "Brandenburg Gate",
+          "kind": "location"
+        },
+        {
+          "id": "loc-alexanderplatz",
+          "label": "Alexanderplatz",
+          "kind": "location"
+        },
+        {
+          "id": "loc-mitte",
+          "label": "Mitte District",
+          "kind": "location"
+        },
+        {
+          "id": "loc-kreuzberg",
+          "label": "Kreuzberg District",
+          "kind": "location"
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "source": "person-anna",
+          "target": "company-techberlin",
+          "label": "CEO"
+        },
+        {
+          "id": "e2",
+          "source": "person-max",
+          "target": "company-spree",
+          "label": "Partner"
+        },
+        {
+          "id": "e3",
+          "source": "company-techberlin",
+          "target": "loc-mitte",
+          "label": "HQ"
+        },
+        {
+          "id": "e4",
+          "source": "company-spree",
+          "target": "loc-kreuzberg",
+          "label": "Office"
+        },
+        {
+          "id": "e5",
+          "source": "person-anna",
+          "target": "person-max",
+          "label": "Advisor"
+        },
+        {
+          "id": "e6",
+          "source": "loc-brandenburg",
+          "target": "loc-mitte",
+          "label": "Landmark"
+        }
+      ],
+      "matchCount": 8
+    }
+  },
+  {
+    "seq": 46,
+    "ts": 1786783384339,
+    "runId": "run-mock-1",
+    "type": "STATE_SNAPSHOT",
+    "snapshot": {
+      "graph": {
+        "nodes": [
+          {
+            "id": "company-techberlin",
+            "label": "TechBerlin GmbH",
+            "kind": "company"
+          },
+          {
+            "id": "company-spree",
+            "label": "Spree Ventures",
+            "kind": "company"
+          },
+          {
+            "id": "person-anna",
+            "label": "Anna Schmidt",
+            "kind": "person"
+          },
+          {
+            "id": "person-max",
+            "label": "Max Weber",
+            "kind": "person"
+          },
+          {
+            "id": "loc-brandenburg",
+            "label": "Brandenburg Gate",
+            "kind": "location"
+          },
+          {
+            "id": "loc-alexanderplatz",
+            "label": "Alexanderplatz",
+            "kind": "location"
+          },
+          {
+            "id": "loc-mitte",
+            "label": "Mitte District",
+            "kind": "location"
+          },
+          {
+            "id": "loc-kreuzberg",
+            "label": "Kreuzberg District",
+            "kind": "location"
+          }
+        ],
+        "edges": [
+          {
+            "id": "e1",
+            "source": "person-anna",
+            "target": "company-techberlin",
+            "label": "CEO"
+          },
+          {
+            "id": "e2",
+            "source": "person-max",
+            "target": "company-spree",
+            "label": "Partner"
+          },
+          {
+            "id": "e3",
+            "source": "company-techberlin",
+            "target": "loc-mitte",
+            "label": "HQ"
+          },
+          {
+            "id": "e4",
+            "source": "company-spree",
+            "target": "loc-kreuzberg",
+            "label": "Office"
+          },
+          {
+            "id": "e5",
+            "source": "person-anna",
+            "target": "person-max",
+            "label": "Advisor"
+          },
+          {
+            "id": "e6",
+            "source": "loc-brandenburg",
+            "target": "loc-mitte",
+            "label": "Landmark"
+          }
+        ],
+        "layout": {
+          "company-techberlin": {
+            "x": 0,
+            "y": 0
+          },
+          "company-spree": {
+            "x": 280,
+            "y": 40
+          },
+          "person-anna": {
+            "x": -120,
+            "y": -80
+          },
+          "person-max": {
+            "x": 420,
+            "y": -60
+          },
+          "loc-brandenburg": {
+            "x": -80,
+            "y": 160
+          },
+          "loc-alexanderplatz": {
+            "x": 120,
+            "y": 200
+          },
+          "loc-mitte": {
+            "x": 40,
+            "y": 120
+          },
+          "loc-kreuzberg": {
+            "x": 320,
+            "y": 180
+          }
+        }
+      },
+      "map": {
+        "shapes": [
+          {
+            "id": "shape-mitte",
+            "kind": "polygon",
+            "coordinates": [
+              [
+                [
+                  13.38,
+                  52.53
+                ],
+                [
+                  13.42,
+                  52.53
+                ],
+                [
+                  13.42,
+                  52.51
+                ],
+                [
+                  13.38,
+                  52.51
+                ],
+                [
+                  13.38,
+                  52.53
+                ]
+              ]
+            ],
+            "label": "Mitte"
+          },
+          {
+            "id": "shape-kreuzberg",
+            "kind": "polygon",
+            "coordinates": [
+              [
+                [
+                  13.4,
+                  52.49
+                ],
+                [
+                  13.44,
+                  52.49
+                ],
+                [
+                  13.44,
+                  52.47
+                ],
+                [
+                  13.4,
+                  52.47
+                ],
+                [
+                  13.4,
+                  52.49
+                ]
+              ]
+            ],
+            "label": "Kreuzberg"
+          },
+          {
+            "id": "shape-hq",
+            "kind": "point",
+            "coordinates": [
+              13.405,
+              52.52
+            ],
+            "label": "TechBerlin HQ"
+          }
+        ],
+        "signals": []
+      }
+    }
+  },
+  {
+    "seq": 47,
+    "ts": 1786783384368,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": "Found"
+  },
+  {
+    "seq": 48,
+    "ts": 1786783384395,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": " "
+  },
+  {
+    "seq": 49,
+    "ts": 1786783384423,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": "eight"
+  },
+  {
+    "seq": 50,
+    "ts": 1786783384451,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": " "
+  },
+  {
+    "seq": 51,
+    "ts": 1786783384479,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": "related"
+  },
+  {
+    "seq": 52,
+    "ts": 1786783384505,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": " "
+  },
+  {
+    "seq": 53,
+    "ts": 1786783384531,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": "entities"
+  },
+  {
+    "seq": 54,
+    "ts": 1786783384558,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": " "
+  },
+  {
+    "seq": 55,
+    "ts": 1786783384585,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": "across"
+  },
+  {
+    "seq": 56,
+    "ts": 1786783384612,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": " "
+  },
+  {
+    "seq": 57,
+    "ts": 1786783384639,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": "companies,"
+  },
+  {
+    "seq": 58,
+    "ts": 1786783384666,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": " "
+  },
+  {
+    "seq": 59,
+    "ts": 1786783384695,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": "people"
+  },
+  {
+    "seq": 60,
+    "ts": 1786783384721,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": " "
+  },
+  {
+    "seq": 61,
+    "ts": 1786783384752,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": "and"
+  },
+  {
+    "seq": 62,
+    "ts": 1786783384781,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": " "
+  },
+  {
+    "seq": 63,
+    "ts": 1786783384809,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": "locations."
+  },
+  {
+    "seq": 64,
+    "ts": 1786783384836,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": " "
+  },
+  {
+    "seq": 65,
+    "ts": 1786783384864,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": "Plotting"
+  },
+  {
+    "seq": 66,
+    "ts": 1786783384890,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": " "
+  },
+  {
+    "seq": 67,
+    "ts": 1786783384917,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": "geo"
+  },
+  {
+    "seq": 68,
+    "ts": 1786783384943,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": " "
+  },
+  {
+    "seq": 69,
+    "ts": 1786783384969,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": "signals"
+  },
+  {
+    "seq": 70,
+    "ts": 1786783384996,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": " "
+  },
+  {
+    "seq": 71,
+    "ts": 1786783385023,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-mid",
+    "delta": "next."
+  },
+  {
+    "seq": 72,
+    "ts": 1786783385023,
+    "runId": "run-mock-1",
+    "type": "TOOL_START",
+    "toolCallId": "run-mock-1-tool-plot",
+    "name": "plot_signals"
+  },
+  {
+    "seq": 73,
+    "ts": 1786783385055,
+    "runId": "run-mock-1",
+    "type": "TOOL_ARGS",
+    "toolCallId": "run-mock-1-tool-plot",
+    "delta": "{\"signalIds\":[\"signal-1\""
+  },
+  {
+    "seq": 74,
+    "ts": 1786783385087,
+    "runId": "run-mock-1",
+    "type": "TOOL_ARGS",
+    "toolCallId": "run-mock-1-tool-plot",
+    "delta": ",\"signal-2\",\"signal-3\"],"
+  },
+  {
+    "seq": 75,
+    "ts": 1786783385119,
+    "runId": "run-mock-1",
+    "type": "TOOL_ARGS",
+    "toolCallId": "run-mock-1-tool-plot",
+    "delta": "\"center\":[13.405,52.52]}"
+  },
+  {
+    "seq": 76,
+    "ts": 1786783385161,
+    "runId": "run-mock-1",
+    "type": "TOOL_RESULT",
+    "toolCallId": "run-mock-1-tool-plot",
+    "status": "ok",
+    "result": {
+      "plotted": 3,
+      "center": [
+        13.405,
+        52.52
+      ]
+    }
+  },
+  {
+    "seq": 77,
+    "ts": 1786783385214,
+    "runId": "run-mock-1",
+    "type": "STATE_SNAPSHOT",
+    "snapshot": {
+      "graph": {
+        "nodes": [
+          {
+            "id": "company-techberlin",
+            "label": "TechBerlin GmbH",
+            "kind": "company"
+          },
+          {
+            "id": "company-spree",
+            "label": "Spree Ventures",
+            "kind": "company"
+          },
+          {
+            "id": "person-anna",
+            "label": "Anna Schmidt",
+            "kind": "person"
+          },
+          {
+            "id": "person-max",
+            "label": "Max Weber",
+            "kind": "person"
+          },
+          {
+            "id": "loc-brandenburg",
+            "label": "Brandenburg Gate",
+            "kind": "location"
+          },
+          {
+            "id": "loc-alexanderplatz",
+            "label": "Alexanderplatz",
+            "kind": "location"
+          },
+          {
+            "id": "loc-mitte",
+            "label": "Mitte District",
+            "kind": "location"
+          },
+          {
+            "id": "loc-kreuzberg",
+            "label": "Kreuzberg District",
+            "kind": "location"
+          }
+        ],
+        "edges": [
+          {
+            "id": "e1",
+            "source": "person-anna",
+            "target": "company-techberlin",
+            "label": "CEO"
+          },
+          {
+            "id": "e2",
+            "source": "person-max",
+            "target": "company-spree",
+            "label": "Partner"
+          },
+          {
+            "id": "e3",
+            "source": "company-techberlin",
+            "target": "loc-mitte",
+            "label": "HQ"
+          },
+          {
+            "id": "e4",
+            "source": "company-spree",
+            "target": "loc-kreuzberg",
+            "label": "Office"
+          },
+          {
+            "id": "e5",
+            "source": "person-anna",
+            "target": "person-max",
+            "label": "Advisor"
+          },
+          {
+            "id": "e6",
+            "source": "loc-brandenburg",
+            "target": "loc-mitte",
+            "label": "Landmark"
+          }
+        ],
+        "layout": {
+          "company-techberlin": {
+            "x": 0,
+            "y": 0
+          },
+          "company-spree": {
+            "x": 280,
+            "y": 40
+          },
+          "person-anna": {
+            "x": -120,
+            "y": -80
+          },
+          "person-max": {
+            "x": 420,
+            "y": -60
+          },
+          "loc-brandenburg": {
+            "x": -80,
+            "y": 160
+          },
+          "loc-alexanderplatz": {
+            "x": 120,
+            "y": 200
+          },
+          "loc-mitte": {
+            "x": 40,
+            "y": 120
+          },
+          "loc-kreuzberg": {
+            "x": 320,
+            "y": 180
+          }
+        }
+      },
+      "map": {
+        "shapes": [
+          {
+            "id": "shape-mitte",
+            "kind": "polygon",
+            "coordinates": [
+              [
+                [
+                  13.38,
+                  52.53
+                ],
+                [
+                  13.42,
+                  52.53
+                ],
+                [
+                  13.42,
+                  52.51
+                ],
+                [
+                  13.38,
+                  52.51
+                ],
+                [
+                  13.38,
+                  52.53
+                ]
+              ]
+            ],
+            "label": "Mitte"
+          },
+          {
+            "id": "shape-kreuzberg",
+            "kind": "polygon",
+            "coordinates": [
+              [
+                [
+                  13.4,
+                  52.49
+                ],
+                [
+                  13.44,
+                  52.49
+                ],
+                [
+                  13.44,
+                  52.47
+                ],
+                [
+                  13.4,
+                  52.47
+                ],
+                [
+                  13.4,
+                  52.49
+                ]
+              ]
+            ],
+            "label": "Kreuzberg"
+          },
+          {
+            "id": "shape-hq",
+            "kind": "point",
+            "coordinates": [
+              13.405,
+              52.52
+            ],
+            "label": "TechBerlin HQ"
+          }
+        ],
+        "signals": [
+          {
+            "id": "signal-1",
+            "coordinates": [
+              13.3777,
+              52.5163
+            ],
+            "label": "Brandenburg Gate activity",
+            "strength": 0.82
+          },
+          {
+            "id": "signal-2",
+            "coordinates": [
+              13.4134,
+              52.5219
+            ],
+            "label": "Alexanderplatz traffic",
+            "strength": 0.67
+          },
+          {
+            "id": "signal-3",
+            "coordinates": [
+              13.405,
+              52.498
+            ],
+            "label": "Kreuzberg cluster",
+            "strength": 0.74
+          }
+        ]
+      }
+    }
+  },
+  {
+    "seq": 78,
+    "ts": 1786783385256,
+    "runId": "run-mock-1",
+    "type": "VIEWPORT_COMMAND",
+    "target": "map",
+    "camera": {
+      "center": [
+        13.405,
+        52.52
+      ],
+      "zoom": 12.5
+    }
+  },
+  {
+    "seq": 79,
+    "ts": 1786783385285,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "Mapped"
+  },
+  {
+    "seq": 80,
+    "ts": 1786783385313,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 81,
+    "ts": 1786783385339,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "three"
+  },
+  {
+    "seq": 82,
+    "ts": 1786783385366,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 83,
+    "ts": 1786783385393,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "activity"
+  },
+  {
+    "seq": 84,
+    "ts": 1786783385420,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 85,
+    "ts": 1786783385447,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "signals"
+  },
+  {
+    "seq": 86,
+    "ts": 1786783385475,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 87,
+    "ts": 1786783385503,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "around"
+  },
+  {
+    "seq": 88,
+    "ts": 1786783385531,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 89,
+    "ts": 1786783385560,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "central"
+  },
+  {
+    "seq": 90,
+    "ts": 1786783385588,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 91,
+    "ts": 1786783385617,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "Berlin"
+  },
+  {
+    "seq": 92,
+    "ts": 1786783385645,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 93,
+    "ts": 1786783385672,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "and"
+  },
+  {
+    "seq": 94,
+    "ts": 1786783385699,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 95,
+    "ts": 1786783385726,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "linked"
+  },
+  {
+    "seq": 96,
+    "ts": 1786783385753,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 97,
+    "ts": 1786783385780,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "eight"
+  },
+  {
+    "seq": 98,
+    "ts": 1786783385806,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 99,
+    "ts": 1786783385832,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "entities"
+  },
+  {
+    "seq": 100,
+    "ts": 1786783385861,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 101,
+    "ts": 1786783385889,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "in"
+  },
+  {
+    "seq": 102,
+    "ts": 1786783385917,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 103,
+    "ts": 1786783385945,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "the"
+  },
+  {
+    "seq": 104,
+    "ts": 1786783385972,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 105,
+    "ts": 1786783386000,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "graph."
+  },
+  {
+    "seq": 106,
+    "ts": 1786783386027,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 107,
+    "ts": 1786783386055,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "TechBerlin"
+  },
+  {
+    "seq": 108,
+    "ts": 1786783386082,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 109,
+    "ts": 1786783386108,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "GmbH"
+  },
+  {
+    "seq": 110,
+    "ts": 1786783386137,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 111,
+    "ts": 1786783386163,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "and"
+  },
+  {
+    "seq": 112,
+    "ts": 1786783386189,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 113,
+    "ts": 1786783386215,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "Spree"
+  },
+  {
+    "seq": 114,
+    "ts": 1786783386241,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 115,
+    "ts": 1786783386268,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "Ventures"
+  },
+  {
+    "seq": 116,
+    "ts": 1786783386296,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 117,
+    "ts": 1786783386322,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "anchor"
+  },
+  {
+    "seq": 118,
+    "ts": 1786783386350,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 119,
+    "ts": 1786783386376,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "the"
+  },
+  {
+    "seq": 120,
+    "ts": 1786783386403,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 121,
+    "ts": 1786783386431,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "company"
+  },
+  {
+    "seq": 122,
+    "ts": 1786783386459,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 123,
+    "ts": 1786783386487,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "layer"
+  },
+  {
+    "seq": 124,
+    "ts": 1786783386514,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 125,
+    "ts": 1786783386542,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "with"
+  },
+  {
+    "seq": 126,
+    "ts": 1786783386570,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 127,
+    "ts": 1786783386598,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "people"
+  },
+  {
+    "seq": 128,
+    "ts": 1786783386626,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 129,
+    "ts": 1786783386654,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "and"
+  },
+  {
+    "seq": 130,
+    "ts": 1786783386680,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 131,
+    "ts": 1786783386707,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "district"
+  },
+  {
+    "seq": 132,
+    "ts": 1786783386736,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 133,
+    "ts": 1786783386763,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "locations"
+  },
+  {
+    "seq": 134,
+    "ts": 1786783386790,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": " "
+  },
+  {
+    "seq": 135,
+    "ts": 1786783386818,
+    "runId": "run-mock-1",
+    "type": "TEXT_DELTA",
+    "messageId": "run-mock-1-assistant-summary",
+    "delta": "connected."
+  },
+  {
+    "seq": 136,
+    "ts": 1786783386818,
+    "runId": "run-mock-1",
+    "type": "RUN_FINISHED"
+  }
+]
