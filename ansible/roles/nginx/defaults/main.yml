@@ -1,3 +1,5 @@
 ---
-pd_fade_tls_enabled: true
+# Set true only after DNS points at the host and HTTP vhost is reachable
+pd_fade_tls_enabled: false
 pd_fade_sse_proxy_read_timeout: 86400s
+certbot_webroot_path: /var/www/certbot

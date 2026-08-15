@@ -4,9 +4,16 @@
     name:
       - nginx
       - certbot
-      - python3-certbot-nginx
     state: present
     update_cache: true
+
+- name: Ensure certbot webroot exists
+  ansible.builtin.file:
+    path: "{{ certbot_webroot_path }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: "0755"
 
 - name: Remove default nginx site
   ansible.builtin.file:
@@ -19,26 +26,15 @@
   register: pd_fade_cert_check
   when: pd_fade_tls_enabled | bool
 
-- name: Stop nginx for initial certificate acquisition
-  ansible.builtin.systemd:
-    name: nginx
-    state: stopped
-  when:
-    - pd_fade_tls_enabled | bool
-    - letsencrypt_email is defined
-    - not (pd_fade_cert_check.stat.exists | default(false))
+- name: Record whether TLS certificate is present
+  ansible.builtin.set_fact:
+    pd_fade_cert_exists: "{{ pd_fade_cert_check.stat.exists | default(false) }}"
+  when: pd_fade_tls_enabled | bool
 
-- name: Obtain initial certificate (standalone)
-  ansible.builtin.command: >
-    certbot certonly --standalone --non-interactive --agree-tos
-    --email {{ letsencrypt_email }}
-    -d {{ root_domain }}
-  when:
-    - pd_fade_tls_enabled | bool
-    - letsencrypt_email is defined
-    - not (pd_fade_cert_check.stat.exists | default(false))
-  register: certbot_result
-  changed_when: certbot_result.rc == 0
+- name: Assume no TLS certificate when TLS is disabled
+  ansible.builtin.set_fact:
+    pd_fade_cert_exists: false
+  when: not (pd_fade_tls_enabled | bool)
 
 - name: Deploy pd-fade vhost
   ansible.builtin.template:
@@ -60,6 +56,48 @@
     state: started
     enabled: true
     daemon_reload: true
+
+- name: Obtain or renew certificate via webroot
+  when:
+    - pd_fade_tls_enabled | bool
+    - letsencrypt_email is defined
+    - not (pd_fade_cert_exists | default(false) | bool)
+  block:
+    - name: Request Let's Encrypt certificate (webroot)
+      ansible.builtin.command: >
+        certbot certonly --webroot --non-interactive --agree-tos
+        --webroot-path {{ certbot_webroot_path }}
+        --email {{ letsencrypt_email }}
+        -d {{ root_domain }}
+      register: certbot_webroot_result
+      changed_when: certbot_webroot_result.rc == 0
+
+    - name: Mark TLS certificate as present after issuance
+      ansible.builtin.set_fact:
+        pd_fade_cert_exists: true
+      when: certbot_webroot_result.rc == 0
+
+    - name: Redeploy pd-fade vhost with HTTPS
+      ansible.builtin.template:
+        src: vhost-pd-fade.conf.j2
+        dest: /etc/nginx/sites-available/pd-fade.conf
+        mode: "0644"
+      when: certbot_webroot_result.rc == 0
+      notify: Reload nginx
+
+  rescue:
+    - name: Report certificate issuance failure
+      ansible.builtin.debug:
+        msg: >-
+          Let's Encrypt certificate request failed; nginx remains on HTTP.
+          Fix DNS or webroot reachability, then re-run with tag nginx.
+
+  always:
+    - name: Ensure nginx is running after certificate attempt
+      ansible.builtin.systemd:
+        name: nginx
+        state: started
+        enabled: true
 
 - name: Set up certbot auto-renewal
   ansible.builtin.cron:
