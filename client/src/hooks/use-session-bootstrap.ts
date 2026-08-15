@@ -36,9 +36,13 @@ export function useSessionBootstrap(): void {
     }
 
     void controller.start();
+    useAppStore.getState().setRetrySessionBootstrap(() => {
+      void controller.start();
+    });
 
     return () => {
       controller.stop();
+      useAppStore.getState().setRetrySessionBootstrap(null);
       controllerRef.current = null;
     };
   }, []);

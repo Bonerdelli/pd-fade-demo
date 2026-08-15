@@ -16,6 +16,7 @@ export function App() {
   const bootstrapStatus = useAppStore((state) => state.uiState.bootstrapStatus);
   const connectionStatus = useAppStore((state) => state.uiState.connectionStatus);
   const mutationError = useAppStore((state) => state.uiState.mutationError);
+  const retrySessionBootstrap = useAppStore((state) => state.retrySessionBootstrap);
   const setActiveCanvasTab = useAppStore((state) => state.setActiveCanvasTab);
 
   const statusKey =
@@ -40,6 +41,15 @@ export function App() {
       <header className="border-b border-slate-200 bg-white px-6 py-3">
         <h1 className="text-lg font-semibold">{t("appTitle")}</h1>
         <p className="text-sm text-slate-500">{t(statusKey)}</p>
+        {bootstrapStatus === "error" && retrySessionBootstrap ? (
+          <button
+            type="button"
+            className="mt-2 rounded bg-slate-900 px-3 py-1.5 text-sm text-white hover:bg-slate-800"
+            onClick={() => retrySessionBootstrap()}
+          >
+            {t("status.retry")}
+          </button>
+        ) : null}
         {mutationErrorText ? (
           <p className="mt-1 text-sm text-red-600">{mutationErrorText}</p>
         ) : null}

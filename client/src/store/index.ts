@@ -95,6 +95,12 @@ export const useAppStore = create<AppStoreState>((set) => ({
       chat: state.chat.filter((message) => message.id !== messageId),
     }));
   },
+
+  retrySessionBootstrap: null,
+
+  setRetrySessionBootstrap: (retry) => {
+    set({ retrySessionBootstrap: retry });
+  },
 }));
 
 export function selectRunLock(state: AppStoreState): boolean {

@@ -52,6 +52,8 @@ export interface AppStoreState {
   replaceUserState: (userState: UserState) => void;
   appendChatMessage: (message: ChatMessage) => void;
   removeChatMessage: (messageId: string) => void;
+  retrySessionBootstrap: (() => void) | null;
+  setRetrySessionBootstrap: (retry: (() => void) | null) => void;
 }
 
 export const emptyAgentState: AgentState = {

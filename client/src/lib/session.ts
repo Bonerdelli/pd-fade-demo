@@ -96,6 +96,10 @@ export function createSessionController(options: SessionControllerOptions): Sess
         setConnectionStatus("reconnecting");
         void resync();
       },
+      onStreamStalled: () => {
+        setConnectionStatus("reconnecting");
+        sseConnection?.abortStream();
+      },
       fetchImpl,
     });
   };

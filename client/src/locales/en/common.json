@@ -11,7 +11,8 @@
     "connected": "Connected to agent stream",
     "reconnecting": "Reconnecting to agent stream",
     "disconnected": "Agent stream disconnected",
-    "error": "Failed to load session"
+    "error": "Failed to load session",
+    "retry": "Retry"
   },
   "skeleton": {
     "chat": "Restoring chat history",
