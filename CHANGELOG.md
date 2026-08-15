@@ -8,6 +8,8 @@ until a release is cut.
 
 ### Added
 
+- Anthropic demo system prompt module with tool choreography, protocol boundary, and user-context instructions
+- Suggested Anthropic live-demo script with paste-ready messages in README
 - Root README with setup, demo walkthrough, and known limitations
 - Client SSE stall watchdog with 45s silence threshold and reconnect on stream stall
 - SSE transport chaos tests for disconnect resume, duplicate seq drop, and gap resync convergence

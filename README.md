@@ -70,6 +70,24 @@ Open the client with a session id in the query string, or let the app create one
 5. **Stop** — while a run is active, press **Stop**; in-flight tool cards finalize as cancelled.
 6. **Server restart mid-run** — kill the server during an active run, restart it, reload the client; orphaned runs reconcile with a `server_restarted` error and finalized tool cards. Set `MOCK_DRIVER_POST_TOOL_START_DELAY_MS=5000` (or similar) in `server/.env` so the mock run stays in-flight long enough to kill the process; the default mock run finishes in seconds.
 
+### Suggested demo script (Anthropic driver)
+
+Set `AGENT_DRIVER=anthropic` and keep the **Map** tab visible before signals plot (see camera limitations above). Paste the opening message, watch search → plot → focus unfold, then draw a suspect zone and comment an agent shape before the follow-up.
+
+**Opening message:**
+
+```
+Someone is quietly linking TechBerlin GmbH and Spree Ventures across Berlin — I need a quick detective read. Search the graph for those two companies and the people tied to them (Anna Schmidt and Max Weber). Plot the Kreuzberg cluster and Brandenburg Gate activity signals on the map, then focus on whichever spot looks most suspicious and tell me what stands out in short beats between each step. I will mark my own suspect zones on the map while you work.
+```
+
+**Follow-up (after drawing a shape and commenting on an agent shape, e.g. TechBerlin HQ):**
+
+```
+I circled a suspect area on the map and left a comment on the TechBerlin HQ marker. Read my annotations in your context — does that point more at Anna Schmidt or Max Weber as the connector? Focus the graph on whoever you think links the two companies and explain why.
+```
+
+Dataset note: the opening message only references entities and signals present in the Berlin fixture (`TechBerlin GmbH`, `Spree Ventures`, `Anna Schmidt`, `Max Weber`, Kreuzberg cluster, Brandenburg Gate activity) so `search_entities` and `plot_signals` match reliably.
+
 ## Tests and quality
 
 ```bash
