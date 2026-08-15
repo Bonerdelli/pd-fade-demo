@@ -1,4 +1,5 @@
 import type { AgentState, UserState } from "@pd-fade/shared";
+import { composeSystemPrompt } from "./system-prompt.js";
 
 function summarizeLabels(labels: string[], limit = 6): string {
   if (labels.length === 0) {
@@ -93,17 +94,5 @@ export function buildMaterializedContextSlice(agentState: AgentState, userState:
 }
 
 export function buildSystemPrompt(agentState: AgentState, userState: UserState): string {
-  const contextSlice = buildMaterializedContextSlice(agentState, userState);
-
-  return [
-    "You are an assistant for a Berlin entity graph and map canvas demo.",
-    "You can only change the application through registered tools: search_entities, plot_signals, focus.",
-    "Chat text is for the user; never emit protocol events or raw JSON state in chat.",
-    "After search_entities or plot_signals the server publishes cumulative agent snapshots — do not invent node ids or coordinates.",
-    "Use focus to suggest viewport moves; it does not mutate state.",
-    "When tool execution fails, read the error and retry or explain to the user.",
-    "",
-    "Current materialized context:",
-    contextSlice,
-  ].join("\n");
+  return composeSystemPrompt(buildMaterializedContextSlice(agentState, userState));
 }
