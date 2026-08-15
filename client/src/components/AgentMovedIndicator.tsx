@@ -13,8 +13,11 @@ export function AgentMovedIndicator({ visible, namespace }: AgentMovedIndicatorP
   }
 
   return (
-    <div className="pointer-events-none absolute right-3 top-3 z-10 rounded-md border border-violet-200 bg-violet-50 px-3 py-1.5 text-xs font-medium text-violet-900 shadow-sm">
+    <p
+      role="status"
+      className="pointer-events-none absolute right-3 top-3 z-10 text-xs font-medium text-blue-600"
+    >
       {t("camera.agentMovedView")}
-    </div>
+    </p>
   );
 }
