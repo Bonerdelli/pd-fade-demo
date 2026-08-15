@@ -16,6 +16,7 @@ import { emptyAgentState, envelope, expectInvalid, expectValid } from "./test-he
 describe("REST and canvas mutation schemas", () => {
   it("validates post message request", () => {
     expectValid(postMessageRequestSchema, { text: "hello" });
+    expectValid(postMessageRequestSchema, { text: "hello", messageId: "msg-1" });
     expectInvalid(postMessageRequestSchema, { text: "" });
     expectInvalid(postMessageRequestSchema, { text: 123 });
   });
