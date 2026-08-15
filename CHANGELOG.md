@@ -8,6 +8,10 @@ until a release is cut.
 
 ### Added
 
+- Extract Berlin demo dataset into `server/src/agent/dataset.ts` with typed search and signal helpers shared by mock and Anthropic drivers
+- Add deterministic tool executors (`search_entities`, `plot_signals`, `focus`) returning tool payloads and cumulative `agentState` snapshots
+- Add `AnthropicAgentDriver` with stream translator, materialized context slice system prompt and `AGENT_DRIVER=anthropic` selection via `@anthropic-ai/sdk`
+- Add unit tests for dataset, executors, translator fake stream sequences and driver factory selection without network calls
 - Reconcile orphaned runs after server restart with `RUN_ERROR` reason `server_restarted` and startup/lazy session touch hooks
 - Full-fidelity session reload E2E covering user mutations, viewports, selection and mid-run hydrate
 - SSE `409 cursor_ahead` response and client resync when the reconnect cursor is beyond the persisted log
@@ -53,7 +57,8 @@ until a release is cut.
 
 ### Changed
 
-- Export `clearPositionOverrides` from `useMutations` and remove graph standalone mutation helper
+- Refactor mock agent driver to use shared dataset and tool executors while preserving deterministic mock-run fixture event structure
+- Export `createAgentDriver` from dedicated factory supporting `mock` and `anthropic` drivers
 - Rebuild client reducer golden fixture from the real mock driver event log
 - Emit graph VIEWPORT_COMMAND from mock driver after search snapshot
 - Force terra-draw to select mode during run soft-lock and hide stale agent shape popups when shapes disappear
