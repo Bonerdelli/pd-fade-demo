@@ -30,6 +30,11 @@
     "sendTooltip": "Send message",
     "stopTooltip": "Stop the current agent run"
   },
+  "selectionContext": {
+    "hint_one": "{{count}} node selected — shared with the agent as context",
+    "hint_other": "{{count}} nodes selected — shared with the agent as context",
+    "clear": "Clear selection"
+  },
   "toolCards": {
     "expand": "Expand",
     "collapse": "Collapse",

@@ -2,6 +2,7 @@ import { useCallback, useLayoutEffect, useRef, useState, type KeyboardEvent } fr
 import { useTranslation } from "react-i18next";
 import { useMutations } from "../../hooks/use-mutations.js";
 import { useRunLock } from "../../hooks/use-run-lock.js";
+import { SelectionContextHint } from "./SelectionContextHint.js";
 
 export function ChatComposer() {
   const { t } = useTranslation("chat");
@@ -62,6 +63,7 @@ export function ChatComposer() {
 
   return (
     <div className="shrink-0 border-t border-slate-200 bg-white px-4 py-3">
+      <SelectionContextHint />
       <div className="flex items-start gap-2">
         <textarea
           ref={textareaRef}

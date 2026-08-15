@@ -6,16 +6,23 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { I18nextProvider } from "react-i18next";
 import i18n from "../../i18n.js";
 import { useAppStore } from "../../store/index.js";
-import { initialUiState } from "../../store/types.js";
+import { initialUiState, emptyUserState } from "../../store/types.js";
 import { ChatComposer } from "./ChatComposer.js";
 import { ChatHeader } from "./ChatHeader.js";
 import { MessageList } from "./MessageList.js";
 import { ToolCard } from "./ToolCard.js";
 
+const { mockSetSelection, mockSendMessage, mockCancelRun } = vi.hoisted(() => ({
+  mockSetSelection: vi.fn(),
+  mockSendMessage: vi.fn(),
+  mockCancelRun: vi.fn(),
+}));
+
 vi.mock("../../hooks/use-mutations.js", () => ({
   useMutations: () => ({
-    sendMessage: vi.fn(),
-    cancelRun: vi.fn(),
+    sendMessage: mockSendMessage,
+    cancelRun: mockCancelRun,
+    setSelection: mockSetSelection,
   }),
 }));
 
@@ -29,8 +36,12 @@ describe("Chat surface components", () => {
   });
 
   beforeEach(() => {
+    mockSetSelection.mockClear();
+    mockSendMessage.mockClear();
+    mockCancelRun.mockClear();
     useAppStore.setState({
       chat: [],
+      userState: emptyUserState,
       uiState: { ...initialUiState, bootstrapStatus: "ready", connectionStatus: "connected" },
     });
   });
@@ -326,5 +337,40 @@ describe("Chat surface components", () => {
     await user.type(input, "next question{enter}");
 
     expect((input as HTMLTextAreaElement).value).toBe("next question");
+  });
+
+  it("shows selection context hint when graph nodes are selected", () => {
+    useAppStore.setState({
+      userState: {
+        ...emptyUserState,
+        selection: ["node-a", "node-b"],
+      },
+    });
+
+    renderWithI18n(<ChatComposer />);
+
+    expect(screen.getByText(/2 nodes selected — shared with the agent as context/i)).toBeTruthy();
+  });
+
+  it("hides selection context hint when selection is empty", () => {
+    renderWithI18n(<ChatComposer />);
+
+    expect(screen.queryByText(/shared with the agent as context/i)).toBeNull();
+  });
+
+  it("clears selection from the context hint button", async () => {
+    const user = userEvent.setup();
+    useAppStore.setState({
+      userState: {
+        ...emptyUserState,
+        selection: ["node-a"],
+      },
+    });
+
+    renderWithI18n(<ChatComposer />);
+
+    await user.click(screen.getByRole("button", { name: /Clear selection/i }));
+
+    expect(mockSetSelection).toHaveBeenCalledWith([]);
   });
 });

@@ -47,6 +47,7 @@ until a release is cut.
 - Implement Map surface with MapLibre GL agent layers, terra-draw user editing, camera commands and soft-lock hints
 - Chat surface with streaming messages, tool card registry, run lifecycle UI, scroll-pinned message list and composer
 - Chat debug mode toggle in header with `uiState.debugMode` hiding fallback tool card raw JSON arguments
+- Selection context hint above chat composer when graph nodes are selected, with clear control via `setSelection`
 
 ### Fixed
 
