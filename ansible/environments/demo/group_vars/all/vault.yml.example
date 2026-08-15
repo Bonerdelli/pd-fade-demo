@@ -1,0 +1,8 @@
+---
+# Copy to vault.yml, fill secrets, then encrypt:
+#   ansible-vault encrypt environments/demo/group_vars/all/vault.yml
+#
+# Or create ansible/.vault_pass (chmod 600) and pass --vault-password-file .vault_pass
+
+# Required when pd_fade_agent_driver: anthropic
+vault_anthropic_api_key: "CHANGE_ME"
