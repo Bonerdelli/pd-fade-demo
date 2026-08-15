@@ -4,7 +4,8 @@
     "chatPanel": "Chat",
     "canvasPanel": "Canvas",
     "graphTab": "Graph",
-    "mapTab": "Map"
+    "mapTab": "Map",
+    "newChat": "New chat"
   },
   "status": {
     "loading": "Loading session",

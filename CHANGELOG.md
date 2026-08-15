@@ -8,6 +8,7 @@ until a release is cut.
 
 ### Added
 
+- New chat control in canvas header to start a fresh session without full page reload
 - Lazy-load MapPanel with React Suspense so MapLibre GL and terra-draw ship in a separate chunk
 - `CanvasSurfaceErrorBoundary` with localized fallback and retry remount for graph and map surfaces
 - Unit tests for map instance resize/load readiness and canvas surface error boundary recovery
@@ -54,6 +55,9 @@ until a release is cut.
 
 ### Fixed
 
+- Re-check lifecycle token after connectSse await and discard stale handles on stop/unmount
+- Disconnect existing SSE stream at the start of session start and resync replace paths
+- Add silent SSE disconnect option to avoid spurious down status on stream replacement
 - Fix tool card Expand click doing nothing for non-latest cards by retaining manual expanded state in `useToolCardExpandedState`
 - Fix blank Map tab by resizing MapLibre after layout settles and deferring draw/layer setup until map load
 - Exclude maplibre-gl from Vite dependency pre-bundling to avoid missing worker asset in dev

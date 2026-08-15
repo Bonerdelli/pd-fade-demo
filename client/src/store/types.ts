@@ -56,6 +56,9 @@ export interface AppStoreState {
   removeChatMessage: (messageId: string) => void;
   retrySessionBootstrap: (() => void) | null;
   setRetrySessionBootstrap: (retry: (() => void) | null) => void;
+  startNewSession: (() => void) | null;
+  setStartNewSession: (startNewSession: (() => void) | null) => void;
+  resetForNewSession: (sessionId: string) => void;
 }
 
 export const emptyAgentState: AgentState = {

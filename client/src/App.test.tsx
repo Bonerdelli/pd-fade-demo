@@ -4,6 +4,7 @@
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n.js";
 import { App } from "./App.js";
@@ -36,6 +37,7 @@ describe("App layout", () => {
     useAppStore.setState({
       uiState: { ...initialUiState, bootstrapStatus: "ready", connectionStatus: "connected" },
       retrySessionBootstrap: null,
+      startNewSession: null,
     });
   });
 
@@ -74,5 +76,20 @@ describe("App layout", () => {
 
     expect(screen.getByTestId("graph-panel")).toBeTruthy();
     expect(screen.getByText("Canvas mutation failed (503)")).toBeTruthy();
+  });
+
+  it("calls startNewSession when New chat is clicked", async () => {
+    const user = userEvent.setup();
+    const startNewSession = vi.fn();
+    useAppStore.setState({
+      uiState: { ...initialUiState, bootstrapStatus: "ready", connectionStatus: "connected" },
+      startNewSession,
+    });
+
+    renderWithI18n(<App />);
+
+    await user.click(screen.getByRole("button", { name: "New chat" }));
+
+    expect(startNewSession).toHaveBeenCalledOnce();
   });
 });

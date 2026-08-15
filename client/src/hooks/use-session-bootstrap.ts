@@ -39,10 +39,18 @@ export function useSessionBootstrap(): void {
     useAppStore.getState().setRetrySessionBootstrap(() => {
       void controller.start();
     });
+    useAppStore.getState().setStartNewSession(() => {
+      controller.stop();
+      const sessionId = createSessionId();
+      writeSessionIdToUrl(sessionId, window.location, { replace: false });
+      useAppStore.getState().resetForNewSession(sessionId);
+      void controller.start();
+    });
 
     return () => {
       controller.stop();
       useAppStore.getState().setRetrySessionBootstrap(null);
+      useAppStore.getState().setStartNewSession(null);
       controllerRef.current = null;
     };
   }, []);

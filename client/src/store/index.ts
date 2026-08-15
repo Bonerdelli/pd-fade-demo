@@ -21,6 +21,8 @@ export const useAppStore = create<AppStoreState>((set) => ({
   userState: initial.userState,
   chat: initial.chat,
   uiState: initial.uiState,
+  retrySessionBootstrap: null,
+  startNewSession: null,
 
   applyEvent: (event: AgentEvent) => {
     set((state) => {
@@ -106,10 +108,25 @@ export const useAppStore = create<AppStoreState>((set) => ({
     }));
   },
 
-  retrySessionBootstrap: null,
-
   setRetrySessionBootstrap: (retry) => {
     set({ retrySessionBootstrap: retry });
+  },
+
+  setStartNewSession: (startNewSession) => {
+    set({ startNewSession });
+  },
+
+  resetForNewSession: (sessionId: string) => {
+    set({
+      sessionId,
+      agentState: initial.agentState,
+      userState: initial.userState,
+      chat: initial.chat,
+      uiState: {
+        ...initial.uiState,
+        bootstrapStatus: "loading",
+      },
+    });
   },
 }));
 
