@@ -8,6 +8,11 @@ until a release is cut.
 
 ### Added
 
+- Reconcile orphaned runs after server restart with `RUN_ERROR` reason `server_restarted` and startup/lazy session touch hooks
+- Full-fidelity session reload E2E covering user mutations, viewports, selection and mid-run hydrate
+- SSE `409 cursor_ahead` response and client resync when the reconnect cursor is beyond the persisted log
+- SSE replay test for `Last-Event-ID` older than the latest snapshot anchor
+- Localized run error copy for `server_restarted` and chat scroll-to-bottom on restore
 - Shared camera command helpers, `useCameraCommand` hook and surface-agnostic indicator components for graph and map
 - `clearPositionOverrides` canvas mutation to reset graph node position overrides for Realign
 - Graph surface with React Flow entity nodes, position overrides, Realign, camera commands and run soft-lock
@@ -31,6 +36,7 @@ until a release is cut.
 
 ### Fixed
 
+- Finalize orphaned in-flight tool cards when a run is reconciled after server restart
 - Allow native builds for `better-sqlite3` and `esbuild` under pnpm 10
 - Harden shared protocol: strict `agentStateSchema`, non-null `runId` on run-scoped events, union regression tests, REST path builders
 - Add chat slice to client store, wire canvas tab to Zustand, deduplicate initial state, set document title from i18n
