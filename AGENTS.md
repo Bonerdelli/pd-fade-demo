@@ -31,7 +31,7 @@ client/   — Vite + React + TS + Tailwind: SSE transport, Zustand store, chat /
 | Client build    | Vite + React                                |
 | State           | Zustand + pure reducer (no Redux, no RxJS)  |
 | Graph           | React Flow (xyflow)                         |
-| Map             | MapLibre GL                                 |
+| Map             | MapLibre GL (+ terra-draw for drawing)      |
 | Styles          | Tailwind CSS                                |
 | i18n            | i18next + react-i18next (client)            |
 | Validation      | zod (schemas live in `shared/`)             |
