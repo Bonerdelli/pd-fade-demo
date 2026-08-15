@@ -72,16 +72,30 @@ export function createSessionController(options: SessionControllerOptions): Sess
   let sseConnection: SseConnectionHandle | null = null;
   let stopped = false;
   let resyncInFlight: Promise<void> | null = null;
+  let lifecycleToken = 0;
+
+  const isLifecycleActive = (token: number): boolean => !stopped && token === lifecycleToken;
 
   const stop = () => {
     stopped = true;
+    lifecycleToken += 1;
     sseConnection?.disconnect();
     sseConnection = null;
     setConnectionStatus("down");
   };
 
-  const connectStream = async (sessionId: string) => {
-    sseConnection?.abortStream();
+  const connectStream = async (sessionId: string, token: number) => {
+    if (!isLifecycleActive(token)) {
+      return;
+    }
+
+    sseConnection?.disconnect();
+    sseConnection = null;
+
+    if (!isLifecycleActive(token)) {
+      return;
+    }
+
     sseConnection = await connectSse({
       url: apiUrl(sessionEventsPath(sessionId)),
       lastEventId: getLastSeq(),
@@ -109,25 +123,32 @@ export function createSessionController(options: SessionControllerOptions): Sess
       return resyncInFlight;
     }
 
+    const token = lifecycleToken;
+
     resyncInFlight = (async () => {
       const sessionId = getSessionId();
-      if (!sessionId || stopped) {
+      if (!isLifecycleActive(token) || !sessionId) {
         return;
       }
 
-      sseConnection?.abortStream();
+      sseConnection?.disconnect();
       sseConnection = null;
       setConnectionStatus("reconnecting");
       setBootstrapStatus("loading");
 
       try {
         const state = await fetchSessionState(sessionId, fetchImpl);
+        if (!isLifecycleActive(token)) {
+          return;
+        }
+
         hydrateSession(state);
         setBootstrapStatus("ready");
-        if (!stopped) {
-          await connectStream(sessionId);
-        }
+        await connectStream(sessionId, token);
       } catch {
+        if (!isLifecycleActive(token)) {
+          return;
+        }
         setBootstrapStatus("error");
         setConnectionStatus("down");
       } finally {
@@ -140,6 +161,9 @@ export function createSessionController(options: SessionControllerOptions): Sess
 
   const start = async () => {
     stopped = false;
+    lifecycleToken += 1;
+    const token = lifecycleToken;
+
     setBootstrapStatus("loading");
 
     let sessionId = getSessionId();
@@ -151,10 +175,17 @@ export function createSessionController(options: SessionControllerOptions): Sess
 
     try {
       const state = await fetchSessionState(sessionId, fetchImpl);
+      if (!isLifecycleActive(token)) {
+        return;
+      }
+
       hydrateSession(state);
       setBootstrapStatus("ready");
-      await connectStream(sessionId);
+      await connectStream(sessionId, token);
     } catch {
+      if (!isLifecycleActive(token)) {
+        return;
+      }
       setBootstrapStatus("error");
       setConnectionStatus("down");
     }
