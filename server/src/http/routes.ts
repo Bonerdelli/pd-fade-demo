@@ -25,6 +25,7 @@ import {
   writeSseEvent,
   writeSseHeartbeat,
 } from "./sse.js";
+import { startSseReplaySession } from "./sse-replay.js";
 
 export interface HttpDependencies {
   sessionStore: SessionStore;
@@ -40,18 +41,16 @@ export function registerSessionRoutes(app: FastifyInstance, deps: HttpDependenci
     sessionStore.ensureSession(id);
 
     const afterSeq = parseLastEventId(request);
-    const replay = sessionStore.getEventsAfter(id, afterSeq);
 
     reply.hijack();
     reply.raw.writeHead(200, sseHeaders());
 
-    for (const event of replay) {
-      writeSseEvent(reply.raw, event);
-    }
-
-    const unsubscribe = eventBus.subscribe(id, (event) => {
-      writeSseEvent(reply.raw, event);
-    });
+    const { unsubscribe } = startSseReplaySession(
+      afterSeq,
+      () => sessionStore.getEventsAfter(id, afterSeq),
+      (listener) => eventBus.subscribe(id, listener),
+      (event) => writeSseEvent(reply.raw, event),
+    );
 
     const heartbeat = setInterval(() => {
       writeSseHeartbeat(reply.raw);
@@ -90,7 +89,7 @@ export function registerSessionRoutes(app: FastifyInstance, deps: HttpDependenci
     }
 
     sessionStore.ensureSession(id);
-    const messageId = crypto.randomUUID();
+    const messageId = body.messageId ?? crypto.randomUUID();
     sessionStore.addUserMessage(id, messageId, body.text);
 
     try {
