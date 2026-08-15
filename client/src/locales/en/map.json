@@ -1,4 +1,25 @@
 {
   "panelTitle": "Map",
-  "placeholder": "Map canvas placeholder"
+  "placeholder": "Map canvas placeholder",
+  "toolbar": {
+    "select": "Select",
+    "point": "Point",
+    "polygon": "Polygon",
+    "delete": "Delete"
+  },
+  "runLock": {
+    "hint": "Agent is working — drawing and comments are paused"
+  },
+  "camera": {
+    "agentMovedView": "Agent moved the view"
+  },
+  "popup": {
+    "agentShape": "Agent shape",
+    "untitledShape": "Untitled shape",
+    "close": "Close",
+    "noComments": "No comments yet",
+    "addCommentLabel": "Add comment",
+    "commentPlaceholder": "Write a note for the agent context…",
+    "submitComment": "Add comment"
+  }
 }
