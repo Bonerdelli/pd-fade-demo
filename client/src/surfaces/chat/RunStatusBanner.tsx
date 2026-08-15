@@ -7,13 +7,16 @@ export function RunStatusBanner() {
   const chat = useAppStore((state) => state.chat);
   const runStatus = useAppStore((state) => state.uiState.runStatus);
   const runErrorMessage = useAppStore((state) => state.uiState.runErrorMessage);
+  const runErrorReasonCode = useAppStore((state) => state.uiState.runErrorReasonCode);
 
   const showThinking = shouldShowThinkingIndicator(runStatus, chat);
   const showError = runStatus === "error" && runErrorMessage !== null;
   const showCancelled = runStatus === "cancelled";
   const localizedError =
     runErrorMessage !== null
-      ? t(`runStatus.errors.${runErrorMessage}`, { defaultValue: runErrorMessage })
+      ? runErrorReasonCode
+        ? t(`runStatus.errors.${runErrorReasonCode}`, { defaultValue: runErrorMessage })
+        : runErrorMessage
       : null;
 
   if (!showThinking && !showError && !showCancelled) {

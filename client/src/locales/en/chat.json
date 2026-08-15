@@ -10,7 +10,8 @@
     "errorTitle": "Run failed",
     "cancelled": "Run was cancelled",
     "errors": {
-      "server_restarted": "The server restarted while this run was in progress"
+      "server_restarted": "The server restarted while this run was in progress",
+      "driver_error": "The agent driver encountered an error"
     }
   },
   "messageList": {

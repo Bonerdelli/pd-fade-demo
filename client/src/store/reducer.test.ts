@@ -172,11 +172,13 @@ describe("reduceEvent golden tests", () => {
       ts: 4,
       type: "RUN_ERROR",
       message: "Provider unavailable",
+      reasonCode: "driver_error",
     });
 
     expect(next.uiState.runStatus).toBe("error");
     expect(next.uiState.currentRunId).toBe(mockRunId);
     expect(next.uiState.runErrorMessage).toBe("Provider unavailable");
+    expect(next.uiState.runErrorReasonCode).toBe("driver_error");
     expect(next.chat.find((message) => message.kind === "toolCall" && message.toolCallId === "tc-running")).toMatchObject({
       status: "error",
     });

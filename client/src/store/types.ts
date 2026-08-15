@@ -28,6 +28,7 @@ export interface UiState {
   activeCanvasTab: ViewportTarget;
   currentRunId: string | null;
   runErrorMessage: string | null;
+  runErrorReasonCode: string | null;
   cameraCommand: CameraCommand | null;
   bootstrapStatus: BootstrapStatus;
   connectionStatus: ConnectionStatus;
@@ -83,6 +84,7 @@ export const initialUiState: UiState = {
   activeCanvasTab: "graph",
   currentRunId: null,
   runErrorMessage: null,
+  runErrorReasonCode: null,
   cameraCommand: null,
   bootstrapStatus: "loading",
   connectionStatus: "down",

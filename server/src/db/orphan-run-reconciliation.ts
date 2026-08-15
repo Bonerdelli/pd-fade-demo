@@ -8,7 +8,9 @@ const TERMINAL_RUN_EVENT_TYPES = new Set<AgentEvent["type"]>([
   "RUN_CANCELLED",
 ]);
 
-export const ORPHAN_RUN_ERROR_MESSAGE = "server_restarted";
+export const ORPHAN_RUN_ERROR_REASON_CODE = "server_restarted";
+export const ORPHAN_RUN_ERROR_MESSAGE =
+  "The server restarted while this run was in progress";
 
 function listSessionIds(db: Database.Database): string[] {
   const rows = db.prepare(`SELECT id FROM sessions`).all() as { id: string }[];
@@ -57,6 +59,7 @@ export function reconcileSessionOrphanedRuns(
       type: "RUN_ERROR",
       runId,
       message: ORPHAN_RUN_ERROR_MESSAGE,
+      reasonCode: ORPHAN_RUN_ERROR_REASON_CODE,
     });
     reconciled.push(event);
     onEvent?.(event);

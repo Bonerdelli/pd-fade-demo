@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import { createDatabase } from "./database.js";
 import {
   ORPHAN_RUN_ERROR_MESSAGE,
+  ORPHAN_RUN_ERROR_REASON_CODE,
   reconcileAllOrphanedRuns,
   reconcileSessionOrphanedRuns,
 } from "./orphan-run-reconciliation.js";
@@ -31,6 +32,7 @@ describe("orphan run reconciliation", () => {
       type: "RUN_ERROR",
       runId: "run-orphan",
       message: ORPHAN_RUN_ERROR_MESSAGE,
+      reasonCode: ORPHAN_RUN_ERROR_REASON_CODE,
     });
 
     const toolCard = store
@@ -68,6 +70,7 @@ describe("orphan run reconciliation", () => {
       expect(reconciled[0]).toMatchObject({
         type: "RUN_ERROR",
         message: ORPHAN_RUN_ERROR_MESSAGE,
+        reasonCode: ORPHAN_RUN_ERROR_REASON_CODE,
       });
 
       reopenedStore.appendEvent(sessionId, { type: "RUN_STARTED", runId: "run-next" });
@@ -133,6 +136,9 @@ describe("orphan run reconciliation", () => {
 
       expect(reconciled).toHaveLength(2);
       expect(new Set(reconciled.map((event) => event.runId))).toEqual(new Set(["run-a", "run-b"]));
+      expect(reconciled.every((event) => event.reasonCode === ORPHAN_RUN_ERROR_REASON_CODE)).toBe(
+        true,
+      );
       expect(reconciled.every((event) => event.message === ORPHAN_RUN_ERROR_MESSAGE)).toBe(true);
 
       reopenedDb.close();

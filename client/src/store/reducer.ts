@@ -90,6 +90,7 @@ export function reduceEvent(state: ReducerState, event: AgentEvent): ReducerStat
           runStatus: "running",
           currentRunId: event.runId,
           runErrorMessage: null,
+          runErrorReasonCode: null,
         },
       };
 
@@ -112,6 +113,7 @@ export function reduceEvent(state: ReducerState, event: AgentEvent): ReducerStat
           runStatus: "error",
           currentRunId: event.runId,
           runErrorMessage: event.message,
+          runErrorReasonCode: event.reasonCode ?? null,
         },
       };
 

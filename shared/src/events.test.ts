@@ -30,8 +30,20 @@ describe("agent event schemas", () => {
 
   it("validates RUN_ERROR", () => {
     expectValid(runErrorEventSchema, { ...envelope, type: "RUN_ERROR", message: "boom" });
+    expectValid(runErrorEventSchema, {
+      ...envelope,
+      type: "RUN_ERROR",
+      message: "The server restarted while this run was in progress",
+      reasonCode: "server_restarted",
+    });
     expectInvalid(runErrorEventSchema, { ...envelope, type: "RUN_ERROR" });
     expectInvalid(runErrorEventSchema, { ...envelope, type: "RUN_ERROR", message: 42 });
+    expectInvalid(runErrorEventSchema, {
+      ...envelope,
+      type: "RUN_ERROR",
+      message: "boom",
+      reasonCode: 42,
+    });
   });
 
   it("validates RUN_CANCELLED", () => {

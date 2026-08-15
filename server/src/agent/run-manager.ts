@@ -76,7 +76,12 @@ export class RunManager {
         await emit({ type: "RUN_CANCELLED", runId });
       } else {
         const message = error instanceof Error ? error.message : "Unknown run error";
-        await emit({ type: "RUN_ERROR", runId, message });
+        await emit({
+          type: "RUN_ERROR",
+          runId,
+          message,
+          reasonCode: "driver_error",
+        });
       }
     } finally {
       this.activeRuns.delete(sessionId);

@@ -26,6 +26,7 @@ export const runFinishedEventSchema = runScopedEnvelopeSchema.extend({
 export const runErrorEventSchema = runScopedEnvelopeSchema.extend({
   type: z.literal("RUN_ERROR"),
   message: z.string(),
+  reasonCode: z.string().optional(),
 });
 
 export const runCancelledEventSchema = runScopedEnvelopeSchema.extend({
