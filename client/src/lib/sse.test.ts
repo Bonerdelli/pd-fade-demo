@@ -173,6 +173,34 @@ describe("connectSse", () => {
     abortController.abort();
     connection.disconnect();
   });
+
+  it("supports silent disconnect without emitting down status", async () => {
+    const onConnectionStatusChange = vi.fn();
+    const abortController = new AbortController();
+
+    const fetchImpl = createSingleUseFetch([
+      'id: 1\ndata: {"seq":1,"runId":"r1","ts":1,"type":"RUN_STARTED"}\n\n',
+    ]);
+
+    const connection = await connectSse({
+      url: "/events",
+      fetchImpl,
+      signal: abortController.signal,
+      sleep: async () => undefined,
+      onEvent: vi.fn(),
+      onConnectionStatusChange,
+    });
+
+    await vi.waitFor(() => {
+      expect(onConnectionStatusChange).toHaveBeenCalledWith("connected");
+    });
+
+    onConnectionStatusChange.mockClear();
+    connection.disconnect({ silent: true });
+
+    expect(onConnectionStatusChange).not.toHaveBeenCalled();
+    abortController.abort();
+  });
 });
 
 describe("computeBackoffDelayMs", () => {

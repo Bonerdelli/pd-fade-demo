@@ -146,4 +146,153 @@ describe("createSessionController", () => {
     controller.stop();
     expect(disconnectSecond).toHaveBeenCalledTimes(1);
   });
+
+  it("connects only once after stop during in-flight fetch and restart", async () => {
+    let resolveFirstFetch: ((value: unknown) => void) | undefined;
+    let fetchCount = 0;
+    const fetchImpl = vi.fn(
+      () =>
+        new Promise((resolve) => {
+          fetchCount += 1;
+          if (fetchCount === 1) {
+            resolveFirstFetch = resolve;
+            return;
+          }
+          resolve({
+            ok: true,
+            status: 200,
+            json: async () => sessionState,
+          });
+        }),
+    ) as unknown as typeof fetch;
+
+    vi.mocked(connectSse).mockResolvedValue({
+      disconnect: vi.fn(),
+      abortStream: vi.fn(),
+    });
+
+    const controller = createSessionController({
+      getSessionId: () => "session-1",
+      setSessionId: vi.fn(),
+      setBootstrapStatus: vi.fn(),
+      setConnectionStatus: vi.fn(),
+      hydrateSession: vi.fn(),
+      applyEvent: vi.fn(),
+      getLastSeq: () => 0,
+      fetchImpl,
+    });
+
+    const firstStart = controller.start();
+    controller.stop();
+
+    resolveFirstFetch?.({
+      ok: true,
+      status: 200,
+      json: async () => sessionState,
+    });
+
+    await firstStart;
+
+    expect(connectSse).not.toHaveBeenCalled();
+
+    await controller.start();
+
+    expect(connectSse).toHaveBeenCalledTimes(1);
+  });
+
+  it("disconnects resolved handle when stop runs during connectSse await", async () => {
+    const disconnect = vi.fn();
+    let resolveConnect: ((handle: SseConnectionHandle) => void) | undefined;
+
+    vi.mocked(connectSse).mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveConnect = resolve;
+        }),
+    );
+
+    const fetchImpl = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => sessionState,
+    })) as unknown as typeof fetch;
+
+    const controller = createSessionController({
+      getSessionId: () => "session-1",
+      setSessionId: vi.fn(),
+      setBootstrapStatus: vi.fn(),
+      setConnectionStatus: vi.fn(),
+      hydrateSession: vi.fn(),
+      applyEvent: vi.fn(),
+      getLastSeq: () => 0,
+      fetchImpl,
+    });
+
+    const startPromise = controller.start();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    controller.stop();
+
+    resolveConnect?.({
+      disconnect,
+      abortStream: vi.fn(),
+    });
+
+    await startPromise;
+
+    expect(connectSse).toHaveBeenCalledTimes(1);
+    expect(disconnect).toHaveBeenCalledWith({ silent: true });
+  });
+
+  it("disconnects the existing stream before a retry start fetch completes", async () => {
+    const disconnect = vi.fn();
+
+    vi.mocked(connectSse).mockResolvedValue({
+      disconnect,
+      abortStream: vi.fn(),
+    });
+
+    let resolveSecondFetch: ((value: unknown) => void) | undefined;
+    let fetchCount = 0;
+    const fetchImpl = vi.fn(async () => {
+      fetchCount += 1;
+      if (fetchCount === 1) {
+        return {
+          ok: true,
+          status: 200,
+          json: async () => sessionState,
+        };
+      }
+
+      return new Promise((resolve) => {
+        resolveSecondFetch = resolve;
+      });
+    }) as unknown as typeof fetch;
+
+    const controller = createSessionController({
+      getSessionId: () => "session-1",
+      setSessionId: vi.fn(),
+      setBootstrapStatus: vi.fn(),
+      setConnectionStatus: vi.fn(),
+      hydrateSession: vi.fn(),
+      applyEvent: vi.fn(),
+      getLastSeq: () => 0,
+      fetchImpl,
+    });
+
+    await controller.start();
+    expect(connectSse).toHaveBeenCalledTimes(1);
+
+    const secondStart = controller.start();
+    expect(disconnect).toHaveBeenCalledWith({ silent: true });
+
+    resolveSecondFetch?.({
+      ok: true,
+      status: 200,
+      json: async () => sessionState,
+    });
+
+    await secondStart;
+    expect(connectSse).toHaveBeenCalledTimes(2);
+  });
 });

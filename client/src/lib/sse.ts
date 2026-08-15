@@ -28,8 +28,12 @@ export interface SseConnectOptions extends SseEventHandler {
   clearScheduledTimeout?: typeof clearTimeout;
 }
 
+export interface SseDisconnectOptions {
+  silent?: boolean;
+}
+
 export interface SseConnectionHandle {
-  disconnect: () => void;
+  disconnect: (options?: SseDisconnectOptions) => void;
   abortStream: () => void;
 }
 
@@ -164,10 +168,12 @@ export async function connectSse(options: SseConnectOptions): Promise<SseConnect
     streamAbortController.abort();
   };
 
-  const disconnect = () => {
+  const disconnect = (options?: SseDisconnectOptions) => {
     closed = true;
     abortStream();
-    onConnectionStatusChange?.("down");
+    if (!options?.silent) {
+      onConnectionStatusChange?.("down");
+    }
   };
 
   if (signal) {

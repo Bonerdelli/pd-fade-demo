@@ -12,10 +12,22 @@ export function readSessionIdFromUrl(location: Location = window.location): stri
   return params.get("session");
 }
 
-export function writeSessionIdToUrl(sessionId: string, location: Location = window.location): void {
+export interface WriteSessionIdOptions {
+  replace?: boolean;
+}
+
+export function writeSessionIdToUrl(
+  sessionId: string,
+  location: Location = window.location,
+  options: WriteSessionIdOptions = {},
+): void {
   const url = new URL(location.href);
   url.searchParams.set("session", sessionId);
-  window.history.replaceState({}, "", url);
+  if (options.replace ?? true) {
+    window.history.replaceState({}, "", url);
+  } else {
+    window.history.pushState({}, "", url);
+  }
 }
 
 export function createSessionId(): string {
@@ -89,14 +101,14 @@ export function createSessionController(options: SessionControllerOptions): Sess
       return;
     }
 
-    sseConnection?.disconnect();
+    sseConnection?.disconnect({ silent: true });
     sseConnection = null;
 
     if (!isLifecycleActive(token)) {
       return;
     }
 
-    sseConnection = await connectSse({
+    const handle = await connectSse({
       url: apiUrl(sessionEventsPath(sessionId)),
       lastEventId: getLastSeq(),
       onEvent: applyEvent,
@@ -116,6 +128,13 @@ export function createSessionController(options: SessionControllerOptions): Sess
       },
       fetchImpl,
     });
+
+    if (!isLifecycleActive(token)) {
+      handle.disconnect({ silent: true });
+      return;
+    }
+
+    sseConnection = handle;
   };
 
   const resync = async () => {
@@ -131,7 +150,7 @@ export function createSessionController(options: SessionControllerOptions): Sess
         return;
       }
 
-      sseConnection?.disconnect();
+      sseConnection?.disconnect({ silent: true });
       sseConnection = null;
       setConnectionStatus("reconnecting");
       setBootstrapStatus("loading");
@@ -163,6 +182,9 @@ export function createSessionController(options: SessionControllerOptions): Sess
     stopped = false;
     lifecycleToken += 1;
     const token = lifecycleToken;
+
+    sseConnection?.disconnect({ silent: true });
+    sseConnection = null;
 
     setBootstrapStatus("loading");
 
