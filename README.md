@@ -77,7 +77,7 @@ Set `AGENT_DRIVER=anthropic` and keep the **Map** tab visible before signals plo
 **Opening message:**
 
 ```
-Someone is quietly linking TechBerlin GmbH and Spree Ventures across Berlin — I need a quick detective read. Search the graph for those two companies and the people tied to them (Anna Schmidt and Max Weber). Plot the Kreuzberg cluster and Brandenburg Gate activity signals on the map, then focus on whichever spot looks most suspicious and tell me what stands out in short beats between each step. I will mark my own suspect zones on the map while you work.
+Someone is quietly linking TechBerlin GmbH and Spree Ventures across Berlin — I need a quick detective read. Search for each name separately (TechBerlin GmbH, then Spree Ventures, then Anna Schmidt, then Max Weber) so the graph fills in. Plot the Kreuzberg cluster in one call, then Brandenburg Gate activity in a separate call. Focus the map on whichever spot looks most suspicious and tell me what stands out in short beats between each step. I will mark my own suspect zones on the map while you work.
 ```
 
 **Follow-up (after drawing a shape and commenting on an agent shape, e.g. TechBerlin HQ):**
@@ -86,7 +86,7 @@ Someone is quietly linking TechBerlin GmbH and Spree Ventures across Berlin — 
 I circled a suspect area on the map and left a comment on the TechBerlin HQ marker. Read my annotations in your context — does that point more at Anna Schmidt or Max Weber as the connector? Focus the graph on whoever you think links the two companies and explain why.
 ```
 
-Dataset note: the opening message only references entities and signals present in the Berlin fixture (`TechBerlin GmbH`, `Spree Ventures`, `Anna Schmidt`, `Max Weber`, Kreuzberg cluster, Brandenburg Gate activity) so `search_entities` and `plot_signals` match reliably.
+Dataset note: executors merge search and plot results cumulatively (each call adds to the graph/map). The script asks for one entity name per search and one signal cluster per plot because the matcher requires every query token to match a single entity and because `area` + `keyword` narrow together (AND). Names and signal labels above are verified against the Berlin fixture matchers.
 
 ## Tests and quality
 
