@@ -6,6 +6,16 @@
     depth: 1
   register: pd_fade_release_dirs
 
+- name: Resolve active release path from current symlink
+  ansible.builtin.command:
+    argv:
+      - readlink
+      - -f
+      - "{{ pd_fade_current_link }}"
+  register: pd_fade_active_release_path
+  changed_when: false
+  failed_when: false
+
 - name: Remove releases beyond retention limit
   ansible.builtin.file:
     path: "{{ item.path }}"
@@ -14,5 +24,7 @@
     {{
       (pd_fade_release_dirs.files | sort(attribute='mtime', reverse=true))
       [pd_fade_release_keep | int:]
+      | rejectattr('path', 'equalto', pd_fade_active_release_path.stdout | default(''))
+      | list
     }}
   when: pd_fade_release_dirs.matched | int > pd_fade_release_keep | int

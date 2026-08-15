@@ -14,7 +14,6 @@ until a release is cut.
 - Unit tests for map instance resize/load readiness and canvas surface error boundary recovery
 - Ansible local build and release archive deploy with versioned releases and rollback via `current` symlink
 - Ansible controller build script and post-deploy `/health` check
-- Ansible optional SSH deploy key for private git repository checkout
 - Ansible provisioning for demo/production VMs (Node.js 20, pnpm via corepack, systemd, nginx, optional TLS)
 - Root README pointer to `ansible/README.md`
 - Anthropic demo system prompt module with tool choreography, protocol boundary, and user-context instructions
@@ -57,6 +56,10 @@ until a release is cut.
 
 ### Fixed
 
+- Include client package manifest in Ansible release archives for pnpm workspace lockfile verification
+- Read Ansible release metadata from a controller JSON file instead of parsing build script stdout
+- Install systemd unit before Ansible release deploy so first-provision restart handlers succeed
+- Exclude the active release directory from Ansible release pruning after rollback
 - Re-check lifecycle token after connectSse await and discard stale handles on stop/unmount
 - Disconnect existing SSE stream at the start of session start and resync replace paths
 - Add silent SSE disconnect option to avoid spurious down status on stream replacement

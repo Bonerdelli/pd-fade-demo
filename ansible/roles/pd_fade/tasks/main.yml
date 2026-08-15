@@ -18,12 +18,6 @@
     - "{{ pd_fade_app_base }}"
     - "{{ pd_fade_releases_dir }}"
 
-- name: Build release archive on controller
-  ansible.builtin.import_tasks: build-local.yml
-
-- name: Deploy release to target host
-  ansible.builtin.import_tasks: deploy-release.yml
-
 - name: Ensure environment file directory exists
   ansible.builtin.file:
     path: "{{ pd_fade_env_file | dirname }}"
@@ -50,6 +44,15 @@
     mode: "0644"
   notify: Reload systemd
 
+- name: Reload systemd after unit file is present
+  ansible.builtin.meta: flush_handlers
+
+- name: Build release archive on controller
+  ansible.builtin.import_tasks: build-local.yml
+
+- name: Deploy release to target host
+  ansible.builtin.import_tasks: deploy-release.yml
+
 - name: Enable and start pd-fade service
   ansible.builtin.systemd:
     name: "{{ pd_fade_systemd_unit }}"
@@ -57,7 +60,7 @@
     state: started
     daemon_reload: true
 
-- name: Apply service restart after environment or unit changes
+- name: Apply service restart after environment changes
   ansible.builtin.meta: flush_handlers
 
 - name: Verify pd-fade health endpoint
