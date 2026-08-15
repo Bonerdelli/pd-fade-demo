@@ -6,6 +6,7 @@ pd_fade_current_link: "{{ pd_fade_app_base }}/current"
 pd_fade_release_keep: 5
 pd_fade_repo_root: "{{ playbook_dir }}/../../.."
 pd_fade_local_build_dir: "{{ playbook_dir }}/../../.build"
+pd_fade_release_meta_file: "{{ pd_fade_local_build_dir }}/release-meta.json"
 pd_fade_pnpm_store_dir: /var/cache/pd-fade/pnpm
 pd_fade_skip_local_build: false
 pd_fade_health_retries: 10

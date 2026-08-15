@@ -49,7 +49,6 @@
           - "{{ playbook_dir }}/../../scripts/build-release-archive.sh"
           - "{{ pd_fade_repo_root }}"
           - "{{ pd_fade_local_build_dir }}"
-      register: pd_fade_build_script
       changed_when: true
 
 - name: Require explicit release archive when skipping local build
@@ -72,7 +71,7 @@
   vars:
     _pd_fade_release_meta: >-
       {{
-        (pd_fade_build_script.stdout | trim | from_json)
+        (lookup('ansible.builtin.file', pd_fade_release_meta_file) | from_json)
         if not (pd_fade_skip_local_build | bool)
         else {
           'release_id': pd_fade_release_id,

@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 # Build pd-fade on the controller and pack a release archive for bare-metal deploy.
-# Outputs JSON metadata on stdout: release_id, archive, checksum.
+# Writes release metadata to ${OUTPUT_DIR}/release-meta.json (release_id, archive, checksum).
 set -euo pipefail
 
 REPO_ROOT="$(cd "${1:?repo root required}" && pwd)"
-OUTPUT_DIR="$(cd "${2:?output dir required}" && pwd)"
+mkdir -p "${2:?output dir required}"
+OUTPUT_DIR="$(cd "${2}" && pwd)"
 RELEASE_ID="${3:-}"
+META_FILE="${OUTPUT_DIR}/release-meta.json"
 
 if [[ -z "${RELEASE_ID}" ]]; then
   if git -C "${REPO_ROOT}" rev-parse --short HEAD >/dev/null 2>&1; then
@@ -22,15 +24,8 @@ rm -rf "${STAGING}"
 mkdir -p "${STAGING}" "${OUTPUT_DIR}"
 
 cd "${REPO_ROOT}"
-pnpm install --frozen-lockfile
-pnpm build
-
-copy_tree() {
-  local src="$1"
-  local dest="$2"
-  mkdir -p "$(dirname "${dest}")"
-  cp -R "${src}" "${dest}"
-}
+pnpm install --frozen-lockfile >&2
+pnpm build >&2
 
 cp "${REPO_ROOT}/package.json" "${STAGING}/package.json"
 cp "${REPO_ROOT}/pnpm-lock.yaml" "${STAGING}/pnpm-lock.yaml"
@@ -38,9 +33,23 @@ cp "${REPO_ROOT}/pnpm-workspace.yaml" "${STAGING}/pnpm-workspace.yaml"
 
 mkdir -p "${STAGING}/shared" "${STAGING}/server" "${STAGING}/client"
 cp "${REPO_ROOT}/shared/package.json" "${STAGING}/shared/package.json"
-cp -R "${REPO_ROOT}/shared/dist" "${STAGING}/shared/dist"
 cp "${REPO_ROOT}/server/package.json" "${STAGING}/server/package.json"
-cp -R "${REPO_ROOT}/server/dist" "${STAGING}/server/dist"
+cp "${REPO_ROOT}/client/package.json" "${STAGING}/client/package.json"
+
+copy_release_dist() {
+  local pkg="$1"
+  mkdir -p "${STAGING}/${pkg}/dist"
+  rsync -a \
+    --exclude='*.test.js' \
+    --exclude='*.test.js.map' \
+    --exclude='*.test.d.ts' \
+    --exclude='*.test.d.ts.map' \
+    --exclude='test-helpers.*' \
+    "${REPO_ROOT}/${pkg}/dist/" "${STAGING}/${pkg}/dist/"
+}
+
+copy_release_dist shared
+copy_release_dist server
 cp -R "${REPO_ROOT}/client/dist" "${STAGING}/client/dist"
 
 printf '%s\n' "${RELEASE_ID}" > "${STAGING}/RELEASE_ID"
@@ -58,4 +67,4 @@ fi
 
 rm -rf "${STAGING}"
 
-printf '%s\n' "{\"release_id\":\"${RELEASE_ID}\",\"archive\":\"${ARCHIVE}\",\"checksum\":\"${CHECKSUM}\"}"
+printf '%s\n' "{\"release_id\":\"${RELEASE_ID}\",\"archive\":\"${ARCHIVE}\",\"checksum\":\"${CHECKSUM}\"}" > "${META_FILE}"
