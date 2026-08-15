@@ -1,19 +1,25 @@
 import {
   sessionCancelRunPath,
   sessionCanvasPath,
+  sessionEventsPath,
   sessionMessagesPath,
   sessionStatePath,
+  agentEventSchema,
+  type AgentEvent,
   type CanvasMutation,
+  type ChatMessage,
   type SessionStateResponse,
 } from "@pd-fade/shared";
-import type { ChatMessage } from "@pd-fade/shared";
+import { get } from "node:http";
 import { afterEach, describe, expect, it } from "vitest";
 import { buildServer } from "../index.js";
 import { waitForRunningToolCall, waitForRunToFinish } from "../test-helpers.js";
+import { parseSseChunk } from "../../../client/src/lib/sse.js";
 import { applyCanvasMutationLocally } from "../../../client/src/lib/mutations.js";
 import { foldEvents } from "../../../client/src/store/reducer.js";
 import { createInitialReducerState } from "../../../client/src/store/reducer.js";
 import { hydrateFromSessionResponse } from "../../../client/src/store/reducer.js";
+import { reduceEvent } from "../../../client/src/store/reducer.js";
 import type { ReducerState } from "../../../client/src/store/reducer.js";
 
 function pickComparableReloadState(state: ReducerState, lastSeq: number) {
@@ -60,6 +66,148 @@ function buildLiveFoldState(body: SessionStateResponse): ReducerState {
     ...folded,
     chat: body.chat,
   };
+}
+
+function assertSessionStateResponseShape(body: SessionStateResponse): void {
+  expect(body.snapshot.graph.nodes).toBeInstanceOf(Array);
+  expect(body.snapshot.graph.edges).toBeInstanceOf(Array);
+  expect(body.snapshot.graph.layout).toBeDefined();
+  expect(body.snapshot.map.shapes).toBeInstanceOf(Array);
+  expect(body.snapshot.map.signals).toBeInstanceOf(Array);
+
+  expect(body.userState.map.shapes).toBeInstanceOf(Array);
+  expect(body.userState.comments).toBeInstanceOf(Array);
+  expect(body.userState.positionOverrides).toBeDefined();
+  expect(body.userState.selection).toBeInstanceOf(Array);
+  expect(Object.hasOwn(body.userState.viewports, "graph")).toBe(true);
+  expect(Object.hasOwn(body.userState.viewports, "map")).toBe(true);
+
+  expect(body.chat).toBeInstanceOf(Array);
+  expect(body.chat.length).toBeGreaterThan(0);
+  for (const message of body.chat) {
+    expect(message).toHaveProperty("kind");
+    expect(message).toHaveProperty("id");
+    if (message.kind === "user" || message.kind === "assistant") {
+      expect(message).toHaveProperty("text");
+    }
+    if (message.kind === "toolCall") {
+      expect(message).toHaveProperty("toolCallId");
+      expect(message).toHaveProperty("name");
+      expect(message).toHaveProperty("status");
+    }
+  }
+
+  expect(body.tailEvents).toBeInstanceOf(Array);
+  expect(typeof body.lastSeq).toBe("number");
+  expect(body.lastSeq).toBeGreaterThan(0);
+}
+
+function assertReloadMutationFields(body: SessionStateResponse): void {
+  expect(body.userState.map.shapes).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ id: "user-shape-reload", kind: "point" }),
+    ]),
+  );
+  expect(body.userState.comments).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        id: "comment-reload",
+        targetShapeId: "shape-mitte",
+        text: "Interesting district",
+      }),
+    ]),
+  );
+  expect(body.userState.positionOverrides["company-techberlin"]).toEqual({ x: 140, y: 220 });
+  expect(body.userState.selection).toEqual(["person-anna", "company-techberlin"]);
+  expect(body.userState.viewports.graph).toEqual({ x: 12, y: 18, zoom: 1.25 });
+  expect(body.userState.viewports.map).toEqual({
+    center: [13.4, 52.52],
+    zoom: 11.5,
+  });
+}
+
+function parseSsePayload(data: string): AgentEvent | null {
+  try {
+    const payload: unknown = JSON.parse(data);
+    const validated = agentEventSchema.safeParse(payload);
+    return validated.success ? validated.data : null;
+  } catch {
+    return null;
+  }
+}
+
+async function simulateLiveClientRun(
+  baseUrl: string,
+  sessionId: string,
+  userMessage: { messageId: string; text: string },
+): Promise<{ state: ReducerState; lastSeq: number }> {
+  let state = createInitialReducerState();
+  let lastSeq = 0;
+  let buffer = "";
+
+  await new Promise<void>((resolve, reject) => {
+    const request = get(`${baseUrl}${sessionEventsPath(sessionId)}`, (response) => {
+      response.on("data", (chunk: Buffer) => {
+        const parsed = parseSseChunk(buffer + chunk.toString());
+        buffer = parsed.remainder;
+
+        for (const frame of parsed.events) {
+          const event = parseSsePayload(frame.data);
+          if (!event || event.seq <= lastSeq) {
+            continue;
+          }
+
+          state = reduceEvent(state, event);
+          lastSeq = event.seq;
+
+          if (event.type === "RUN_FINISHED") {
+            response.destroy();
+            request.destroy();
+            resolve();
+          }
+        }
+      });
+
+      response.on("error", (error: NodeJS.ErrnoException) => {
+        if (error.code === "ECONNRESET") {
+          resolve();
+          return;
+        }
+        reject(error);
+      });
+    });
+
+    request.on("error", reject);
+
+    setTimeout(() => {
+      state = {
+        ...state,
+        chat: [
+          ...state.chat,
+          { kind: "user", id: userMessage.messageId, text: userMessage.text },
+        ],
+      };
+
+      void fetch(`${baseUrl}${sessionMessagesPath(sessionId)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userMessage),
+      });
+    }, 50);
+
+    setTimeout(() => reject(new Error("Live client SSE timeout")), 12_000);
+  });
+
+  return { state, lastSeq };
+}
+
+async function listenBaseUrl(app: Awaited<ReturnType<typeof buildServer>>): Promise<string> {
+  await app.listen({ port: 0, host: "127.0.0.1" });
+  const address = app.server.address();
+  if (!address || typeof address === "string") {
+    throw new Error("Expected server address");
+  }
+  return `http://127.0.0.1:${address.port}`;
 }
 
 describe("hydrate chat duplication E2E", () => {
@@ -200,14 +348,16 @@ describe("full-fidelity session reload E2E", () => {
   it("reload lands exactly where the live session left off across all slices", async () => {
     const app = await buildServer({ dbPath: ":memory:" });
     const sessionId = "reload-fidelity-session";
+    const baseUrl = await listenBaseUrl(app);
 
-    const messageResponse = await app.inject({
-      method: "POST",
-      url: sessionMessagesPath(sessionId),
-      payload: { text: "show berlin entities", messageId: "reload-user-1" },
-    });
-    expect(messageResponse.statusCode).toBe(200);
-    await waitForRunToFinish(app, sessionId);
+    const { state: runState, lastSeq: runLastSeq } = await simulateLiveClientRun(
+      baseUrl,
+      sessionId,
+      { messageId: "reload-user-1", text: "show berlin entities" },
+    );
+
+    expect(runState.agentState.graph.nodes.length).toBeGreaterThan(0);
+    expect(runState.uiState.runStatus).toBe("idle");
 
     const mutations: CanvasMutation[] = [
       {
@@ -244,13 +394,12 @@ describe("full-fidelity session reload E2E", () => {
       {
         type: "setViewport",
         target: "map",
-        camera: { center: [13.4, 52.52], zoom: 11.5, bearing: 0, pitch: 0 },
+        camera: { center: [13.4, 52.52], zoom: 11.5 },
       },
     ];
 
-    let liveState = hydrateFromSessionResponse(
-      (await app.inject({ method: "GET", url: sessionStatePath(sessionId) })).json(),
-    );
+    let liveState = runState;
+    const liveLastSeq = runLastSeq;
 
     for (const mutation of mutations) {
       await postCanvasMutation(app, sessionId, mutation);
@@ -260,22 +409,21 @@ describe("full-fidelity session reload E2E", () => {
       };
     }
 
-    const beforeReloadResponse = await app.inject({
+    const reloadResponse = await app.inject({
       method: "GET",
       url: sessionStatePath(sessionId),
     });
-    expect(beforeReloadResponse.statusCode).toBe(200);
+    expect(reloadResponse.statusCode).toBe(200);
 
-    const beforeReloadBody = beforeReloadResponse.json() as SessionStateResponse;
-    liveState = {
-      ...buildLiveFoldState(beforeReloadBody),
-      userState: beforeReloadBody.userState,
-    };
+    const reloadBody = reloadResponse.json() as SessionStateResponse;
+    assertSessionStateResponseShape(reloadBody);
+    assertReloadMutationFields(reloadBody);
 
-    const reloaded = hydrateFromSessionResponse(beforeReloadBody);
+    const reloaded = hydrateFromSessionResponse(reloadBody);
 
-    expect(pickComparableReloadState(reloaded, beforeReloadBody.lastSeq)).toEqual(
-      pickComparableReloadState(liveState, beforeReloadBody.lastSeq),
+    expect(reloadBody.lastSeq).toBe(liveLastSeq);
+    expect(pickComparableReloadState(reloaded, reloadBody.lastSeq)).toEqual(
+      pickComparableReloadState(liveState, liveLastSeq),
     );
 
     await app.close();

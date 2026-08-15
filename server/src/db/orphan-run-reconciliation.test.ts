@@ -104,6 +104,43 @@ describe("orphan run reconciliation", () => {
     db.close();
   });
 
+  it("reconciles multiple orphaned runs across sessions on startup", () => {
+    const tempDir = mkdtempSync(join(tmpdir(), "pd-fade-orphan-multi-"));
+    const dbPath = join(tempDir, "session.db");
+
+    try {
+      const seedDb = createDatabase(dbPath);
+      const seedStore = new SessionStore(seedDb);
+
+      for (const [sessionId, runId] of [
+        ["orphan-session-a", "run-a"],
+        ["orphan-session-b", "run-b"],
+      ] as const) {
+        seedStore.ensureSession(sessionId);
+        seedStore.appendEvent(sessionId, { type: "RUN_STARTED", runId });
+        seedStore.appendEvent(sessionId, {
+          type: "TOOL_START",
+          runId,
+          toolCallId: `${runId}-tool`,
+          name: "searchEntities",
+        });
+      }
+      seedDb.close();
+
+      const reopenedDb = createDatabase(dbPath);
+      const reopenedStore = new SessionStore(reopenedDb);
+      const reconciled = reconcileAllOrphanedRuns(reopenedStore);
+
+      expect(reconciled).toHaveLength(2);
+      expect(new Set(reconciled.map((event) => event.runId))).toEqual(new Set(["run-a", "run-b"]));
+      expect(reconciled.every((event) => event.message === ORPHAN_RUN_ERROR_MESSAGE)).toBe(true);
+
+      reopenedDb.close();
+    } finally {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
+  });
+
   it("does not reconcile runs that already have a terminal event", () => {
     const db = createDatabase(":memory:");
     const store = new SessionStore(db);

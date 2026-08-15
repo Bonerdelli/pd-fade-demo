@@ -40,7 +40,8 @@ until a release is cut.
 
 ### Fixed
 
-- Skip orphan-run reconciliation for the in-memory active run id so mid-run reload keeps running status
+- Strengthen full-fidelity reload E2E with independent live SSE folding and explicit session-state field assertions
+- Add startup reconciliation test for multiple orphaned runs across sessions
 - Fix SSE snapshot-anchor replay test to derive the compaction cursor from tail events instead of tailEvents
 - Finalize orphaned in-flight tool cards when a run is reconciled after server restart
 - Allow native builds for `better-sqlite3` and `esbuild` under pnpm 10
