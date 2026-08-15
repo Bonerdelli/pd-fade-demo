@@ -34,6 +34,7 @@ export interface UiState {
   connectionStatus: ConnectionStatus;
   mutationError: MutationError | null;
   lastSeq: number;
+  debugMode: boolean;
 }
 
 export interface AppStoreState {
@@ -49,6 +50,7 @@ export interface AppStoreState {
   setConnectionStatus: (status: ConnectionStatus) => void;
   setSessionId: (sessionId: string) => void;
   setMutationError: (error: MutationError | null) => void;
+  setDebugMode: (debugMode: boolean) => void;
   replaceUserState: (userState: UserState) => void;
   appendChatMessage: (message: ChatMessage) => void;
   removeChatMessage: (messageId: string) => void;
@@ -92,4 +94,5 @@ export const initialUiState: UiState = {
   connectionStatus: "down",
   mutationError: null,
   lastSeq: 0,
+  debugMode: false,
 };
