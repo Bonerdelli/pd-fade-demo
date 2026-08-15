@@ -42,6 +42,72 @@ describe("tool executors", () => {
     db.close();
   });
 
+  it("merges repeated search_entities calls by entity id", () => {
+    const db = createDatabase(":memory:");
+    const store = new SessionStore(db);
+    let agentState = store.getAgentState("merge-search-session");
+
+    const first = executeTool("search_entities", { query: "TechBerlin" }, agentState);
+    expect(first.status).toBe("ok");
+    agentState = first.agentState ?? agentState;
+    expect(agentState.graph.nodes).toHaveLength(1);
+
+    const second = executeTool("search_entities", { query: "Spree Ventures" }, agentState);
+    expect(second.status).toBe("ok");
+    agentState = second.agentState ?? agentState;
+    expect(agentState.graph.nodes.map((node) => node.id).sort()).toEqual([
+      "company-spree",
+      "company-techberlin",
+    ]);
+    expect(agentState.graph.edges.some((edge) => edge.id === "e1" || edge.id === "e2")).toBe(false);
+
+    const third = executeTool("search_entities", { query: "Anna Schmidt" }, agentState);
+    expect(third.status).toBe("ok");
+    agentState = third.agentState ?? agentState;
+    expect(agentState.graph.nodes).toHaveLength(3);
+    expect(agentState.graph.edges.some((edge) => edge.id === "e1")).toBe(true);
+
+    const duplicate = executeTool("search_entities", { query: "TechBerlin" }, agentState);
+    expect(duplicate.status).toBe("ok");
+    agentState = duplicate.agentState ?? agentState;
+    expect(agentState.graph.nodes).toHaveLength(3);
+
+    db.close();
+  });
+
+  it("adds repeated plot_signals calls by signal id", () => {
+    const db = createDatabase(":memory:");
+    const store = new SessionStore(db);
+    let agentState = store.getAgentState("merge-plot-session");
+
+    const searchOutcome = executeTool(
+      "search_entities",
+      { query: "berlin", kinds: ["company"] },
+      agentState,
+    );
+    agentState = searchOutcome.agentState ?? agentState;
+
+    const kreuzberg = executeTool("plot_signals", { keyword: "Kreuzberg" }, agentState);
+    expect(kreuzberg.status).toBe("ok");
+    agentState = kreuzberg.agentState ?? agentState;
+    expect(agentState.map.signals.map((signal) => signal.id)).toEqual(["signal-3"]);
+
+    const brandenburg = executeTool("plot_signals", { keyword: "Brandenburg" }, agentState);
+    expect(brandenburg.status).toBe("ok");
+    agentState = brandenburg.agentState ?? agentState;
+    expect(agentState.map.signals.map((signal) => signal.id).sort()).toEqual([
+      "signal-1",
+      "signal-3",
+    ]);
+
+    const duplicate = executeTool("plot_signals", { keyword: "Kreuzberg" }, agentState);
+    expect(duplicate.status).toBe("ok");
+    agentState = duplicate.agentState ?? agentState;
+    expect(agentState.map.signals).toHaveLength(2);
+
+    db.close();
+  });
+
   it("returns viewport intent for focus without mutating agent state", () => {
     const db = createDatabase(":memory:");
     const store = new SessionStore(db);

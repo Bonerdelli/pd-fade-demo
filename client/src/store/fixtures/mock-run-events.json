@@ -1,13 +1,13 @@
 [
   {
     "seq": 1,
-    "ts": 1786786664640,
+    "ts": 1786792877257,
     "runId": "run-mock-1",
     "type": "RUN_STARTED"
   },
   {
     "seq": 2,
-    "ts": 1786786664669,
+    "ts": 1786792877284,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -15,7 +15,7 @@
   },
   {
     "seq": 3,
-    "ts": 1786786664696,
+    "ts": 1786792877311,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -23,7 +23,7 @@
   },
   {
     "seq": 4,
-    "ts": 1786786664722,
+    "ts": 1786792877337,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -31,7 +31,7 @@
   },
   {
     "seq": 5,
-    "ts": 1786786664750,
+    "ts": 1786792877362,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -39,7 +39,7 @@
   },
   {
     "seq": 6,
-    "ts": 1786786664777,
+    "ts": 1786792877389,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -47,7 +47,7 @@
   },
   {
     "seq": 7,
-    "ts": 1786786664804,
+    "ts": 1786792877415,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -55,7 +55,7 @@
   },
   {
     "seq": 8,
-    "ts": 1786786664831,
+    "ts": 1786792877441,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -63,7 +63,7 @@
   },
   {
     "seq": 9,
-    "ts": 1786786664858,
+    "ts": 1786792877468,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -71,7 +71,7 @@
   },
   {
     "seq": 10,
-    "ts": 1786786664887,
+    "ts": 1786792877494,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -79,7 +79,7 @@
   },
   {
     "seq": 11,
-    "ts": 1786786664915,
+    "ts": 1786792877520,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -87,7 +87,7 @@
   },
   {
     "seq": 12,
-    "ts": 1786786664942,
+    "ts": 1786792877546,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -95,7 +95,7 @@
   },
   {
     "seq": 13,
-    "ts": 1786786664968,
+    "ts": 1786792877572,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -103,7 +103,7 @@
   },
   {
     "seq": 14,
-    "ts": 1786786664996,
+    "ts": 1786792877599,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -111,7 +111,7 @@
   },
   {
     "seq": 15,
-    "ts": 1786786665023,
+    "ts": 1786792877625,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -119,7 +119,7 @@
   },
   {
     "seq": 16,
-    "ts": 1786786665050,
+    "ts": 1786792877651,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -127,7 +127,7 @@
   },
   {
     "seq": 17,
-    "ts": 1786786665078,
+    "ts": 1786792877677,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -135,7 +135,7 @@
   },
   {
     "seq": 18,
-    "ts": 1786786665105,
+    "ts": 1786792877703,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -143,7 +143,7 @@
   },
   {
     "seq": 19,
-    "ts": 1786786665131,
+    "ts": 1786792877730,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -151,7 +151,7 @@
   },
   {
     "seq": 20,
-    "ts": 1786786665158,
+    "ts": 1786792877755,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -159,7 +159,7 @@
   },
   {
     "seq": 21,
-    "ts": 1786786665186,
+    "ts": 1786792877782,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -167,7 +167,7 @@
   },
   {
     "seq": 22,
-    "ts": 1786786665212,
+    "ts": 1786792877807,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -175,7 +175,7 @@
   },
   {
     "seq": 23,
-    "ts": 1786786665238,
+    "ts": 1786792877834,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -183,7 +183,7 @@
   },
   {
     "seq": 24,
-    "ts": 1786786665266,
+    "ts": 1786792877859,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -191,7 +191,7 @@
   },
   {
     "seq": 25,
-    "ts": 1786786665294,
+    "ts": 1786792877886,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -199,7 +199,7 @@
   },
   {
     "seq": 26,
-    "ts": 1786786665321,
+    "ts": 1786792877912,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -207,7 +207,7 @@
   },
   {
     "seq": 27,
-    "ts": 1786786665349,
+    "ts": 1786792877938,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -215,7 +215,7 @@
   },
   {
     "seq": 28,
-    "ts": 1786786665375,
+    "ts": 1786792877965,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -223,7 +223,7 @@
   },
   {
     "seq": 29,
-    "ts": 1786786665402,
+    "ts": 1786792877991,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -231,7 +231,7 @@
   },
   {
     "seq": 30,
-    "ts": 1786786665429,
+    "ts": 1786792878017,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -239,7 +239,7 @@
   },
   {
     "seq": 31,
-    "ts": 1786786665455,
+    "ts": 1786792878042,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -247,7 +247,7 @@
   },
   {
     "seq": 32,
-    "ts": 1786786665482,
+    "ts": 1786792878069,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -255,7 +255,7 @@
   },
   {
     "seq": 33,
-    "ts": 1786786665509,
+    "ts": 1786792878095,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -263,7 +263,7 @@
   },
   {
     "seq": 34,
-    "ts": 1786786665534,
+    "ts": 1786792878121,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -271,7 +271,7 @@
   },
   {
     "seq": 35,
-    "ts": 1786786665562,
+    "ts": 1786792878147,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -279,7 +279,7 @@
   },
   {
     "seq": 36,
-    "ts": 1786786665590,
+    "ts": 1786792878173,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -287,7 +287,7 @@
   },
   {
     "seq": 37,
-    "ts": 1786786665617,
+    "ts": 1786792878199,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -295,7 +295,7 @@
   },
   {
     "seq": 38,
-    "ts": 1786786665644,
+    "ts": 1786792878225,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -303,7 +303,7 @@
   },
   {
     "seq": 39,
-    "ts": 1786786665672,
+    "ts": 1786792878252,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -311,7 +311,7 @@
   },
   {
     "seq": 40,
-    "ts": 1786786665698,
+    "ts": 1786792878278,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant",
@@ -319,7 +319,7 @@
   },
   {
     "seq": 41,
-    "ts": 1786786665698,
+    "ts": 1786792878280,
     "runId": "run-mock-1",
     "type": "TOOL_START",
     "toolCallId": "run-mock-1-tool-search",
@@ -327,7 +327,7 @@
   },
   {
     "seq": 42,
-    "ts": 1786786665734,
+    "ts": 1786792878312,
     "runId": "run-mock-1",
     "type": "TOOL_ARGS",
     "toolCallId": "run-mock-1-tool-search",
@@ -335,7 +335,7 @@
   },
   {
     "seq": 43,
-    "ts": 1786786665768,
+    "ts": 1786792878342,
     "runId": "run-mock-1",
     "type": "TOOL_ARGS",
     "toolCallId": "run-mock-1-tool-search",
@@ -343,7 +343,7 @@
   },
   {
     "seq": 44,
-    "ts": 1786786665800,
+    "ts": 1786792878373,
     "runId": "run-mock-1",
     "type": "TOOL_ARGS",
     "toolCallId": "run-mock-1-tool-search",
@@ -351,7 +351,7 @@
   },
   {
     "seq": 45,
-    "ts": 1786786665842,
+    "ts": 1786792878415,
     "runId": "run-mock-1",
     "type": "TOOL_RESULT",
     "toolCallId": "run-mock-1-tool-search",
@@ -437,12 +437,13 @@
           "label": "Landmark"
         }
       ],
-      "matchCount": 8
+      "matchCount": 8,
+      "graphNodeCount": 8
     }
   },
   {
     "seq": 46,
-    "ts": 1786786665901,
+    "ts": 1786792878466,
     "runId": "run-mock-1",
     "type": "STATE_SNAPSHOT",
     "snapshot": {
@@ -638,7 +639,7 @@
   },
   {
     "seq": 47,
-    "ts": 1786786665947,
+    "ts": 1786792878508,
     "runId": "run-mock-1",
     "type": "VIEWPORT_COMMAND",
     "target": "graph",
@@ -650,7 +651,7 @@
   },
   {
     "seq": 48,
-    "ts": 1786786665976,
+    "ts": 1786792878535,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -658,7 +659,7 @@
   },
   {
     "seq": 49,
-    "ts": 1786786666004,
+    "ts": 1786792878561,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -666,7 +667,7 @@
   },
   {
     "seq": 50,
-    "ts": 1786786666032,
+    "ts": 1786792878588,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -674,7 +675,7 @@
   },
   {
     "seq": 51,
-    "ts": 1786786666059,
+    "ts": 1786792878614,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -682,7 +683,7 @@
   },
   {
     "seq": 52,
-    "ts": 1786786666085,
+    "ts": 1786792878640,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -690,7 +691,7 @@
   },
   {
     "seq": 53,
-    "ts": 1786786666113,
+    "ts": 1786792878666,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -698,7 +699,7 @@
   },
   {
     "seq": 54,
-    "ts": 1786786666139,
+    "ts": 1786792878692,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -706,7 +707,7 @@
   },
   {
     "seq": 55,
-    "ts": 1786786666165,
+    "ts": 1786792878719,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -714,7 +715,7 @@
   },
   {
     "seq": 56,
-    "ts": 1786786666191,
+    "ts": 1786792878745,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -722,7 +723,7 @@
   },
   {
     "seq": 57,
-    "ts": 1786786666218,
+    "ts": 1786792878771,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -730,7 +731,7 @@
   },
   {
     "seq": 58,
-    "ts": 1786786666245,
+    "ts": 1786792878798,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -738,7 +739,7 @@
   },
   {
     "seq": 59,
-    "ts": 1786786666272,
+    "ts": 1786792878823,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -746,7 +747,7 @@
   },
   {
     "seq": 60,
-    "ts": 1786786666300,
+    "ts": 1786792878850,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -754,7 +755,7 @@
   },
   {
     "seq": 61,
-    "ts": 1786786666327,
+    "ts": 1786792878877,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -762,7 +763,7 @@
   },
   {
     "seq": 62,
-    "ts": 1786786666354,
+    "ts": 1786792878903,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -770,7 +771,7 @@
   },
   {
     "seq": 63,
-    "ts": 1786786666382,
+    "ts": 1786792878929,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -778,7 +779,7 @@
   },
   {
     "seq": 64,
-    "ts": 1786786666410,
+    "ts": 1786792878955,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -786,7 +787,7 @@
   },
   {
     "seq": 65,
-    "ts": 1786786666438,
+    "ts": 1786792878982,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -794,7 +795,7 @@
   },
   {
     "seq": 66,
-    "ts": 1786786666465,
+    "ts": 1786792879008,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -802,7 +803,7 @@
   },
   {
     "seq": 67,
-    "ts": 1786786666492,
+    "ts": 1786792879035,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -810,7 +811,7 @@
   },
   {
     "seq": 68,
-    "ts": 1786786666519,
+    "ts": 1786792879061,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -818,7 +819,7 @@
   },
   {
     "seq": 69,
-    "ts": 1786786666547,
+    "ts": 1786792879087,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -826,7 +827,7 @@
   },
   {
     "seq": 70,
-    "ts": 1786786666573,
+    "ts": 1786792879113,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -834,7 +835,7 @@
   },
   {
     "seq": 71,
-    "ts": 1786786666601,
+    "ts": 1786792879139,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -842,7 +843,7 @@
   },
   {
     "seq": 72,
-    "ts": 1786786666628,
+    "ts": 1786792879166,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-mid",
@@ -850,7 +851,7 @@
   },
   {
     "seq": 73,
-    "ts": 1786786666628,
+    "ts": 1786792879167,
     "runId": "run-mock-1",
     "type": "TOOL_START",
     "toolCallId": "run-mock-1-tool-plot",
@@ -858,7 +859,7 @@
   },
   {
     "seq": 74,
-    "ts": 1786786666659,
+    "ts": 1786792879198,
     "runId": "run-mock-1",
     "type": "TOOL_ARGS",
     "toolCallId": "run-mock-1-tool-plot",
@@ -866,7 +867,7 @@
   },
   {
     "seq": 75,
-    "ts": 1786786666690,
+    "ts": 1786792879229,
     "runId": "run-mock-1",
     "type": "TOOL_ARGS",
     "toolCallId": "run-mock-1-tool-plot",
@@ -874,7 +875,7 @@
   },
   {
     "seq": 76,
-    "ts": 1786786666721,
+    "ts": 1786792879261,
     "runId": "run-mock-1",
     "type": "TOOL_ARGS",
     "toolCallId": "run-mock-1-tool-plot",
@@ -882,13 +883,14 @@
   },
   {
     "seq": 77,
-    "ts": 1786786666763,
+    "ts": 1786792879302,
     "runId": "run-mock-1",
     "type": "TOOL_RESULT",
     "toolCallId": "run-mock-1-tool-plot",
     "status": "ok",
     "result": {
       "plotted": 3,
+      "totalPlotted": 3,
       "center": [
         13.405,
         52.52
@@ -897,7 +899,7 @@
   },
   {
     "seq": 78,
-    "ts": 1786786666817,
+    "ts": 1786792879353,
     "runId": "run-mock-1",
     "type": "STATE_SNAPSHOT",
     "snapshot": {
@@ -1121,7 +1123,7 @@
   },
   {
     "seq": 79,
-    "ts": 1786786666859,
+    "ts": 1786792879394,
     "runId": "run-mock-1",
     "type": "VIEWPORT_COMMAND",
     "target": "map",
@@ -1135,7 +1137,7 @@
   },
   {
     "seq": 80,
-    "ts": 1786786666886,
+    "ts": 1786792879421,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1143,7 +1145,7 @@
   },
   {
     "seq": 81,
-    "ts": 1786786666914,
+    "ts": 1786792879448,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1151,7 +1153,7 @@
   },
   {
     "seq": 82,
-    "ts": 1786786666942,
+    "ts": 1786792879474,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1159,7 +1161,7 @@
   },
   {
     "seq": 83,
-    "ts": 1786786666969,
+    "ts": 1786792879500,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1167,7 +1169,7 @@
   },
   {
     "seq": 84,
-    "ts": 1786786666995,
+    "ts": 1786792879526,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1175,7 +1177,7 @@
   },
   {
     "seq": 85,
-    "ts": 1786786667023,
+    "ts": 1786792879552,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1183,7 +1185,7 @@
   },
   {
     "seq": 86,
-    "ts": 1786786667051,
+    "ts": 1786792879578,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1191,7 +1193,7 @@
   },
   {
     "seq": 87,
-    "ts": 1786786667079,
+    "ts": 1786792879604,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1199,7 +1201,7 @@
   },
   {
     "seq": 88,
-    "ts": 1786786667107,
+    "ts": 1786792879631,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1207,7 +1209,7 @@
   },
   {
     "seq": 89,
-    "ts": 1786786667134,
+    "ts": 1786792879657,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1215,7 +1217,7 @@
   },
   {
     "seq": 90,
-    "ts": 1786786667161,
+    "ts": 1786792879683,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1223,7 +1225,7 @@
   },
   {
     "seq": 91,
-    "ts": 1786786667190,
+    "ts": 1786792879709,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1231,7 +1233,7 @@
   },
   {
     "seq": 92,
-    "ts": 1786786667217,
+    "ts": 1786792879736,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1239,7 +1241,7 @@
   },
   {
     "seq": 93,
-    "ts": 1786786667244,
+    "ts": 1786792879762,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1247,7 +1249,7 @@
   },
   {
     "seq": 94,
-    "ts": 1786786667272,
+    "ts": 1786792879788,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1255,7 +1257,7 @@
   },
   {
     "seq": 95,
-    "ts": 1786786667299,
+    "ts": 1786792879815,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1263,7 +1265,7 @@
   },
   {
     "seq": 96,
-    "ts": 1786786667327,
+    "ts": 1786792879840,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1271,7 +1273,7 @@
   },
   {
     "seq": 97,
-    "ts": 1786786667355,
+    "ts": 1786792879867,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1279,7 +1281,7 @@
   },
   {
     "seq": 98,
-    "ts": 1786786667382,
+    "ts": 1786792879893,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1287,7 +1289,7 @@
   },
   {
     "seq": 99,
-    "ts": 1786786667409,
+    "ts": 1786792879919,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1295,7 +1297,7 @@
   },
   {
     "seq": 100,
-    "ts": 1786786667437,
+    "ts": 1786792879945,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1303,7 +1305,7 @@
   },
   {
     "seq": 101,
-    "ts": 1786786667466,
+    "ts": 1786792879972,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1311,7 +1313,7 @@
   },
   {
     "seq": 102,
-    "ts": 1786786667494,
+    "ts": 1786792879998,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1319,7 +1321,7 @@
   },
   {
     "seq": 103,
-    "ts": 1786786667521,
+    "ts": 1786792880024,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1327,7 +1329,7 @@
   },
   {
     "seq": 104,
-    "ts": 1786786667548,
+    "ts": 1786792880051,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1335,7 +1337,7 @@
   },
   {
     "seq": 105,
-    "ts": 1786786667575,
+    "ts": 1786792880077,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1343,7 +1345,7 @@
   },
   {
     "seq": 106,
-    "ts": 1786786667603,
+    "ts": 1786792880103,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1351,7 +1353,7 @@
   },
   {
     "seq": 107,
-    "ts": 1786786667630,
+    "ts": 1786792880129,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1359,7 +1361,7 @@
   },
   {
     "seq": 108,
-    "ts": 1786786667657,
+    "ts": 1786792880155,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1367,7 +1369,7 @@
   },
   {
     "seq": 109,
-    "ts": 1786786667684,
+    "ts": 1786792880182,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1375,7 +1377,7 @@
   },
   {
     "seq": 110,
-    "ts": 1786786667710,
+    "ts": 1786792880207,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1383,7 +1385,7 @@
   },
   {
     "seq": 111,
-    "ts": 1786786667737,
+    "ts": 1786792880233,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1391,7 +1393,7 @@
   },
   {
     "seq": 112,
-    "ts": 1786786667763,
+    "ts": 1786792880260,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1399,7 +1401,7 @@
   },
   {
     "seq": 113,
-    "ts": 1786786667790,
+    "ts": 1786792880286,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1407,7 +1409,7 @@
   },
   {
     "seq": 114,
-    "ts": 1786786667818,
+    "ts": 1786792880312,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1415,7 +1417,7 @@
   },
   {
     "seq": 115,
-    "ts": 1786786667844,
+    "ts": 1786792880338,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1423,7 +1425,7 @@
   },
   {
     "seq": 116,
-    "ts": 1786786667871,
+    "ts": 1786792880364,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1431,7 +1433,7 @@
   },
   {
     "seq": 117,
-    "ts": 1786786667898,
+    "ts": 1786792880390,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1439,7 +1441,7 @@
   },
   {
     "seq": 118,
-    "ts": 1786786667925,
+    "ts": 1786792880417,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1447,7 +1449,7 @@
   },
   {
     "seq": 119,
-    "ts": 1786786667952,
+    "ts": 1786792880443,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1455,7 +1457,7 @@
   },
   {
     "seq": 120,
-    "ts": 1786786667980,
+    "ts": 1786792880469,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1463,7 +1465,7 @@
   },
   {
     "seq": 121,
-    "ts": 1786786668007,
+    "ts": 1786792880495,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1471,7 +1473,7 @@
   },
   {
     "seq": 122,
-    "ts": 1786786668035,
+    "ts": 1786792880520,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1479,7 +1481,7 @@
   },
   {
     "seq": 123,
-    "ts": 1786786668062,
+    "ts": 1786792880547,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1487,7 +1489,7 @@
   },
   {
     "seq": 124,
-    "ts": 1786786668090,
+    "ts": 1786792880573,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1495,7 +1497,7 @@
   },
   {
     "seq": 125,
-    "ts": 1786786668117,
+    "ts": 1786792880599,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1503,7 +1505,7 @@
   },
   {
     "seq": 126,
-    "ts": 1786786668143,
+    "ts": 1786792880625,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1511,7 +1513,7 @@
   },
   {
     "seq": 127,
-    "ts": 1786786668171,
+    "ts": 1786792880651,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1519,7 +1521,7 @@
   },
   {
     "seq": 128,
-    "ts": 1786786668198,
+    "ts": 1786792880677,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1527,7 +1529,7 @@
   },
   {
     "seq": 129,
-    "ts": 1786786668226,
+    "ts": 1786792880704,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1535,7 +1537,7 @@
   },
   {
     "seq": 130,
-    "ts": 1786786668253,
+    "ts": 1786792880729,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1543,7 +1545,7 @@
   },
   {
     "seq": 131,
-    "ts": 1786786668281,
+    "ts": 1786792880755,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1551,7 +1553,7 @@
   },
   {
     "seq": 132,
-    "ts": 1786786668309,
+    "ts": 1786792880781,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1559,7 +1561,7 @@
   },
   {
     "seq": 133,
-    "ts": 1786786668335,
+    "ts": 1786792880808,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1567,7 +1569,7 @@
   },
   {
     "seq": 134,
-    "ts": 1786786668360,
+    "ts": 1786792880833,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1575,7 +1577,7 @@
   },
   {
     "seq": 135,
-    "ts": 1786786668388,
+    "ts": 1786792880860,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1583,7 +1585,7 @@
   },
   {
     "seq": 136,
-    "ts": 1786786668415,
+    "ts": 1786792880886,
     "runId": "run-mock-1",
     "type": "TEXT_DELTA",
     "messageId": "run-mock-1-assistant-summary",
@@ -1591,7 +1593,7 @@
   },
   {
     "seq": 137,
-    "ts": 1786786668415,
+    "ts": 1786792880886,
     "runId": "run-mock-1",
     "type": "RUN_FINISHED"
   }

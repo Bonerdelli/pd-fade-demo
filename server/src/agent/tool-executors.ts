@@ -10,6 +10,7 @@ import {
   BERLIN_CENTER,
   LAYOUT,
   MAP_SHAPES,
+  edgesForNodeIds,
   searchEntities,
   selectSignals,
 } from "./dataset.js";
@@ -54,26 +55,56 @@ function toAgentMapShapes() {
   });
 }
 
-function buildSearchAgentState(previous: AgentState, searchResult: ReturnType<typeof searchEntities>) {
+function mergeSearchIntoAgentState(
+  previous: AgentState,
+  searchResult: ReturnType<typeof searchEntities>,
+): AgentState {
+  const nodeById = new Map(previous.graph.nodes.map((node) => [node.id, node]));
+  for (const node of searchResult.nodes) {
+    nodeById.set(node.id, node);
+  }
+
+  const nodes = Array.from(nodeById.values());
+  const nodeIds = new Set(nodes.map((node) => node.id));
+  const layout = { ...previous.graph.layout };
+
+  for (const node of searchResult.nodes) {
+    const position = searchResult.layout[node.id] ?? LAYOUT[node.id];
+    if (position) {
+      layout[node.id] = { ...position };
+    }
+  }
+
+  const agentMapShapes =
+    previous.map.shapes.length > 0 ? previous.map.shapes : toAgentMapShapes();
+
   return agentStateSchema.parse({
     graph: {
-      nodes: searchResult.nodes,
-      edges: searchResult.edges,
-      layout: searchResult.layout,
+      nodes,
+      edges: edgesForNodeIds(nodeIds),
+      layout,
     },
     map: {
-      shapes: toAgentMapShapes(),
+      shapes: agentMapShapes,
       signals: previous.map.signals,
     },
   });
 }
 
-function buildSignalsAgentState(previous: AgentState, signals: ReturnType<typeof selectSignals>) {
+function mergeSignalsIntoAgentState(
+  previous: AgentState,
+  signals: ReturnType<typeof selectSignals>,
+): AgentState {
+  const signalById = new Map(previous.map.signals.map((signal) => [signal.id, signal]));
+  for (const signal of signals) {
+    signalById.set(signal.id, signal);
+  }
+
   return agentStateSchema.parse({
     graph: previous.graph,
     map: {
       shapes: previous.map.shapes,
-      signals,
+      signals: Array.from(signalById.values()),
     },
   });
 }
@@ -142,7 +173,15 @@ function executeSearchEntities(input: unknown, agentState: AgentState): ToolExec
   }
 
   const searchResult = searchEntities(parsed.data);
-  const nextState = buildSearchAgentState(agentState, searchResult);
+  if (searchResult.matchCount === 0) {
+    return {
+      status: "error",
+      result: { message: "No entities matched the query" },
+      errorMessage: "No entities matched the query",
+    };
+  }
+
+  const nextState = mergeSearchIntoAgentState(agentState, searchResult);
 
   return {
     status: "ok",
@@ -150,6 +189,7 @@ function executeSearchEntities(input: unknown, agentState: AgentState): ToolExec
       entities: searchResult.entities,
       edges: searchResult.edges,
       matchCount: searchResult.matchCount,
+      graphNodeCount: nextState.graph.nodes.length,
     },
     agentState: nextState,
   };
@@ -174,12 +214,16 @@ function executePlotSignals(input: unknown, agentState: AgentState): ToolExecuti
     };
   }
 
-  const nextState = buildSignalsAgentState(agentState, signals);
+  const nextState = mergeSignalsIntoAgentState(agentState, signals);
   const center = parsed.data.center ?? BERLIN_CENTER;
 
   return {
     status: "ok",
-    result: { plotted: signals.length, center },
+    result: {
+      plotted: signals.length,
+      totalPlotted: nextState.map.signals.length,
+      center,
+    },
     agentState: nextState,
   };
 }

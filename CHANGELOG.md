@@ -13,6 +13,7 @@ until a release is cut.
 - Root README pointer to `ansible/README.md`
 - Anthropic demo system prompt module with tool choreography, protocol boundary, and user-context instructions
 - Suggested Anthropic live-demo script with paste-ready messages in README
+- Unit test for composeSystemPrompt and cumulative tool executor merge semantics
 - Root README with setup, demo walkthrough, and known limitations
 - Client SSE stall watchdog with 45s silence threshold and reconnect on stream stall
 - SSE transport chaos tests for disconnect resume, duplicate seq drop, and gap resync convergence
@@ -86,6 +87,8 @@ until a release is cut.
 - Default Ansible TLS to off for HTTP-first bring-up; document enable-TLS path
 - Move Ansible pnpm store to `/var/cache/pd-fade/pnpm`, separate from SQLite data dir
 - Drop unused `python3-certbot-nginx` package and `ansible.posix` collection from Ansible requirements
+- Make search_entities and plot_signals executors merge cumulatively into agent state
+- Update Anthropic system prompt and demo script for per-call search/plot choreography
 - Add optional `reasonCode` on RUN_ERROR events with server restart and driver crash reason codes
 - Resolve run error banner copy from `reasonCode` with human-readable message fallback
 - Localize tool card header names via chat i18n mapping with raw-name fallback

@@ -192,6 +192,12 @@ export function searchEntities(filter: SearchEntitiesFilter = {}): SearchEntitie
   };
 }
 
+export function edgesForNodeIds(nodeIds: ReadonlySet<string>): GraphEdge[] {
+  return EDGES.filter((edge) => nodeIds.has(edge.source) && nodeIds.has(edge.target)).map(
+    (edge) => ({ ...edge }),
+  );
+}
+
 export interface SelectSignalsFilter {
   area?: string;
   keyword?: string;
