@@ -78,6 +78,7 @@ until a release is cut.
 - Restart pd-fade only when git checkout or environment file changes on redeploy
 - Run NodeSource setup script only when the APT source is not yet configured
 - Obtain Let's Encrypt certificate before deploying TLS nginx vhost on first provision
+- Remove unused pd_fade role handlers left over after explicit service state task
 - Fix tool card name i18n lookup to use the `toolCards.toolNames` namespace path
 - Sync hydrated user map shapes into terra-draw after deferred map load setup
 - Clear historical viewport commands on session hydrate and skip replay on surface remount
