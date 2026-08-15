@@ -255,6 +255,7 @@ export function useDrawTools({
       draw.start();
       draw.setMode(terraDrawModeForTool(activeModeRef.current));
       drawRef.current = draw;
+      syncStoreToDraw(useAppStore.getState().userState.map.shapes);
     };
 
     if (map.isStyleLoaded()) {
@@ -271,7 +272,7 @@ export function useDrawTools({
       selectedFeatureIdRef.current = null;
       setHasSelection(false);
     };
-  }, [deleteUserShape, mapRef, publishFeature]);
+  }, [deleteUserShape, mapRef, publishFeature, syncStoreToDraw]);
 
   useEffect(() => {
     if (syncingFromDrawRef.current) {

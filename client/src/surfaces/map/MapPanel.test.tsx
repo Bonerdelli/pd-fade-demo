@@ -104,20 +104,31 @@ vi.mock("../../hooks/index.js", () => ({
 }));
 
 vi.mock("../../store/index.js", () => ({
-  useAppStore: (selector: (state: unknown) => unknown) =>
-    selector({
-      userState: {
-        viewports: { map: null },
-        comments: [],
-        map: { shapes: [] },
-      },
-      agentState: {
-        map: { shapes: [], signals: [] },
-      },
-      uiState: {
-        cameraCommand: null,
-      },
-    }),
+  useAppStore: Object.assign(
+    (selector: (state: unknown) => unknown) =>
+      selector({
+        userState: {
+          viewports: { map: null },
+          comments: [],
+          map: { shapes: [] },
+        },
+        agentState: {
+          map: { shapes: [], signals: [] },
+        },
+        uiState: {
+          cameraCommand: null,
+        },
+      }),
+    {
+      getState: () => ({
+        userState: {
+          viewports: { map: null },
+          comments: [],
+          map: { shapes: [] },
+        },
+      }),
+    },
+  ),
 }));
 
 describe("MapPanel", () => {

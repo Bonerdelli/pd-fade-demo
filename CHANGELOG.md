@@ -43,6 +43,10 @@ until a release is cut.
 
 ### Fixed
 
+- Sync hydrated user map shapes into terra-draw after deferred map load setup
+- Clear historical viewport commands on session hydrate and skip replay on surface remount
+- Wire SSE stall watchdog through session controller and add bootstrap retry on load failure
+- Rework SSE gap chaos test to compare partial client state against true server resync payload
 - Assert Anthropic driver second stream call includes tool_result in messages payload
 - Align mid-run hydrate E2E with independent live fold and explicit running-state assertions
 - Abort Anthropic SDK streams promptly on run cancellation via signal listener and RequestOptions.signal
@@ -70,6 +74,8 @@ until a release is cut.
 
 - Add optional `reasonCode` on RUN_ERROR events with server restart and driver crash reason codes
 - Resolve run error banner copy from `reasonCode` with human-readable message fallback
+- Localize tool card header names via chat i18n mapping with raw-name fallback
+- Extend README known limitations and demo walkthrough for mock delay env and design-doc gaps
 - Refactor mock agent driver to use shared dataset and tool executors while preserving deterministic mock-run fixture event structure
 - Export `createAgentDriver` from dedicated factory supporting `mock` and `anthropic` drivers
 - Rebuild client reducer golden fixture from the real mock driver event log
