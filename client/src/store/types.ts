@@ -1,19 +1,55 @@
-import type { AgentEvent, AgentState, ChatMessage, UserState } from "@pd-fade/shared";
+import type {
+  AgentEvent,
+  AgentState,
+  ChatMessage,
+  GraphCamera,
+  MapCamera,
+  SessionStateResponse,
+  UserState,
+} from "@pd-fade/shared";
 
 export type RunStatus = "idle" | "running" | "error" | "cancelled";
 
+export type BootstrapStatus = "loading" | "ready" | "error";
+
+export type ConnectionStatus = "connected" | "reconnecting" | "down";
+
+export type ViewportTarget = "graph" | "map";
+
+export interface CameraCommand {
+  target: ViewportTarget;
+  camera: GraphCamera | MapCamera;
+  seq: number;
+}
+
 export interface UiState {
   runStatus: RunStatus;
-  activeCanvasTab: "graph" | "map";
+  activeCanvasTab: ViewportTarget;
+  currentRunId: string | null;
+  runErrorMessage: string | null;
+  cameraCommand: CameraCommand | null;
+  bootstrapStatus: BootstrapStatus;
+  connectionStatus: ConnectionStatus;
+  mutationError: string | null;
+  lastSeq: number;
 }
 
 export interface AppStoreState {
+  sessionId: string | null;
   agentState: AgentState;
   userState: UserState;
   chat: ChatMessage[];
   uiState: UiState;
   applyEvent: (event: AgentEvent) => void;
-  setActiveCanvasTab: (tab: "graph" | "map") => void;
+  hydrateSession: (response: SessionStateResponse) => void;
+  setActiveCanvasTab: (tab: ViewportTarget) => void;
+  setBootstrapStatus: (status: BootstrapStatus) => void;
+  setConnectionStatus: (status: ConnectionStatus) => void;
+  setSessionId: (sessionId: string) => void;
+  setMutationError: (message: string | null) => void;
+  replaceUserState: (userState: UserState) => void;
+  appendChatMessage: (message: ChatMessage) => void;
+  removeChatMessage: (messageId: string) => void;
 }
 
 export const emptyAgentState: AgentState = {
@@ -44,4 +80,11 @@ export const emptyUserState: UserState = {
 export const initialUiState: UiState = {
   runStatus: "idle",
   activeCanvasTab: "graph",
+  currentRunId: null,
+  runErrorMessage: null,
+  cameraCommand: null,
+  bootstrapStatus: "loading",
+  connectionStatus: "down",
+  mutationError: null,
+  lastSeq: 0,
 };
