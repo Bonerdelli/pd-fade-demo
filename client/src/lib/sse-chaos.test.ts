@@ -189,20 +189,23 @@ describe("SSE transport chaos", () => {
 
     expect(accepted).toEqual([uninterruptedEvents[0]]);
 
-    const uninterrupted = foldAllEvents(uninterruptedEvents);
+    const partialState = foldAllEvents(accepted);
+    const trueFinalState = foldAllEvents(uninterruptedEvents);
+    expect(partialState.chat).not.toEqual(trueFinalState.chat);
 
     const resyncBody = {
-      snapshot: createInitialReducerState().agentState,
+      snapshot: trueFinalState.agentState,
       userState: createInitialReducerState().userState,
-      chat: uninterrupted.chat,
+      chat: trueFinalState.chat,
       tailEvents: uninterruptedEvents,
       lastSeq: uninterruptedEvents.at(-1)!.seq,
     };
 
     const hydrated = hydrateFromSessionResponse(resyncBody);
 
-    expect(hydrated.uiState.runStatus).toBe(uninterrupted.uiState.runStatus);
-    expect(hydrated.chat).toEqual(uninterrupted.chat);
+    expect(hydrated.uiState.runStatus).toBe(trueFinalState.uiState.runStatus);
+    expect(hydrated.chat).toEqual(trueFinalState.chat);
+    expect(hydrated.agentState).toEqual(trueFinalState.agentState);
 
     abortController.abort();
   });
