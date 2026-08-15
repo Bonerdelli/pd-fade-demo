@@ -33,6 +33,7 @@ client/   — Vite + React + TS + Tailwind: SSE transport, Zustand store, chat /
 | Graph           | React Flow (xyflow)                         |
 | Map             | MapLibre GL                                 |
 | Styles          | Tailwind CSS                                |
+| i18n            | i18next + react-i18next (client)            |
 | Validation      | zod (schemas live in `shared/`)             |
 | Tests           | vitest                                      |
 
@@ -71,6 +72,20 @@ that are not configured.
   the server middleware, the client reducer, and reducer golden tests
 - New agent capability = new tool schema + designed registry component + review.
   Never let unvalidated payloads reach the render
+
+## Localization
+
+- App language is English, but every user-visible string goes through i18n tables —
+  no hardcoded UI text in components, ever
+- Client uses i18next + react-i18next; locale files live in
+  `client/src/locales/en/<namespace>.json`, one namespace per surface
+  (`common`, `chat`, `graph`, `map`)
+
+## Changelog
+
+- Keep [CHANGELOG.md](CHANGELOG.md) up to date: append a bullet under
+  `## [Unreleased]` in the matching subsection (Added / Changed / Fixed) for every
+  meaningful change, in the same commit as the change itself
 
 ## Environment
 
@@ -113,6 +128,18 @@ prefixes. Be specific enough that someone scanning the log understands the chang
 - Never commit `.env`, secrets, `node_modules`, SQLite database files
 - Do not push or open PRs unless the user explicitly requests it
 
+### Parallel work etiquette
+
+Several agents may work in this tree concurrently:
+
+- Edit only files within your assigned scope; when you must touch a shared file
+  (e.g. `CHANGELOG.md`, root `package.json`), append or make a minimal targeted
+  edit — never rewrite or reorder others' content
+- Never revert, reset, stash, overwrite or delete changes you did not make
+- Stage only your own files by explicit path; re-check `git status` right before
+  committing and leave foreign files unstaged
+- If a foreign uncommitted change blocks you — report it, do not "fix" it
+
 ### Operational safety
 
 - Never clear caches or reset databases on your own
@@ -124,7 +151,11 @@ prefixes. Be specific enough that someone scanning the log understands the chang
 ### Code quality
 
 - Study existing code before writing new code: look for helpers, hooks, similar places
-- DRY — use library functions and existing implementations instead of duplicating
+- DRY — use library functions and existing implementations instead of duplicating;
+  prefer ready solutions from the approved stack over hand-rolled ones
+- Keep layers separate: pure helpers in `lib/`, hooks in `hooks/`, components stay
+  presentational and reusable — do not pile logic into components, no copy-paste
+  between surfaces
 - Match the style of the file and the project (imports, abstractions, naming)
 - No trivial or obvious comments; comment only non-obvious "why"
 - File naming: React components `PascalCase.tsx`, everything else kebab-case
