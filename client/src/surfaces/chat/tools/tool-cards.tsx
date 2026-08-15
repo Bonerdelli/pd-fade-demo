@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { useAppStore } from "../../../store/index.js";
 import type { ToolCardContentProps, ToolCardSummaryProps } from "./tool-card-types.js";
 import { formatArgsRaw } from "../lib/parse-tool-args.js";
 
@@ -152,6 +153,7 @@ export function PlotSignalsSummary({ argsResult, result, status }: ToolCardSumma
 
 export function FallbackToolCard({ name, argsResult, status }: ToolCardContentProps) {
   const { t } = useTranslation("chat");
+  const debugMode = useAppStore((state) => state.uiState.debugMode);
   const raw =
     argsResult.kind === "parsed"
       ? formatArgsRaw(argsResult.value)
@@ -164,14 +166,11 @@ export function FallbackToolCard({ name, argsResult, status }: ToolCardContentPr
       </p>
       {argsResult.kind === "streaming" ? (
         <p className="text-slate-500">{t("toolCards.fallback.receivingArgs")}</p>
-      ) : (
-        <details className="rounded border border-slate-200 bg-slate-50 p-2">
-          <summary className="cursor-pointer text-slate-600">{t("toolCards.fallback.details")}</summary>
-          <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-all font-mono text-xs text-slate-700">
-            {raw}
-          </pre>
-        </details>
-      )}
+      ) : debugMode ? (
+        <pre className="overflow-x-auto whitespace-pre-wrap break-all rounded border border-slate-200 bg-slate-50 p-2 font-mono text-xs text-slate-700">
+          {raw}
+        </pre>
+      ) : null}
       {status === "error" ? (
         <p className="text-red-700">{t("toolCards.fallback.failed")}</p>
       ) : null}

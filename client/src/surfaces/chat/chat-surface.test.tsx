@@ -8,6 +8,7 @@ import i18n from "../../i18n.js";
 import { useAppStore } from "../../store/index.js";
 import { initialUiState } from "../../store/types.js";
 import { ChatComposer } from "./ChatComposer.js";
+import { ChatHeader } from "./ChatHeader.js";
 import { MessageList } from "./MessageList.js";
 import { ToolCard } from "./ToolCard.js";
 
@@ -105,6 +106,73 @@ describe("Chat surface components", () => {
     );
 
     expect(screen.getByText(/Agent executed mystery_tool/i)).toBeTruthy();
+  });
+
+  it("renders debug mode toggle in chat header", async () => {
+    const user = userEvent.setup();
+
+    renderWithI18n(<ChatHeader />);
+
+    const toggle = screen.getByRole("checkbox", { name: /Debug Mode/i });
+    expect(toggle).toBeTruthy();
+    expect((toggle as HTMLInputElement).checked).toBe(false);
+
+    await user.click(toggle);
+    expect(useAppStore.getState().uiState.debugMode).toBe(true);
+    expect((toggle as HTMLInputElement).checked).toBe(true);
+
+    await user.click(toggle);
+    expect(useAppStore.getState().uiState.debugMode).toBe(false);
+  });
+
+  it("hides raw fallback tool args when debug mode is off", () => {
+    useAppStore.setState({
+      uiState: { ...initialUiState, bootstrapStatus: "ready", debugMode: false },
+    });
+
+    renderWithI18n(
+      <ToolCard
+        message={{
+          kind: "toolCall",
+          id: "tc-hidden",
+          toolCallId: "tc-hidden",
+          name: "mystery_tool",
+          status: "ok",
+          args: { payload: true },
+          result: { ok: true },
+        }}
+        isExpanded={true}
+        onToggle={() => undefined}
+      />,
+    );
+
+    expect(screen.getByText(/Agent executed mystery_tool/i)).toBeTruthy();
+    expect(screen.queryByText(/"payload"/)).toBeNull();
+    expect(screen.queryByText(/Arguments/i)).toBeNull();
+  });
+
+  it("shows raw fallback tool args when debug mode is on", () => {
+    useAppStore.setState({
+      uiState: { ...initialUiState, bootstrapStatus: "ready", debugMode: true },
+    });
+
+    renderWithI18n(
+      <ToolCard
+        message={{
+          kind: "toolCall",
+          id: "tc-visible",
+          toolCallId: "tc-visible",
+          name: "mystery_tool",
+          status: "ok",
+          args: { payload: true },
+          result: { ok: true },
+        }}
+        isExpanded={true}
+        onToggle={() => undefined}
+      />,
+    );
+
+    expect(screen.getByText(/"payload": true/)).toBeTruthy();
   });
 
   it("shows Stop button while a run is active", () => {

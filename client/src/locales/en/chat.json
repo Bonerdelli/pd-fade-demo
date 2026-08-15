@@ -1,5 +1,8 @@
 {
   "panelTitle": "Chat",
+  "debugMode": {
+    "label": "Debug Mode"
+  },
   "connection": {
     "connected": "Connected",
     "reconnecting": "Reconnecting",

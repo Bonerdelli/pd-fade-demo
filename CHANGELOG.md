@@ -46,6 +46,7 @@ until a release is cut.
 - Server integration tests for event log, SSE replay, run lifecycle, canvas soft-lock and mock snapshot validation
 - Implement Map surface with MapLibre GL agent layers, terra-draw user editing, camera commands and soft-lock hints
 - Chat surface with streaming messages, tool card registry, run lifecycle UI, scroll-pinned message list and composer
+- Chat debug mode toggle in header with `uiState.debugMode` hiding fallback tool card raw JSON arguments
 
 ### Fixed
 
@@ -91,6 +92,7 @@ until a release is cut.
 
 ### Changed
 
+- Switch chat/canvas two-column layout breakpoint from `lg` (1024px) to `md` (768px)
 - Remove app header and Graph panel subtitle; show bootstrap and mutation errors in a centered canvas overlay
 - Default Ansible TLS to off for HTTP-first bring-up; document enable-TLS path
 - Move Ansible pnpm store to `/var/cache/pd-fade/pnpm`, separate from SQLite data dir
