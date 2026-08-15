@@ -1,14 +1,13 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useAppStore } from "./store";
 import { ChatPanel } from "./surfaces/chat/ChatPanel";
 import { GraphPanel } from "./surfaces/graph/GraphPanel";
 import { MapPanel } from "./surfaces/map/MapPanel";
 
-type CanvasTab = "graph" | "map";
-
 export function App() {
   const { t } = useTranslation("common");
-  const [activeTab, setActiveTab] = useState<CanvasTab>("graph");
+  const activeTab = useAppStore((state) => state.uiState.activeCanvasTab);
+  const setActiveCanvasTab = useAppStore((state) => state.setActiveCanvasTab);
 
   return (
     <div className="flex h-full flex-col bg-slate-100 text-slate-900">
@@ -33,7 +32,7 @@ export function App() {
                 className={`rounded px-3 py-1 text-sm ${
                   activeTab === "graph" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"
                 }`}
-                onClick={() => setActiveTab("graph")}
+                onClick={() => setActiveCanvasTab("graph")}
               >
                 {t("layout.graphTab")}
               </button>
@@ -42,7 +41,7 @@ export function App() {
                 className={`rounded px-3 py-1 text-sm ${
                   activeTab === "map" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"
                 }`}
-                onClick={() => setActiveTab("map")}
+                onClick={() => setActiveCanvasTab("map")}
               >
                 {t("layout.mapTab")}
               </button>

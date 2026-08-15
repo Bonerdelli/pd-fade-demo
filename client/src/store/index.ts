@@ -7,6 +7,7 @@ const initial = createInitialReducerState();
 export const useAppStore = create<AppStoreState>((set) => ({
   agentState: initial.agentState,
   userState: initial.userState,
+  chat: initial.chat,
   uiState: initial.uiState,
   applyEvent: (event) => {
     set((state) => {
@@ -14,6 +15,7 @@ export const useAppStore = create<AppStoreState>((set) => ({
         {
           agentState: state.agentState,
           userState: state.userState,
+          chat: state.chat,
           uiState: state.uiState,
         },
         event,
@@ -21,8 +23,14 @@ export const useAppStore = create<AppStoreState>((set) => ({
       return {
         agentState: next.agentState,
         userState: next.userState,
+        chat: next.chat,
         uiState: next.uiState,
       };
     });
+  },
+  setActiveCanvasTab: (tab) => {
+    set((state) => ({
+      uiState: { ...state.uiState, activeCanvasTab: tab },
+    }));
   },
 }));

@@ -1,10 +1,11 @@
-import type { AgentEvent, AgentState, UserState } from "@pd-fade/shared";
+import type { AgentEvent, AgentState, ChatMessage, UserState } from "@pd-fade/shared";
 import type { UiState } from "./types.js";
-import { initialUiState } from "./types.js";
+import { emptyAgentState, emptyUserState, initialUiState } from "./types.js";
 
 export interface ReducerState {
   agentState: AgentState;
   userState: UserState;
+  chat: ChatMessage[];
   uiState: UiState;
 }
 
@@ -42,17 +43,9 @@ export function reduceEvent(state: ReducerState, event: AgentEvent): ReducerStat
 
 export function createInitialReducerState(): ReducerState {
   return {
-    agentState: {
-      graph: { nodes: [], edges: [], layout: {} },
-      map: { shapes: [], signals: [] },
-    },
-    userState: {
-      map: { shapes: [] },
-      comments: [],
-      positionOverrides: {},
-      selection: [],
-      viewports: { graph: null, map: null },
-    },
+    agentState: emptyAgentState,
+    userState: emptyUserState,
+    chat: [],
     uiState: initialUiState,
   };
 }

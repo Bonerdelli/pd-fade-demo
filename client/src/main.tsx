@@ -5,6 +5,8 @@ import { App } from "./App";
 import i18n from "./i18n";
 import "./index.css";
 
+document.title = i18n.t("appTitle", { ns: "common" });
+
 const rootElement = document.getElementById("root");
 
 if (!rootElement) {

@@ -20,3 +20,4 @@ until a release is cut.
 
 - Allow native builds for `better-sqlite3` and `esbuild` under pnpm 10
 - Harden shared protocol: strict `agentStateSchema`, non-null `runId` on run-scoped events, union regression tests, REST path builders
+- Add chat slice to client store, wire canvas tab to Zustand, deduplicate initial state, set document title from i18n

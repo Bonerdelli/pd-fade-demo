@@ -1,4 +1,4 @@
-import type { AgentEvent, AgentState, UserState } from "@pd-fade/shared";
+import type { AgentEvent, AgentState, ChatMessage, UserState } from "@pd-fade/shared";
 
 export type RunStatus = "idle" | "running" | "error" | "cancelled";
 
@@ -10,8 +10,10 @@ export interface UiState {
 export interface AppStoreState {
   agentState: AgentState;
   userState: UserState;
+  chat: ChatMessage[];
   uiState: UiState;
   applyEvent: (event: AgentEvent) => void;
+  setActiveCanvasTab: (tab: "graph" | "map") => void;
 }
 
 export const emptyAgentState: AgentState = {
