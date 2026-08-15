@@ -167,18 +167,42 @@ describe("Chat surface components", () => {
           args: { signalIds: ["s1", "s2", "s3"], center: [13.405, 52.52] },
           result: { plotted: 3 },
         }}
-        isExpanded={true}
+        isExpanded={false}
         onToggle={() => undefined}
       />,
     );
 
-    expect(screen.getByText(/3 selected/i)).toBeTruthy();
     expect(screen.getByText(/Plotted 3 signals/i)).toBeTruthy();
+    expect(screen.queryByText(/Expand/i)).toBeNull();
+    expect(screen.queryByText(/3 selected/i)).toBeNull();
     expect(screen.queryByText(/13\.405/)).toBeNull();
-    expect(screen.queryByText(/Center:/i)).toBeNull();
   });
 
-  it("shows plot signals center coordinates when debug mode is on", () => {
+  it("shows plot signals expand control when debug mode reveals center", () => {
+    useAppStore.setState({
+      uiState: { ...initialUiState, bootstrapStatus: "ready", debugMode: true },
+    });
+
+    renderWithI18n(
+      <ToolCard
+        message={{
+          kind: "toolCall",
+          id: "tc-plot-visible",
+          toolCallId: "tc-plot-visible",
+          name: "plot_signals",
+          status: "ok",
+          args: { signalIds: ["s1", "s2", "s3"], center: [13.405, 52.52] },
+          result: { plotted: 3 },
+        }}
+        isExpanded={false}
+        onToggle={() => undefined}
+      />,
+    );
+
+    expect(screen.getByText(/Expand/i)).toBeTruthy();
+  });
+
+  it("shows plot signals center coordinates when debug mode is on and expanded", () => {
     useAppStore.setState({
       uiState: { ...initialUiState, bootstrapStatus: "ready", debugMode: true },
     });
@@ -201,6 +225,47 @@ describe("Chat surface components", () => {
 
     expect(screen.getByText(/13\.405, 52\.52/)).toBeTruthy();
     expect(screen.getByText(/Center:/i)).toBeTruthy();
+  });
+
+  it("shows expand control for search entity tool cards", () => {
+    renderWithI18n(
+      <ToolCard
+        message={{
+          kind: "toolCall",
+          id: "tc-search",
+          toolCallId: "tc-search",
+          name: "search_entities",
+          status: "ok",
+          args: { query: "berlin", kinds: ["company"], city: "Berlin" },
+          result: { matchCount: 8, entities: [], edges: [] },
+        }}
+        isExpanded={false}
+        onToggle={() => undefined}
+      />,
+    );
+
+    expect(screen.getByText(/Expand/i)).toBeTruthy();
+  });
+
+  it("shows expand control for errored fallback tool cards", () => {
+    renderWithI18n(
+      <ToolCard
+        message={{
+          kind: "toolCall",
+          id: "tc-error",
+          toolCallId: "tc-error",
+          name: "mystery_tool",
+          status: "error",
+          args: { payload: true },
+          result: { message: "boom" },
+        }}
+        isExpanded={false}
+        onToggle={() => undefined}
+      />,
+    );
+
+    expect(screen.getByText(/Expand/i)).toBeTruthy();
+    expect(screen.getByText(/mystery_tool failed/i)).toBeTruthy();
   });
 
   it("shows raw fallback tool args when debug mode is on", () => {

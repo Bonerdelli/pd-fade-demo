@@ -1,7 +1,11 @@
 import type { ChatMessage, ChatToolCallStatus } from "@pd-fade/shared";
 import { useTranslation } from "react-i18next";
+import { useAppStore } from "../../store/index.js";
 import { parseToolArgs } from "./lib/parse-tool-args.js";
-import { resolveToolCardDefinition } from "./tools/tool-card-registry.js";
+import {
+  resolveToolCardDefinition,
+  toolCardHasExpandableDetails,
+} from "./tools/tool-card-registry.js";
 
 type ToolCallMessage = Extract<ChatMessage, { kind: "toolCall" }>;
 
@@ -37,23 +41,27 @@ function readErrorMessage(result: unknown): string | null {
 
 export function ToolCard({ message, isExpanded, onToggle }: ToolCardProps) {
   const { t } = useTranslation("chat");
+  const debugMode = useAppStore((state) => state.uiState.debugMode);
   const hasResult = message.result !== undefined;
   const argsResult = parseToolArgs(message.args, hasResult);
   const definition = resolveToolCardDefinition(message.name, argsResult);
   const { Card, Summary } = definition;
+  const hasDetails = toolCardHasExpandableDetails(
+    message.name,
+    argsResult,
+    message.status,
+    message.result,
+    debugMode,
+  );
   const isRunning = message.status === "running" || message.status === "pending";
   const errorMessage = message.status === "error" ? readErrorMessage(message.result) : null;
 
   const statusLabel = t(`toolCards.status.${message.status}`);
+  const rowClassName = `flex w-full items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-left text-sm ring-1 ring-inset ${STATUS_RING[message.status]}`;
 
-  if (!isExpanded) {
-    return (
-      <button
-        type="button"
-        onClick={onToggle}
-        className={`flex w-full items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-left text-sm ring-1 ring-inset transition hover:bg-slate-50 ${STATUS_RING[message.status]}`}
-        aria-expanded={false}
-      >
+  if (!hasDetails || !isExpanded) {
+    const summary = (
+      <>
         <span
           className={`shrink-0 rounded px-1.5 py-0.5 text-xs font-medium ${STATUS_BADGE[message.status]}`}
         >
@@ -67,6 +75,21 @@ export function ToolCard({ message, isExpanded, onToggle }: ToolCardProps) {
             result={message.result}
           />
         </span>
+      </>
+    );
+
+    if (!hasDetails) {
+      return <div className={rowClassName}>{summary}</div>;
+    }
+
+    return (
+      <button
+        type="button"
+        onClick={onToggle}
+        className={`${rowClassName} transition hover:bg-slate-50`}
+        aria-expanded={false}
+      >
+        {summary}
         <span className="ml-auto shrink-0 text-xs text-slate-400">{t("toolCards.expand")}</span>
       </button>
     );
