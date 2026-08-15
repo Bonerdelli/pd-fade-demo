@@ -241,5 +241,9 @@ export function hydrateFromSessionResponse(response: SessionStateResponse): Redu
   return {
     ...folded,
     chat: response.chat,
+    uiState: {
+      ...folded.uiState,
+      cameraCommand: null,
+    },
   };
 }

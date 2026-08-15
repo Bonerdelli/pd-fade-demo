@@ -260,4 +260,25 @@ describe("hydrateFromSessionResponse", () => {
     expect(hydrated.uiState.runStatus).toBe("idle");
     expect(hydrated.agentState).toEqual(emptyAgentState);
   });
+
+  it("does not surface historical viewport commands after hydrate", () => {
+    const hydrated = hydrateFromSessionResponse({
+      snapshot: emptyAgentState,
+      userState: emptyUserState,
+      chat: [],
+      tailEvents: [
+        {
+          seq: 1,
+          runId: mockRunId,
+          ts: 1,
+          type: "VIEWPORT_COMMAND",
+          target: "map",
+          camera: { center: [13.405, 52.52], zoom: 12.5 },
+        },
+      ],
+      lastSeq: 1,
+    });
+
+    expect(hydrated.uiState.cameraCommand).toBeNull();
+  });
 });

@@ -32,7 +32,7 @@ function pickComparableReloadState(state: ReducerState, lastSeq: number) {
       currentRunId: state.uiState.currentRunId,
       runErrorMessage: state.uiState.runErrorMessage,
       runErrorReasonCode: state.uiState.runErrorReasonCode,
-      cameraCommand: state.uiState.cameraCommand,
+      cameraCommand: null,
     },
     lastSeq,
   };

@@ -23,7 +23,8 @@ export function useCameraCommand<TCamera>({
   indicatorMs = AGENT_MOVED_INDICATOR_MS,
 }: UseCameraCommandOptions<TCamera>) {
   const cameraCommand = useAppStore((state) => state.uiState.cameraCommand);
-  const lastConsumedSeqRef = useRef(0);
+  const lastSeq = useAppStore((state) => state.uiState.lastSeq);
+  const lastConsumedSeqRef = useRef(lastSeq);
   const [showAgentMoved, setShowAgentMoved] = useState(false);
 
   useEffect(() => {
