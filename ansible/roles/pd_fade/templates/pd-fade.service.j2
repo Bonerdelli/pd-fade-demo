@@ -1,0 +1,16 @@
+[Unit]
+Description=pd-fade Fastify server
+After=network.target
+
+[Service]
+Type=simple
+User={{ pd_fade_user }}
+Group={{ pd_fade_group }}
+WorkingDirectory={{ pd_fade_root }}/server
+EnvironmentFile={{ pd_fade_env_file }}
+ExecStart=/usr/bin/node dist/index.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

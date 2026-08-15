@@ -1,0 +1,20 @@
+---
+# Provision a pd-fade demo/production host (bare Node.js + systemd + nginx).
+#
+# Full run (from ansible/):
+#   ansible-galaxy install -r requirements.yml
+#   ansible-playbook environments/demo/provision.yml --ask-vault-pass
+#
+# Redeploy app only:
+#   ansible-playbook environments/demo/provision.yml --tags pd_fade --ask-vault-pass
+
+- name: Provision pd-fade host
+  hosts: pd_fade_servers
+  become: true
+  gather_facts: true
+
+  roles:
+    - { role: base, tags: [base] }
+    - { role: nodejs, tags: [nodejs] }
+    - { role: pd_fade, tags: [pd_fade] }
+    - { role: nginx, tags: [nginx] }

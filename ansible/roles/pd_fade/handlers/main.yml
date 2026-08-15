@@ -1,0 +1,9 @@
+---
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Restart pd-fade
+  ansible.builtin.systemd:
+    name: "{{ pd_fade_systemd_unit }}"
+    state: restarted

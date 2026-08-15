@@ -1,0 +1,11 @@
+---
+pd_fade_base_prereq_packages:
+  - ca-certificates
+  - curl
+  - gnupg
+  - tzdata
+
+pd_fade_base_packages:
+  - git
+  - build-essential
+  - python3

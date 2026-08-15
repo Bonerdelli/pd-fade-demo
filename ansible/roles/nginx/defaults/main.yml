@@ -1,0 +1,3 @@
+---
+pd_fade_tls_enabled: true
+pd_fade_sse_proxy_read_timeout: 86400s

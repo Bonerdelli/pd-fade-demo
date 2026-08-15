@@ -1,0 +1,79 @@
+---
+- name: Ensure application checkout directory exists
+  ansible.builtin.file:
+    path: "{{ pd_fade_root }}"
+    state: directory
+    owner: "{{ pd_fade_user }}"
+    group: "{{ pd_fade_group }}"
+    mode: "0755"
+
+- name: Clone or update application repository
+  ansible.builtin.git:
+    repo: "{{ pd_fade_repo_url }}"
+    dest: "{{ pd_fade_root }}"
+    version: "{{ pd_fade_repo_version }}"
+    accept_hostkey: true
+  become: true
+  become_user: "{{ pd_fade_user }}"
+  notify: Restart pd-fade
+
+- name: Install workspace dependencies
+  ansible.builtin.command:
+    cmd: pnpm install --frozen-lockfile
+    chdir: "{{ pd_fade_root }}"
+  become: true
+  become_user: "{{ pd_fade_user }}"
+  environment:
+    HOME: "{{ pd_fade_data_dir }}"
+  register: pnpm_install
+  changed_when: >-
+    'Already up to date' not in pnpm_install.stdout
+    and 'Lockfile is up to date' not in pnpm_install.stdout
+  notify: Restart pd-fade
+
+- name: Build client and server
+  ansible.builtin.command:
+    cmd: pnpm build
+    chdir: "{{ pd_fade_root }}"
+  become: true
+  become_user: "{{ pd_fade_user }}"
+  environment:
+    HOME: "{{ pd_fade_data_dir }}"
+  register: pnpm_build
+  changed_when: pnpm_build.rc == 0
+  notify: Restart pd-fade
+
+- name: Ensure environment file directory exists
+  ansible.builtin.file:
+    path: "{{ pd_fade_env_file | dirname }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Deploy server environment file
+  ansible.builtin.template:
+    src: pd-fade.env.j2
+    dest: "{{ pd_fade_env_file }}"
+    owner: root
+    group: "{{ pd_fade_group }}"
+    mode: "0640"
+  notify: Restart pd-fade
+
+- name: Deploy systemd unit
+  ansible.builtin.template:
+    src: pd-fade.service.j2
+    dest: "/etc/systemd/system/{{ pd_fade_systemd_unit }}.service"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Reload systemd
+    - Restart pd-fade
+
+- name: Enable and start pd-fade service
+  ansible.builtin.systemd:
+    name: "{{ pd_fade_systemd_unit }}"
+    enabled: true
+    state: started
+    daemon_reload: true
