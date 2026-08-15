@@ -18,6 +18,8 @@ until a release is cut.
 - Implement client event reducer with golden tests covering mock-run replay, ownership boundaries and tool card lifecycle
 - Add fetch-based SSE transport with seq gap detection, invalid payload dropping and reconnect backoff
 - Wire session bootstrap from URL query param through state hydration to live SSE subscription
+- Add optimistic upstream mutation helpers with debounced viewport/selection and coalesced position overrides
+- Expose `useSessionBootstrap`, `useRunLock` and `useMutations` hooks for surface phases
 - SQLite session store with append-only event log, snapshot compaction anchors, user state persistence and materialized chat read model
 - Server REST and SSE endpoints for session state, messages, canvas mutations and run cancellation
 - Deterministic mock agent driver with Berlin entity dataset and run manager with single active run per session
