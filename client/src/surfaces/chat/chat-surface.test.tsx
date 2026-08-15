@@ -8,6 +8,7 @@ import i18n from "../../i18n.js";
 import { useAppStore } from "../../store/index.js";
 import { initialUiState, emptyUserState } from "../../store/types.js";
 import { ChatComposer } from "./ChatComposer.js";
+import { ChatDebugModeToggle } from "./ChatDebugModeToggle.js";
 import { ChatHeader } from "./ChatHeader.js";
 import { MessageList } from "./MessageList.js";
 import { ToolCard } from "./ToolCard.js";
@@ -119,10 +120,22 @@ describe("Chat surface components", () => {
     expect(screen.getByText(/Agent executed mystery_tool/i)).toBeTruthy();
   });
 
-  it("renders debug mode toggle in chat header", async () => {
+  it("calls startNewSession when New chat is clicked in the chat header", async () => {
     const user = userEvent.setup();
+    const startNewSession = vi.fn();
+    useAppStore.setState({ startNewSession });
 
     renderWithI18n(<ChatHeader />);
+
+    await user.click(screen.getByRole("button", { name: "New chat" }));
+
+    expect(startNewSession).toHaveBeenCalledOnce();
+  });
+
+  it("renders debug mode toggle below the composer", async () => {
+    const user = userEvent.setup();
+
+    renderWithI18n(<ChatDebugModeToggle />);
 
     const toggle = screen.getByRole("checkbox", { name: /Debug Mode/i });
     expect(toggle).toBeTruthy();

@@ -23,7 +23,6 @@ export function App() {
   const bootstrapStatus = useAppStore((state) => state.uiState.bootstrapStatus);
   const mutationError = useAppStore((state) => state.uiState.mutationError);
   const retrySessionBootstrap = useAppStore((state) => state.retrySessionBootstrap);
-  const startNewSession = useAppStore((state) => state.startNewSession);
   const setActiveCanvasTab = useAppStore((state) => state.setActiveCanvasTab);
 
   const mutationErrorText = mutationError
@@ -53,13 +52,6 @@ export function App() {
               {t("layout.canvasPanel")}
             </span>
             <div className="ml-auto flex items-center gap-2">
-              <button
-                type="button"
-                className="rounded bg-slate-100 px-3 py-1 text-sm text-slate-700 hover:bg-slate-200"
-                onClick={() => startNewSession?.()}
-              >
-                {t("layout.newChat")}
-              </button>
               <div className="flex gap-1">
               <button
                 type="button"
