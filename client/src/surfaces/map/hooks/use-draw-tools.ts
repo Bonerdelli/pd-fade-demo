@@ -68,10 +68,20 @@ export function useDrawTools({
   const activeModeRef = useRef<DrawToolMode>("select");
   const selectedFeatureIdRef = useRef<string | number | null>(null);
   const isRunLockedRef = useRef(isRunLocked);
+  const [selectPinnedByLock, setSelectPinnedByLock] = useState(false);
+  const [prevRunLocked, setPrevRunLocked] = useState(isRunLocked);
   const syncingFromStoreRef = useRef(false);
   const syncingFromDrawRef = useRef(false);
   const serializedShapesRef = useRef<string>("");
   const [hasSelection, setHasSelection] = useState(false);
+  const [drawMode, setDrawModeState] = useState<DrawToolMode>("select");
+
+  if (isRunLocked !== prevRunLocked) {
+    setPrevRunLocked(isRunLocked);
+    if (isRunLocked) {
+      setSelectPinnedByLock(true);
+    }
+  }
 
   useEffect(() => {
     isRunLockedRef.current = isRunLocked;
@@ -82,12 +92,13 @@ export function useDrawTools({
       return;
     }
 
+    activeModeRef.current = "select";
+
     const draw = drawRef.current;
     if (!draw) {
       return;
     }
 
-    activeModeRef.current = "select";
     draw.setMode("select");
   }, [isRunLocked]);
 
@@ -274,7 +285,9 @@ export function useDrawTools({
       if (isRunLockedRef.current) {
         return;
       }
+      setSelectPinnedByLock(false);
       activeModeRef.current = mode;
+      setDrawModeState(mode);
       drawRef.current?.setMode(terraDrawModeForTool(mode));
     },
     [],
@@ -293,7 +306,10 @@ export function useDrawTools({
     setHasSelection(false);
   }, [deleteUserShape]);
 
+  const effectiveDrawMode: DrawToolMode = selectPinnedByLock ? "select" : drawMode;
+
   return {
+    drawMode: effectiveDrawMode,
     setDrawMode,
     deleteSelected,
     hasSelection,

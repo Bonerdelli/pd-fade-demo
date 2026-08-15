@@ -41,6 +41,9 @@ until a release is cut.
 - Keep resync on `reconnecting` status during gap recovery instead of flashing `down`
 - Accept optional client `messageId` on POST messages for optimistic id alignment
 - Finalize in-flight tool cards as cancelled or error when a run ends with RUN_CANCELLED or RUN_ERROR
+- Keep map draw toolbar in sync with terra-draw after run soft-lock releases
+- Remove unused submitClearPositionOverrides mutation helper export
+- Add hydrate E2E coverage for cancelled runs with cancelled in-flight tool cards
 
 ### Changed
 

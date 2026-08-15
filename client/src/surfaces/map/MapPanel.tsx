@@ -23,13 +23,11 @@ export function MapPanel() {
   const isRunLocked = useRunLock();
   const { upsertUserShape, deleteUserShape, addComment, setViewport } = useMutations();
 
-  const [activeMode, setActiveMode] = useState<DrawToolMode>("select");
   const [selectedAgentShape, setSelectedAgentShape] = useState<{
     shapeId: string;
     label: string;
   } | null>(null);
 
-  const toolbarMode: DrawToolMode = isRunLocked ? "select" : activeMode;
   const visibleAgentShape =
     selectedAgentShape && agentShapeIds.has(selectedAgentShape.shapeId)
       ? selectedAgentShape
@@ -66,7 +64,7 @@ export function MapPanel() {
     onAgentShapeClick: handleAgentShapeClick,
   });
 
-  const { setDrawMode, deleteSelected, hasSelection } = useDrawTools({
+  const { drawMode, setDrawMode, deleteSelected, hasSelection } = useDrawTools({
     mapRef,
     isRunLocked,
     upsertUserShape,
@@ -97,7 +95,6 @@ export function MapPanel() {
 
   const handleModeChange = useCallback(
     (mode: DrawToolMode) => {
-      setActiveMode(mode);
       setDrawMode(mode);
     },
     [setDrawMode],
@@ -129,7 +126,7 @@ export function MapPanel() {
         <div ref={containerRef} className="absolute inset-0" data-testid="map-container" />
 
         <MapToolbar
-          activeMode={toolbarMode}
+          activeMode={drawMode}
           disabled={isRunLocked}
           canDelete={hasSelection}
           onModeChange={handleModeChange}
