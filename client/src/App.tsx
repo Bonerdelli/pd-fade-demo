@@ -1,10 +1,16 @@
+import { lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { CanvasErrorOverlay } from "./components/CanvasErrorOverlay";
+import { CanvasSurfaceErrorBoundary } from "./components/CanvasSurfaceErrorBoundary";
 import { useSessionBootstrap } from "./hooks";
 import { useAppStore } from "./store";
 import { ChatPanel } from "./surfaces/chat/ChatPanel";
 import { GraphPanel } from "./surfaces/graph/GraphPanel";
-import { MapPanel } from "./surfaces/map/MapPanel";
+
+const MapPanel = lazy(async () => {
+  const module = await import("./surfaces/map/MapPanel");
+  return { default: module.MapPanel };
+});
 
 function SessionBootstrap() {
   useSessionBootstrap();
@@ -12,7 +18,7 @@ function SessionBootstrap() {
 }
 
 export function App() {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation(["common", "map"]);
   const activeTab = useAppStore((state) => state.uiState.activeCanvasTab);
   const bootstrapStatus = useAppStore((state) => state.uiState.bootstrapStatus);
   const mutationError = useAppStore((state) => state.uiState.mutationError);
@@ -70,7 +76,23 @@ export function App() {
           <div className="relative min-h-0 flex-1 bg-white">
             {bootstrapStatus === "ready" ? (
               <>
-                {activeTab === "graph" ? <GraphPanel /> : <MapPanel />}
+                {activeTab === "graph" ? (
+                  <CanvasSurfaceErrorBoundary surface="graph">
+                    <GraphPanel />
+                  </CanvasSurfaceErrorBoundary>
+                ) : (
+                  <Suspense
+                    fallback={
+                      <div className="flex h-full items-center justify-center p-8">
+                        <p className="text-sm text-slate-500">{t("map:loading")}</p>
+                      </div>
+                    }
+                  >
+                    <CanvasSurfaceErrorBoundary surface="map">
+                      <MapPanel />
+                    </CanvasSurfaceErrorBoundary>
+                  </Suspense>
+                )}
                 {mutationErrorText ? (
                   <CanvasErrorOverlay message={mutationErrorText} overlay />
                 ) : null}

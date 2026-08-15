@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
 import { createSessionController } from "./session.js";
 import type { SseConnectionHandle } from "./sse.js";
 
@@ -24,6 +24,10 @@ vi.mock("./sse.js", () => ({
 import { connectSse } from "./sse.js";
 
 describe("createSessionController", () => {
+  beforeEach(() => {
+    vi.mocked(connectSse).mockClear();
+  });
+
   it("wires onStreamStalled to abort the stream and mark reconnecting", async () => {
     const setConnectionStatus = vi.fn();
     const abortStream = vi.fn();

@@ -1,5 +1,6 @@
 {
   "panelTitle": "Map",
+  "loading": "Loading map",
   "toolbar": {
     "select": "Select",
     "point": "Point",

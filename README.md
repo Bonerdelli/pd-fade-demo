@@ -116,7 +116,7 @@ Reducer golden tests replay recorded mock-run event logs. Transport tests cover 
 - **Camera commands are consumed once** — historical `VIEWPORT_COMMAND` events are never replayed on reload or canvas remount (user viewports stay absolute across session boundaries). The trade-off: a camera flight that happens while the target canvas is unmounted is skipped, along with its “agent moved the view” indicator.
 - **Composer during a run** — while a run is active the Send action is replaced by Stop; you can type the next message but cannot send it until the run finishes or is stopped.
 - **Comment placement** — commenting an agent map shape opens a side panel rather than a popup anchored at the clicked location.
-- **Client bundle size** — the production bundle is ~1.6 MB (MapLibre GL + React Flow); Vite emits a chunk-size warning. No code splitting of the canvas libraries in this demo.
+- **Client bundle size** — MapLibre GL and terra-draw load in a separate lazy chunk when the Map tab is opened; the main bundle still includes React Flow (~1.1 MB). Vite may emit chunk-size warnings for the map chunk.
 
 ## License
 

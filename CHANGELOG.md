@@ -8,6 +8,9 @@ until a release is cut.
 
 ### Added
 
+- Lazy-load MapPanel with React Suspense so MapLibre GL and terra-draw ship in a separate chunk
+- `CanvasSurfaceErrorBoundary` with localized fallback and retry remount for graph and map surfaces
+- Unit tests for map instance resize/load readiness and canvas surface error boundary recovery
 - Ansible optional SSH deploy key for private git repository checkout
 - Ansible provisioning for demo/production VMs (Node.js 20, pnpm via corepack, systemd, nginx, optional TLS)
 - Root README pointer to `ansible/README.md`
@@ -53,6 +56,7 @@ until a release is cut.
 
 - Fix blank Map tab by resizing MapLibre after layout settles and deferring draw/layer setup until map load
 - Exclude maplibre-gl from Vite dependency pre-bundling to avoid missing worker asset in dev
+- Clear `connectSse` mock call history between session controller unit tests
 - Fix doubled SSE event application from StrictMode bootstrap and leaked reconnect loops by disconnecting replaced streams and guarding in-flight session lifecycle
 - Ignore duplicate event seq in store applyEvent as a global dedup backstop
 - Flush Ansible nginx handlers before certbot webroot so ACME challenges succeed on first TLS run

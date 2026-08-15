@@ -18,6 +18,10 @@
     "chat": "Restoring chat history",
     "canvas": "Restoring canvas state"
   },
+  "canvasError": {
+    "graph": "Graph canvas failed to load",
+    "map": "Map canvas failed to load"
+  },
   "mutations": {
     "blockedDuringRun": "Mutation blocked while agent run is active",
     "messageBlockedDuringRun": "Cannot send message while agent run is active",
