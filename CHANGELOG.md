@@ -8,6 +8,7 @@ until a release is cut.
 
 ### Added
 
+- Root README with setup, demo walkthrough, and known limitations
 - Client SSE stall watchdog with 45s silence threshold and reconnect on stream stall
 - SSE transport chaos tests for disconnect resume, duplicate seq drop, and gap resync convergence
 - Unit tests for SSE activity watchdog with fake timers
