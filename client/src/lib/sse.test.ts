@@ -74,7 +74,7 @@ describe("connectSse", () => {
       'id: 3\ndata: {"seq":2,"runId":"r1","ts":2,"type":"RUN_FINISHED"}\n\n',
     ]);
 
-    const disconnect = await connectSse({
+    const connection = await connectSse({
       url: "/events",
       fetchImpl,
       signal: abortController.signal,
@@ -89,7 +89,7 @@ describe("connectSse", () => {
 
     expect(onInvalidPayload).toHaveBeenCalledTimes(1);
     abortController.abort();
-    disconnect();
+    connection.disconnect();
   });
 
   it("triggers resync callback on seq gap", async () => {
@@ -130,7 +130,7 @@ describe("connectSse", () => {
       'id: 1\ndata: {"seq":1,"runId":"r1","ts":1,"type":"RUN_STARTED"}\n\n',
     ]);
 
-    const disconnect = await connectSse({
+    const connection = await connectSse({
       url: "/events",
       lastEventId: 1,
       fetchImpl,
@@ -144,7 +144,7 @@ describe("connectSse", () => {
     });
 
     abortController.abort();
-    disconnect();
+    connection.disconnect();
   });
 });
 

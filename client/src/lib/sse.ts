@@ -23,6 +23,11 @@ export interface SseConnectOptions extends SseEventHandler {
   sleep?: (ms: number) => Promise<void>;
 }
 
+export interface SseConnectionHandle {
+  disconnect: () => void;
+  abortStream: () => void;
+}
+
 const MAX_BACKOFF_MS = 10_000;
 const BASE_BACKOFF_MS = 500;
 
@@ -77,7 +82,7 @@ function shouldAcceptSeq(lastSeq: number, incomingSeq: number): "accept" | "drop
   return "accept";
 }
 
-export async function connectSse(options: SseConnectOptions): Promise<() => void> {
+export async function connectSse(options: SseConnectOptions): Promise<SseConnectionHandle> {
   const {
     url,
     lastEventId: initialLastEventId,
@@ -94,28 +99,31 @@ export async function connectSse(options: SseConnectOptions): Promise<() => void
   let lastEventIdHeader = initialLastEventId !== undefined ? String(initialLastEventId) : undefined;
   let attempt = 0;
   let closed = false;
-  const abortController = new AbortController();
+  let streamAbortController = new AbortController();
 
-  const mergedSignal = signal
-    ? (() => {
-        const onAbort = () => abortController.abort();
-        signal.addEventListener("abort", onAbort, { once: true });
-        return abortController.signal;
-      })()
-    : abortController.signal;
+  const abortStream = () => {
+    streamAbortController.abort();
+  };
 
   const disconnect = () => {
     closed = true;
-    abortController.abort();
+    abortStream();
     onConnectionStatusChange?.("down");
   };
 
+  if (signal) {
+    signal.addEventListener("abort", () => disconnect(), { once: true });
+  }
+
   void (async () => {
-    while (!closed && !mergedSignal.aborted) {
+    while (!closed) {
+      streamAbortController = new AbortController();
+      const streamSignal = streamAbortController.signal;
+
       if (attempt > 0) {
         onConnectionStatusChange?.("reconnecting");
         await sleep(computeBackoffDelayMs(attempt - 1));
-        if (closed || mergedSignal.aborted) {
+        if (closed || streamSignal.aborted) {
           return;
         }
       }
@@ -130,7 +138,7 @@ export async function connectSse(options: SseConnectOptions): Promise<() => void
 
         const response = await fetchImpl(url, {
           headers,
-          signal: mergedSignal,
+          signal: streamSignal,
         });
 
         if (!response.ok || !response.body) {
@@ -144,7 +152,7 @@ export async function connectSse(options: SseConnectOptions): Promise<() => void
         const decoder = new TextDecoder();
         let buffer = "";
 
-        while (!closed && !mergedSignal.aborted) {
+        while (!closed && !streamSignal.aborted) {
           const { done, value } = await reader.read();
           if (done) {
             break;
@@ -183,7 +191,7 @@ export async function connectSse(options: SseConnectOptions): Promise<() => void
             if (seqDecision === "gap") {
               onGapDetected?.(lastSeq, event.seq);
               reader.cancel().catch(() => undefined);
-              abortController.abort();
+              abortStream();
               return;
             }
 
@@ -195,11 +203,11 @@ export async function connectSse(options: SseConnectOptions): Promise<() => void
           }
         }
 
-        if (closed || mergedSignal.aborted) {
+        if (closed || streamSignal.aborted) {
           return;
         }
       } catch {
-        if (closed || mergedSignal.aborted) {
+        if (closed || streamSignal.aborted) {
           return;
         }
       }
@@ -212,7 +220,7 @@ export async function connectSse(options: SseConnectOptions): Promise<() => void
     }
   })();
 
-  return disconnect;
+  return { disconnect, abortStream };
 }
 
 export function reportInvalidSsePayload(_raw: string, _error: unknown): void {

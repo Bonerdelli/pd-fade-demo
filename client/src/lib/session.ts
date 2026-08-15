@@ -5,7 +5,7 @@ import {
   type SessionStateResponse,
 } from "@pd-fade/shared";
 import { apiUrl } from "./api-base.js";
-import { connectSse, reportInvalidSsePayload, type SseConnectionStatus } from "./sse.js";
+import { connectSse, reportInvalidSsePayload, type SseConnectionHandle, type SseConnectionStatus } from "./sse.js";
 
 export function readSessionIdFromUrl(location: Location = window.location): string | null {
   const params = new URLSearchParams(location.search);
@@ -69,26 +69,27 @@ export function createSessionController(options: SessionControllerOptions): Sess
     fetchImpl = fetch,
   } = options;
 
-  let disconnectSse: (() => void) | null = null;
+  let sseConnection: SseConnectionHandle | null = null;
   let stopped = false;
   let resyncInFlight: Promise<void> | null = null;
 
   const stop = () => {
     stopped = true;
-    disconnectSse?.();
-    disconnectSse = null;
+    sseConnection?.disconnect();
+    sseConnection = null;
     setConnectionStatus("down");
   };
 
   const connectStream = async (sessionId: string) => {
-    disconnectSse?.();
-    disconnectSse = await connectSse({
+    sseConnection?.abortStream();
+    sseConnection = await connectSse({
       url: apiUrl(sessionEventsPath(sessionId)),
       lastEventId: getLastSeq(),
       onEvent: applyEvent,
       onInvalidPayload: reportInvalidSsePayload,
       onConnectionStatusChange: setConnectionStatus,
       onGapDetected: () => {
+        setConnectionStatus("reconnecting");
         void resync();
       },
       fetchImpl,
@@ -106,13 +107,15 @@ export function createSessionController(options: SessionControllerOptions): Sess
         return;
       }
 
-      disconnectSse?.();
-      disconnectSse = null;
+      sseConnection?.abortStream();
+      sseConnection = null;
+      setConnectionStatus("reconnecting");
       setBootstrapStatus("loading");
 
       try {
         const state = await fetchSessionState(sessionId, fetchImpl);
         hydrateSession(state);
+        setBootstrapStatus("ready");
         if (!stopped) {
           await connectStream(sessionId);
         }
