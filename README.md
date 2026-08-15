@@ -63,7 +63,7 @@ Open the client with a session id in the query string, or let the app create one
 
 ## Demo walkthrough
 
-1. **Send a message** — type something like “show berlin entities” in chat. Watch streaming assistant text, tool cards, graph nodes appearing, and a map camera move after signals plot.
+1. **Send a message** — type something like “show berlin entities” in chat. Watch streaming assistant text, tool cards, graph nodes appearing, and a map camera move after signals plot. Keep the Map tab open before the agent plots signals: camera commands are consumed once, so if the flight happens while the Map canvas is unmounted, opening the tab later shows the shapes but not the flight or the “agent moved the view” indicator.
 2. **Graph** — drag nodes (position overrides), select nodes, click **Realign** when layout diverges from the agent snapshot.
 3. **Map** — draw a point or polygon with the toolbar, select and delete user shapes. Click an agent shape to attach a comment.
 4. **Reload mid-session** — refresh the page; chat, agent snapshot, user shapes, comments, overrides, selection, and viewports restore from the server.
@@ -95,6 +95,10 @@ Reducer golden tests replay recorded mock-run event logs. Transport tests cover 
 - **Map basemap dependency** — tiles load from `demotiles.maplibre.org`; offline or blocked network yields a blank basemap (user/agent overlays still render).
 - **Server start without env file** — `pnpm start` on the server does not load `.env`; only `pnpm dev` passes `--env-file=.env` (Anthropic key, driver selection, mock delays).
 - **MapLibre re-created on tab switch** — switching Graph ↔ Map unmounts the inactive canvas; the map instance and terra-draw adapter are torn down and recreated (documented debt, not fixed in this demo).
+- **Camera commands are consumed once** — historical `VIEWPORT_COMMAND` events are never replayed on reload or canvas remount (user viewports stay absolute across session boundaries). The trade-off: a camera flight that happens while the target canvas is unmounted is skipped, along with its “agent moved the view” indicator.
+- **Composer during a run** — while a run is active the Send action is replaced by Stop; you can type the next message but cannot send it until the run finishes or is stopped.
+- **Comment placement** — commenting an agent map shape opens a side panel rather than a popup anchored at the clicked location.
+- **Client bundle size** — the production bundle is ~1.6 MB (MapLibre GL + React Flow); Vite emits a chunk-size warning. No code splitting of the canvas libraries in this demo.
 
 ## License
 

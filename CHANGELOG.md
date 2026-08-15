@@ -77,6 +77,7 @@ until a release is cut.
 - Resolve run error banner copy from `reasonCode` with human-readable message fallback
 - Localize tool card header names via chat i18n mapping with raw-name fallback
 - Extend README known limitations and demo walkthrough for mock delay env and design-doc gaps
+- Document camera consume-once semantics, composer run policy, comment panel placement and bundle size in README
 - Refactor mock agent driver to use shared dataset and tool executors while preserving deterministic mock-run fixture event structure
 - Export `createAgentDriver` from dedicated factory supporting `mock` and `anthropic` drivers
 - Rebuild client reducer golden fixture from the real mock driver event log
