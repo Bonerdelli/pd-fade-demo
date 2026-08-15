@@ -121,3 +121,7 @@ Reducer golden tests replay recorded mock-run event logs. Transport tests cover 
 ## License
 
 Private demo repository.
+
+## Deployment
+
+Bare-metal VM provisioning (Node.js, systemd, nginx) is documented in [ansible/README.md](ansible/README.md).

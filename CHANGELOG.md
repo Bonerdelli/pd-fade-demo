@@ -8,6 +8,8 @@ until a release is cut.
 
 ### Added
 
+- Ansible provisioning for demo/production VMs (Node.js 20, pnpm via corepack, systemd, nginx, optional TLS)
+- Root README pointer to `ansible/README.md`
 - Anthropic demo system prompt module with tool choreography, protocol boundary, and user-context instructions
 - Suggested Anthropic live-demo script with paste-ready messages in README
 - Root README with setup, demo walkthrough, and known limitations
