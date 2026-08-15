@@ -1,7 +1,7 @@
 import type { AppendEventInput, SessionStore } from "../db/session-store.js";
 import type { EventBus } from "../lib/event-bus.js";
 import type { AgentDriver } from "./driver.js";
-import { createAgentDriver } from "./mock-driver.js";
+import { createAgentDriver } from "./create-agent-driver.js";
 import { isRunCancelledError } from "./driver.js";
 
 interface ActiveRun {
@@ -20,6 +20,10 @@ export class RunManager {
 
   isRunActive(sessionId: string): boolean {
     return this.activeRuns.has(sessionId);
+  }
+
+  getActiveRunId(sessionId: string): string | null {
+    return this.activeRuns.get(sessionId)?.runId ?? null;
   }
 
   startRun(sessionId: string, userMessage: string): void {

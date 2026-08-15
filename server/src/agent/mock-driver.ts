@@ -111,5 +111,3 @@ export class MockAgentDriver implements AgentDriver {
     await emit({ type: "RUN_FINISHED", runId });
   }
 }
-
-export { createAgentDriver } from "./create-agent-driver.js";

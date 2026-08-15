@@ -80,6 +80,30 @@ describe("orphan run reconciliation", () => {
     }
   });
 
+  it("skips reconciliation for run ids that are still executing in memory", () => {
+    const db = createDatabase(":memory:");
+    const store = new SessionStore(db);
+    const sessionId = "active-run-session";
+
+    store.ensureSession(sessionId);
+    store.appendEvent(sessionId, { type: "RUN_STARTED", runId: "run-active" });
+    store.appendEvent(sessionId, {
+      type: "TOOL_START",
+      runId: "run-active",
+      toolCallId: "tool-active",
+      name: "searchEntities",
+    });
+
+    const reconciled = reconcileSessionOrphanedRuns(store, sessionId, {
+      skipRunIds: new Set(["run-active"]),
+    });
+
+    expect(reconciled).toHaveLength(0);
+    expect(store.getLastSeq(sessionId)).toBe(2);
+
+    db.close();
+  });
+
   it("does not reconcile runs that already have a terminal event", () => {
     const db = createDatabase(":memory:");
     const store = new SessionStore(db);

@@ -36,12 +36,20 @@ function findOrphanedRunIds(db: Database.Database, sessionId: string): string[] 
   return [...startedRunIds].filter((runId) => !terminatedRunIds.has(runId));
 }
 
+export interface ReconcileSessionOptions {
+  onEvent?: (event: AgentEvent) => void;
+  skipRunIds?: ReadonlySet<string>;
+}
+
 export function reconcileSessionOrphanedRuns(
   sessionStore: SessionStore,
   sessionId: string,
-  onEvent?: (event: AgentEvent) => void,
+  options: ReconcileSessionOptions = {},
 ): AgentEvent[] {
-  const orphanedRunIds = findOrphanedRunIds(sessionStore.getDatabase(), sessionId);
+  const { onEvent, skipRunIds } = options;
+  const orphanedRunIds = findOrphanedRunIds(sessionStore.getDatabase(), sessionId).filter(
+    (runId) => !skipRunIds?.has(runId),
+  );
   const reconciled: AgentEvent[] = [];
 
   for (const runId of orphanedRunIds) {
@@ -64,8 +72,10 @@ export function reconcileAllOrphanedRuns(
   const reconciled: AgentEvent[] = [];
 
   for (const sessionId of listSessionIds(sessionStore.getDatabase())) {
-    const events = reconcileSessionOrphanedRuns(sessionStore, sessionId, (event) => {
-      onEvent?.(sessionId, event);
+    const events = reconcileSessionOrphanedRuns(sessionStore, sessionId, {
+      onEvent: (event) => {
+        onEvent?.(sessionId, event);
+      },
     });
     reconciled.push(...events);
   }

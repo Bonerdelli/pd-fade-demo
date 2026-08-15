@@ -37,11 +37,17 @@ export interface HttpDependencies {
 function touchSession(
   sessionStore: SessionStore,
   eventBus: EventBus,
+  runManager: RunManager,
   sessionId: string,
 ): void {
   sessionStore.ensureSession(sessionId);
-  reconcileSessionOrphanedRuns(sessionStore, sessionId, (event) => {
-    eventBus.publish(sessionId, event);
+
+  const activeRunId = runManager.getActiveRunId(sessionId);
+  reconcileSessionOrphanedRuns(sessionStore, sessionId, {
+    skipRunIds: activeRunId ? new Set([activeRunId]) : undefined,
+    onEvent: (event) => {
+      eventBus.publish(sessionId, event);
+    },
   });
 }
 
@@ -50,7 +56,7 @@ export function registerSessionRoutes(app: FastifyInstance, deps: HttpDependenci
 
   app.get(sessionEventsPath(":id"), async (request, reply) => {
     const { id } = sessionRouteParamsSchema.parse(request.params);
-    touchSession(sessionStore, eventBus, id);
+    touchSession(sessionStore, eventBus, runManager, id);
 
     const afterSeq = parseLastEventId(request);
     const lastSeq = sessionStore.getLastSeq(id);
@@ -81,7 +87,7 @@ export function registerSessionRoutes(app: FastifyInstance, deps: HttpDependenci
 
   app.get(sessionStatePath(":id"), async (request) => {
     const { id } = sessionRouteParamsSchema.parse(request.params);
-    touchSession(sessionStore, eventBus, id);
+    touchSession(sessionStore, eventBus, runManager, id);
 
     const latestSnapshot = sessionStore.getLatestSnapshot(id);
     const snapshotSeq = latestSnapshot?.seq ?? 0;
@@ -101,7 +107,7 @@ export function registerSessionRoutes(app: FastifyInstance, deps: HttpDependenci
     const { id } = sessionRouteParamsSchema.parse(request.params);
     const body = postMessageRequestSchema.parse(request.body);
 
-    touchSession(sessionStore, eventBus, id);
+    touchSession(sessionStore, eventBus, runManager, id);
 
     if (runManager.isRunActive(id)) {
       return reply.status(409).send({ error: "run_active" });
@@ -129,14 +135,14 @@ export function registerSessionRoutes(app: FastifyInstance, deps: HttpDependenci
       return reply.status(409).send({ error: "run_active" });
     }
 
-    touchSession(sessionStore, eventBus, id);
+    touchSession(sessionStore, eventBus, runManager, id);
     sessionStore.applyCanvasMutation(id, body.mutation);
     return postCanvasResponseSchema.parse({ accepted: true });
   });
 
   app.post(sessionCancelRunPath(":id"), async (request, reply) => {
     const { id } = sessionRouteParamsSchema.parse(request.params);
-    touchSession(sessionStore, eventBus, id);
+    touchSession(sessionStore, eventBus, runManager, id);
     const cancelled = runManager.cancelRun(id);
 
     if (!cancelled) {

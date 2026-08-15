@@ -156,10 +156,11 @@ describe("SSE", () => {
       lastSeq: number;
     };
 
-    const snapshotEvent = stateBody.tailEvents.find((event) => event.type === "STATE_SNAPSHOT");
-    expect(snapshotEvent).toBeDefined();
+    const firstTailSeq = stateBody.tailEvents[0]?.seq;
+    expect(firstTailSeq).toBeDefined();
 
-    const oldCursor = Math.max(0, snapshotEvent!.seq - 3);
+    const snapshotAnchorSeq = firstTailSeq! - 1;
+    const oldCursor = Math.max(0, snapshotAnchorSeq - 2);
     const replayBody = await new Promise<string>((resolve, reject) => {
       const request = get(
         `${baseUrl}${sessionEventsPath(sessionId)}?lastEventId=${oldCursor}`,
