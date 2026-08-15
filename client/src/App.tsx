@@ -27,8 +27,8 @@ export function App() {
     <div className="flex h-full flex-col bg-slate-100 text-slate-900">
       <SessionBootstrap />
 
-      <main className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[360px_minmax(0,1fr)]">
-        <aside className="min-h-0 border-b border-slate-200 bg-white lg:border-b-0 lg:border-r">
+      <main className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[360px_minmax(0,1fr)]">
+        <aside className="min-h-0 border-b border-slate-200 bg-white md:border-b-0 md:border-r">
           {bootstrapStatus === "ready" ? (
             <ChatPanel />
           ) : (
