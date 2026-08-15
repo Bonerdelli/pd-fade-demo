@@ -49,6 +49,8 @@ until a release is cut.
 
 ### Fixed
 
+- Fix doubled SSE event application from StrictMode bootstrap and leaked reconnect loops by disconnecting replaced streams and guarding in-flight session lifecycle
+- Ignore duplicate event seq in store applyEvent as a global dedup backstop
 - Flush Ansible nginx handlers before certbot webroot so ACME challenges succeed on first TLS run
 - Make Ansible git known_hosts management idempotent via the known_hosts module
 - Rebuild pd-fade on retry when dist outputs or build stamp lag behind the checked-out revision

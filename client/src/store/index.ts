@@ -24,6 +24,10 @@ export const useAppStore = create<AppStoreState>((set) => ({
 
   applyEvent: (event: AgentEvent) => {
     set((state) => {
+      if (event.seq <= state.uiState.lastSeq) {
+        return state;
+      }
+
       const next = reduceEvent(toReducerSlice(state), event);
       return {
         agentState: next.agentState,
@@ -31,7 +35,7 @@ export const useAppStore = create<AppStoreState>((set) => ({
         chat: next.chat,
         uiState: {
           ...next.uiState,
-          lastSeq: Math.max(state.uiState.lastSeq, event.seq),
+          lastSeq: event.seq,
         },
       };
     });
@@ -77,6 +81,12 @@ export const useAppStore = create<AppStoreState>((set) => ({
   setMutationError: (error: MutationError | null) => {
     set((state) => ({
       uiState: { ...state.uiState, mutationError: error },
+    }));
+  },
+
+  setDebugMode: (debugMode: boolean) => {
+    set((state) => ({
+      uiState: { ...state.uiState, debugMode },
     }));
   },
 
