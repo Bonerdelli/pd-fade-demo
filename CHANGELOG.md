@@ -47,6 +47,7 @@ until a release is cut.
 
 ### Fixed
 
+- Obtain Let's Encrypt certificate before deploying TLS nginx vhost on first provision
 - Fix tool card name i18n lookup to use the `toolCards.toolNames` namespace path
 - Sync hydrated user map shapes into terra-draw after deferred map load setup
 - Clear historical viewport commands on session hydrate and skip replay on surface remount

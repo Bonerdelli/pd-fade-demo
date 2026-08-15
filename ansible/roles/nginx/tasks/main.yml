@@ -12,21 +12,6 @@
   ansible.builtin.file:
     path: /etc/nginx/sites-enabled/default
     state: absent
-  notify: Reload nginx
-
-- name: Deploy pd-fade vhost
-  ansible.builtin.template:
-    src: vhost-pd-fade.conf.j2
-    dest: /etc/nginx/sites-available/pd-fade.conf
-    mode: "0644"
-  notify: Reload nginx
-
-- name: Enable pd-fade vhost
-  ansible.builtin.file:
-    src: /etc/nginx/sites-available/pd-fade.conf
-    dest: /etc/nginx/sites-enabled/pd-fade.conf
-    state: link
-  notify: Reload nginx
 
 - name: Check if TLS certificate exists
   ansible.builtin.stat:
@@ -54,13 +39,27 @@
     - not (pd_fade_cert_check.stat.exists | default(false))
   register: certbot_result
   changed_when: certbot_result.rc == 0
-  notify: Restart nginx
+
+- name: Deploy pd-fade vhost
+  ansible.builtin.template:
+    src: vhost-pd-fade.conf.j2
+    dest: /etc/nginx/sites-available/pd-fade.conf
+    mode: "0644"
+  notify: Reload nginx
+
+- name: Enable pd-fade vhost
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/pd-fade.conf
+    dest: /etc/nginx/sites-enabled/pd-fade.conf
+    state: link
+  notify: Reload nginx
 
 - name: Enable and start nginx
   ansible.builtin.systemd:
     name: nginx
     state: started
     enabled: true
+    daemon_reload: true
 
 - name: Set up certbot auto-renewal
   ansible.builtin.cron:
