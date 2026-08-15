@@ -2,7 +2,7 @@ import Fastify from "fastify";
 import { fileURLToPath } from "node:url";
 import { createRunManager } from "./agent/index.js";
 import { config } from "./config.js";
-import { createDatabase, SessionStore } from "./db/index.js";
+import { createDatabase, reconcileAllOrphanedRuns, SessionStore } from "./db/index.js";
 import { registerSessionRoutes } from "./http/index.js";
 import { EventBus } from "./lib/event-bus.js";
 
@@ -15,6 +15,9 @@ export async function buildServer(options: BuildServerOptions = {}) {
   const db = createDatabase(options.dbPath ?? config.dbPath);
   const sessionStore = new SessionStore(db);
   const eventBus = new EventBus();
+  reconcileAllOrphanedRuns(sessionStore, (sessionId, event) => {
+    eventBus.publish(sessionId, event);
+  });
   const runManager = createRunManager(
     sessionStore,
     eventBus,

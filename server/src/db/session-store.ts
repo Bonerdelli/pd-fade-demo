@@ -15,6 +15,10 @@ export type AppendEventInput = {
 export class SessionStore {
   constructor(private readonly db: Database.Database) {}
 
+  getDatabase(): Database.Database {
+    return this.db;
+  }
+
   ensureSession(sessionId: string): void {
     const existing = this.db
       .prepare(`SELECT id FROM sessions WHERE id = ?`)
