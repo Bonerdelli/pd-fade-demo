@@ -12,6 +12,8 @@ until a release is cut.
 - Lazy-load MapPanel with React Suspense so MapLibre GL and terra-draw ship in a separate chunk
 - `CanvasSurfaceErrorBoundary` with localized fallback and retry remount for graph and map surfaces
 - Unit tests for map instance resize/load readiness and canvas surface error boundary recovery
+- Ansible local build and release archive deploy with versioned releases and rollback via `current` symlink
+- Ansible controller build script and post-deploy `/health` check
 - Ansible optional SSH deploy key for private git repository checkout
 - Ansible provisioning for demo/production VMs (Node.js 20, pnpm via corepack, systemd, nginx, optional TLS)
 - Root README pointer to `ansible/README.md`
@@ -104,6 +106,7 @@ until a release is cut.
 
 ### Changed
 
+- Rework Ansible app deploy to controller-side build and release archives (no git on target)
 - Left-align the chat debug mode toggle and drop its separator border
 - Move New chat control from canvas header to chat header; move debug mode toggle to a footer row below the composer
 - Hide tool card Expand control when expanded content would repeat the collapsed summary; registry `hasDetails` predicates per card type and debug mode
@@ -132,4 +135,5 @@ until a release is cut.
 
 ### Removed
 
+- Ansible target-host git checkout deploy path (deploy keys, repo URL vars, on-host build)
 - React Flow MiniMap from the graph canvas (non-functional in current setup)

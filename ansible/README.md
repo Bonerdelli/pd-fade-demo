@@ -1,13 +1,22 @@
 # pd-fade Ansible provisioning
 
-Bare-metal provisioning for a demo or small production VM: **Node.js 20 + pnpm 10 (corepack)**, **systemd** for the Fastify server, **nginx** for the built client SPA and `/api` reverse proxy with SSE-friendly settings. No Docker on the target host.
+Bare-metal provisioning for a demo or small production VM: **build on the controller**, ship a release archive, install production deps on the target (native modules compiled for Linux), **systemd** for the Fastify server, **nginx** for the built client SPA and `/api` reverse proxy with SSE-friendly settings. No Docker and **no git** on the target host.
 
 ## Requirements
 
-- Ansible 2.15+ on the control machine
-- Debian or Ubuntu on the target host
+### Control machine (where you run `ansible-playbook`)
+
+- Ansible 2.15+
+- Node.js 20+ and pnpm 10+ (`corepack enable && corepack prepare pnpm@10.28.0 --activate`)
+- The pd-fade repository checkout (build runs from `pd_fade_repo_root`)
+
+### Target host
+
+- Debian or Ubuntu
 - SSH access as root (or a user with sudo)
+- Node.js 20+ and pnpm 10+ (installed by the `nodejs` role — used for `pnpm install --prod` only)
 - DNS `A` record for `root_domain` when TLS is enabled
+- **No git required**
 
 ```bash
 cd ansible
@@ -17,13 +26,23 @@ ansible-galaxy install -r requirements.yml
 
 Collections install into `ansible/.collections` (see `ansible.cfg`).
 
+## Deploy flow
+
+1. **Controller:** `pnpm install --frozen-lockfile && pnpm build`, then pack `server/dist`, `shared/dist`, `client/dist`, workspace manifests into `pd-fade-<release-id>.tar.gz` (see `scripts/build-release-archive.sh`; Ansible invokes this automatically).
+2. **Target:** upload archive → unpack under `{{ pd_fade_releases_dir }}/<release-id>` → `pnpm install --frozen-lockfile --prod --filter @pd-fade/server...` (rebuilds **better-sqlite3** for Linux) → atomically point `{{ pd_fade_current_link }}` symlink → restart systemd → probe `/health`.
+3. **Idempotency:** if the archive SHA-256 matches `.release-checksum` in the current release, upload and restart are skipped.
+
+### Why not ship `node_modules` from macOS?
+
+`better-sqlite3` is a native addon. Binaries built on a macOS controller are not portable to Linux. The archive contains compiled **JavaScript** (`dist/`) and manifests only; the target runs `pnpm install --prod` so native modules compile on the host.
+
 ## Inventory
 
 1. Copy or edit `environments/demo/inventory.yml` — set `ansible_host`, `ansible_user`, and SSH key if needed.
-2. Edit `environments/demo/group_vars/all/vars.yml` — at minimum `pd_fade_repo_url`, `root_domain`, and `pd_fade_agent_driver`.
-3. **Secrets (optional):** `vault.yml` is only required when you use encrypted secrets (Anthropic API key or a private git deploy key). Mock-only stands can skip vault entirely — vars use `default('')` fallbacks and you do not need `--ask-vault-pass`.
+2. Edit `environments/demo/group_vars/all/vars.yml` — at minimum `root_domain` and `pd_fade_agent_driver`.
+3. **Secrets (optional):** `vault.yml` is only required for `pd_fade_agent_driver: anthropic`. Mock-only stands skip vault and do not need `--ask-vault-pass`.
 
-When you do need secrets, copy `vault.yml.example` to `vault.yml`, fill values, then encrypt:
+When you need secrets, copy `vault.yml.example` to `vault.yml`, fill values, then encrypt:
 
 ```bash
 ansible-vault encrypt environments/demo/group_vars/all/vault.yml
@@ -36,95 +55,89 @@ Optional: create `ansible/.vault_pass` (mode `600`) and pass `--vault-password-f
 From the `ansible/` directory:
 
 ```bash
-# Mock driver, public repo — no vault password needed
+# Mock driver — no vault password needed
 ansible-playbook environments/demo/provision.yml
 
 # With vault.yml present
 ansible-playbook environments/demo/provision.yml --ask-vault-pass
 ```
 
-This runs all roles: base packages and app user, Node.js + pnpm, application build and systemd unit, nginx (+ optional Let's Encrypt).
+Runs: base → nodejs → **local build + release deploy** → nginx (+ optional Let's Encrypt).
 
 ### HTTP-only first bring-up, then TLS
 
-`pd_fade_tls_enabled` defaults to **false** so the first run serves the app over plain HTTP without needing a live certificate or DNS.
+`pd_fade_tls_enabled` defaults to **false**.
 
-1. Provision with defaults (`pd_fade_tls_enabled: false`), verify the app at `http://<root_domain>/`.
+1. Provision with defaults, verify at `http://<root_domain>/`.
 2. Point DNS at the host.
-3. Set `pd_fade_tls_enabled: true` in `vars.yml` and re-run (full playbook or `--tags nginx`).
-4. nginx serves `/.well-known/acme-challenge/` on port 80 (not redirected), obtains the cert via **certbot webroot**, then enables HTTPS redirect for all other paths. Renewals use the same webroot authenticator while nginx stays up.
+3. Set `pd_fade_tls_enabled: true` and re-run (full playbook or `--tags nginx`).
 
-If certificate issuance fails, nginx remains on HTTP (no downtime from a stopped nginx).
+## Redeploy application
 
-## Redeploy application only
-
-After the host is provisioned, redeploy code without touching nginx or Node:
+Rebuild on the controller and roll out a new release (skips upload when checksum unchanged):
 
 ```bash
 ansible-playbook environments/demo/provision.yml --tags pd_fade
 ```
 
-The service restarts only when the git checkout or environment file changes — unchanged redeploys skip a needless restart.
+Manual build/pack (debugging):
+
+```bash
+./scripts/build-release-archive.sh .. .build
+```
 
 Tags: `base`, `nodejs`, `pd_fade`, `nginx`.
 
-## Private git repositories
+## Rollback
 
-Public HTTPS repos work out of the box (`pd_fade_git_deploy_key_enabled: false`).
+Releases are kept under `pd_fade_releases_dir` (default `/opt/pd-fade/releases/`); the live app is `pd_fade_current_link` (default `/opt/pd-fade/current`).
 
-**Primary: SSH deploy key**
+```bash
+# On the target host (example)
+sudo ln -sfn /opt/pd-fade/releases/<previous-release-id> /opt/pd-fade/current
+sudo systemctl restart pd-fade
+curl -sS http://127.0.0.1:3001/health
+```
 
-1. Generate a read-only deploy key and add the public half to your git host.
-2. Set in `vars.yml`:
-   - `pd_fade_git_deploy_key_enabled: true`
-   - `pd_fade_repo_url: "git@github.com:ORG/pd-fade.git"` (SSH form)
-3. Put the private key in vault as `vault_pd_fade_git_deploy_key` (see `vault.yml.example`).
-4. Run with `--ask-vault-pass` (or `--vault-password-file`).
+Or re-run Ansible with a previously built archive:
 
-Ansible installs the key under `pd_fade_data_dir/.ssh/`, populates `known_hosts` for the git host, and sets `GIT_SSH_COMMAND` for the clone task.
-
-**Alternative: HTTPS token URL**
-
-Keep `pd_fade_git_deploy_key_enabled: false` and embed a token in the URL (store the token in vault, reference from `vars.yml`):
-
-```yaml
-pd_fade_repo_url: "https://x-access-token:{{ vault_pd_fade_git_token }}@github.com/ORG/pd-fade.git"
+```bash
+ansible-playbook environments/demo/provision.yml --tags pd_fade \
+  -e pd_fade_skip_local_build=true \
+  -e pd_fade_release_archive=/path/to/pd-fade-<id>.tar.gz \
+  -e pd_fade_release_checksum=<sha256> \
+  -e pd_fade_release_id=<id>
 ```
 
 ## What gets installed
 
 | Component | Location / notes |
 |-----------|------------------|
-| App checkout | `pd_fade_root` (default `/opt/pd-fade`) |
+| Releases | `pd_fade_releases_dir` (default `/opt/pd-fade/releases/<id>/`) |
+| Live app | `pd_fade_current_link` → active release |
 | SQLite data | `pd_fade_data_dir` (default `/var/lib/pd-fade`) — **not** removed on redeploy |
-| pnpm store | `pd_fade_pnpm_store_dir` (default `/var/cache/pd-fade/pnpm`) — separate from SQLite |
-| Environment | `pd_fade_env_file` (default `/etc/pd-fade/env`) — `PORT`, `DB_PATH`, `AGENT_DRIVER`, etc. |
-| systemd unit | `pd-fade.service` — `Restart=on-failure`, runs `node dist/index.js` from `server/` |
-| Static client | nginx serves `client/dist` |
-| API | nginx proxies `/api/*` → server port, strips `/api` prefix (matches Vite dev proxy) |
-
-### Node.js and pnpm
-
-Node.js **20.x** is installed from the NodeSource APT repository. **pnpm 10** is activated via **corepack** (`corepack prepare pnpm@<version> --activate`). The NodeSource setup script runs only when the APT source is not already present.
+| pnpm store | `pd_fade_pnpm_store_dir` (default `/var/cache/pd-fade/pnpm`) |
+| Environment | `pd_fade_env_file` (default `/etc/pd-fade/env`) |
+| systemd | `pd-fade.service` — `WorkingDirectory={{ pd_fade_current_link }}/server` |
+| Static client | nginx serves `{{ pd_fade_current_link }}/client/dist` |
+| API | nginx proxies `/api/*` → server port |
 
 ### Environment variables
 
-The server `start` script does not load `server/.env`; production config comes from the systemd `EnvironmentFile`:
-
 | Variable | Source var | Notes |
 |----------|------------|-------|
-| `PORT` | `pd_fade_server_port` | Binds on localhost; nginx proxies |
-| `DB_PATH` | `pd_fade_db_path` | Persistent path under `pd_fade_data_dir` |
+| `PORT` | `pd_fade_server_port` | localhost; nginx proxies |
+| `DB_PATH` | `pd_fade_db_path` | under `pd_fade_data_dir` |
 | `AGENT_DRIVER` | `pd_fade_agent_driver` | `mock` or `anthropic` |
-| `ANTHROPIC_API_KEY` | `vault_anthropic_api_key` | Vault; required for `anthropic` |
-| `ANTHROPIC_MODEL` | `pd_fade_anthropic_model` | Optional override |
-| `MOCK_DRIVER_POST_TOOL_START_DELAY_MS` | `pd_fade_mock_driver_post_tool_start_delay_ms` | Optional; omit when empty |
+| `ANTHROPIC_API_KEY` | `vault_anthropic_api_key` | vault; required for `anthropic` |
+| `ANTHROPIC_MODEL` | `pd_fade_anthropic_model` | optional |
+| `MOCK_DRIVER_POST_TOOL_START_DELAY_MS` | `pd_fade_mock_driver_post_tool_start_delay_ms` | optional |
 
 ### nginx / SSE
 
-- General API: `/api/` → upstream with `/api` stripped.
-- SSE stream (`/api/session/*/events`): `proxy_buffering off`, `gzip off`, long `proxy_read_timeout`, HTTP/1.1 — aligned with server `X-Accel-Buffering: no`.
-- TLS: certbot **webroot** (`certbot_webroot_path`, default `/var/www/certbot`); `/.well-known/acme-challenge/` is served on port 80 and excluded from the HTTPS redirect.
+- `/api/` → upstream with `/api` stripped
+- SSE: `proxy_buffering off`, `gzip off`, long read timeout
+- TLS: certbot webroot; ACME path excluded from HTTPS redirect
 
 ## Syntax check
 
@@ -132,11 +145,9 @@ The server `start` script does not load `server/.env`; production config comes f
 ansible-playbook environments/demo/provision.yml --syntax-check
 ```
 
-## Borrowed from kjam-pomogu-org-iac
+## Reference patterns
 
-- `ansible.cfg`, `requirements.yml` layout, `environments/<env>/` with `inventory.yml` + `group_vars/all/`
-- Vault placeholder + example file pattern
-- nginx role structure (certbot, vhost templates, handlers)
-- Tagged playbook with multiple roles
+- **pyro-platform/iac:** controller-side build, target-side prod install, health probes after restart
+- **kjam-pomogu-org-iac:** inventory layout, nginx/TLS, vault examples
 
-**Skipped:** Docker, Postgres, Redis, Authentik, devsec hardening, fail2ban, UFW, swap tuning, deploy-user sudo patterns not needed for this single-app host.
+**Skipped:** target git checkout, shipping cross-platform `node_modules`, Docker, Postgres/Redis
