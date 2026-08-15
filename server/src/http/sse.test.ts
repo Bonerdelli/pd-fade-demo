@@ -110,6 +110,89 @@ describe("SSE", () => {
 
     await app.close();
   }, 20_000);
+
+  it("returns 409 when Last-Event-ID is ahead of the persisted log", async () => {
+    const app = await buildServer({ dbPath: ":memory:" });
+    const sessionId = "cursor-ahead-session";
+
+    const response = await app.inject({
+      method: "GET",
+      url: `${sessionEventsPath(sessionId)}?lastEventId=100`,
+      headers: { "Last-Event-ID": "100" },
+    });
+
+    expect(response.statusCode).toBe(409);
+    expect(response.json()).toEqual({ error: "cursor_ahead" });
+
+    await app.close();
+  });
+
+  it("replays events when Last-Event-ID is older than the latest snapshot anchor", async () => {
+    const app = await buildServer({ dbPath: ":memory:" });
+    await app.listen({ port: 0, host: "127.0.0.1" });
+
+    const address = app.server.address();
+    if (!address || typeof address === "string") {
+      throw new Error("Expected server address");
+    }
+
+    const baseUrl = `http://127.0.0.1:${address.port}`;
+    const sessionId = "snapshot-replay-session";
+
+    await fetch(`${baseUrl}${sessionMessagesPath(sessionId)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: "show berlin entities" }),
+    });
+    await waitForRunToFinish(app, sessionId);
+
+    const stateBody = (
+      await app.inject({
+        method: "GET",
+        url: sessionStatePath(sessionId),
+      })
+    ).json() as {
+      tailEvents: Array<{ seq: number; type: string }>;
+      lastSeq: number;
+    };
+
+    const snapshotEvent = stateBody.tailEvents.find((event) => event.type === "STATE_SNAPSHOT");
+    expect(snapshotEvent).toBeDefined();
+
+    const oldCursor = Math.max(0, snapshotEvent!.seq - 3);
+    const replayBody = await new Promise<string>((resolve, reject) => {
+      const request = get(
+        `${baseUrl}${sessionEventsPath(sessionId)}?lastEventId=${oldCursor}`,
+        {
+          headers: { "Last-Event-ID": String(oldCursor) },
+        },
+        (response) => {
+          let body = "";
+          response.on("data", (chunk: Buffer) => {
+            body += chunk.toString();
+          });
+          response.on("error", (error: NodeJS.ErrnoException) => {
+            if (error.code === "ECONNRESET") {
+              resolve(body);
+              return;
+            }
+            reject(error);
+          });
+          setTimeout(() => {
+            response.destroy();
+            request.destroy();
+            resolve(body);
+          }, 300);
+        },
+      );
+      request.on("error", reject);
+    });
+
+    expect(replayBody).toContain('"type":"STATE_SNAPSHOT"');
+    expect(replayBody).toContain(`"seq":${stateBody.lastSeq}`);
+
+    await app.close();
+  }, 20_000);
 });
 
 describe("session state endpoint", () => {

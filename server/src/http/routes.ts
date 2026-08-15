@@ -15,6 +15,7 @@ import {
 import type { FastifyInstance } from "fastify";
 import type { RunManager } from "../agent/run-manager.js";
 import { RunConflictError } from "../agent/run-manager.js";
+import { reconcileSessionOrphanedRuns } from "../db/orphan-run-reconciliation.js";
 import type { SessionStore } from "../db/session-store.js";
 import { emptyAgentState } from "../db/empty-states.js";
 import type { EventBus } from "../lib/event-bus.js";
@@ -33,14 +34,30 @@ export interface HttpDependencies {
   runManager: RunManager;
 }
 
+function touchSession(
+  sessionStore: SessionStore,
+  eventBus: EventBus,
+  sessionId: string,
+): void {
+  sessionStore.ensureSession(sessionId);
+  reconcileSessionOrphanedRuns(sessionStore, sessionId, (event) => {
+    eventBus.publish(sessionId, event);
+  });
+}
+
 export function registerSessionRoutes(app: FastifyInstance, deps: HttpDependencies): void {
   const { sessionStore, eventBus, runManager } = deps;
 
   app.get(sessionEventsPath(":id"), async (request, reply) => {
     const { id } = sessionRouteParamsSchema.parse(request.params);
-    sessionStore.ensureSession(id);
+    touchSession(sessionStore, eventBus, id);
 
     const afterSeq = parseLastEventId(request);
+    const lastSeq = sessionStore.getLastSeq(id);
+
+    if (afterSeq > lastSeq) {
+      return reply.status(409).send({ error: "cursor_ahead" });
+    }
 
     reply.hijack();
     reply.raw.writeHead(200, sseHeaders());
@@ -64,7 +81,7 @@ export function registerSessionRoutes(app: FastifyInstance, deps: HttpDependenci
 
   app.get(sessionStatePath(":id"), async (request) => {
     const { id } = sessionRouteParamsSchema.parse(request.params);
-    sessionStore.ensureSession(id);
+    touchSession(sessionStore, eventBus, id);
 
     const latestSnapshot = sessionStore.getLatestSnapshot(id);
     const snapshotSeq = latestSnapshot?.seq ?? 0;
@@ -84,11 +101,11 @@ export function registerSessionRoutes(app: FastifyInstance, deps: HttpDependenci
     const { id } = sessionRouteParamsSchema.parse(request.params);
     const body = postMessageRequestSchema.parse(request.body);
 
+    touchSession(sessionStore, eventBus, id);
+
     if (runManager.isRunActive(id)) {
       return reply.status(409).send({ error: "run_active" });
     }
-
-    sessionStore.ensureSession(id);
     const messageId = body.messageId ?? crypto.randomUUID();
     sessionStore.addUserMessage(id, messageId, body.text);
 
@@ -112,12 +129,14 @@ export function registerSessionRoutes(app: FastifyInstance, deps: HttpDependenci
       return reply.status(409).send({ error: "run_active" });
     }
 
+    touchSession(sessionStore, eventBus, id);
     sessionStore.applyCanvasMutation(id, body.mutation);
     return postCanvasResponseSchema.parse({ accepted: true });
   });
 
   app.post(sessionCancelRunPath(":id"), async (request, reply) => {
     const { id } = sessionRouteParamsSchema.parse(request.params);
+    touchSession(sessionStore, eventBus, id);
     const cancelled = runManager.cancelRun(id);
 
     if (!cancelled) {
