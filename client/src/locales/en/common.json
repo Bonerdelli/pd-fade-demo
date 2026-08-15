@@ -1,0 +1,12 @@
+{
+  "appTitle": "Agent Canvas Demo",
+  "layout": {
+    "chatPanel": "Chat",
+    "canvasPanel": "Canvas",
+    "graphTab": "Graph",
+    "mapTab": "Map"
+  },
+  "status": {
+    "placeholder": "Session transport not connected yet"
+  }
+}

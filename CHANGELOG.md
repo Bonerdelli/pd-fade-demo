@@ -13,3 +13,4 @@ until a release is cut.
 - pnpm workspace scaffolding with shared TypeScript, ESLint, Prettier and Vitest tooling
 - `@pd-fade/shared` protocol package with zod schemas for agent events, state models, chat read model and REST contracts
 - Shared protocol unit tests covering every event and canvas mutation schema
+- `@pd-fade/client` Vite + React + Tailwind skeleton with i18n namespaces and Zustand store stub
