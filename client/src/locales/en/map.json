@@ -1,6 +1,5 @@
 {
   "panelTitle": "Map",
-  "placeholder": "Map canvas placeholder",
   "toolbar": {
     "select": "Select",
     "point": "Point",

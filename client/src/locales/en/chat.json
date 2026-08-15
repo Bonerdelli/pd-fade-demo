@@ -41,6 +41,11 @@
       "error": "Failed",
       "cancelled": "Cancelled"
     },
+    "toolNames": {
+      "search_entities": "Entity search",
+      "plot_signals": "Plot signals",
+      "focus": "Focus"
+    },
     "searchEntities": {
       "title": "Entity search",
       "query": "Query",
