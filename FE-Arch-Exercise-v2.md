@@ -197,8 +197,9 @@ The surfaces have different interaction contracts:
   select nodes and move them. User positions take priority: a new snapshot applies the
   agent's layout only to new nodes, surviving nodes stay where the user put them. When
   the layouts diverge, the UI shows a **Realign** button that applies the agent's
-  stored layout wholesale (a purely local operation — the last agent layout lives in
-  `agentState`, so no server round-trip)
+  stored layout wholesale via the `clearPositionOverrides` canvas mutation so
+  persisted user state matches the realigned view on reload (the agent layout itself
+  already lives in `agentState`)
 - **Map.** Both sides draw. Agent shapes are read-only for the user, but the user can
   attach **comments** to them — persistent annotations that live in `userState`, are
   keyed by shape id, and are included in every subsequent run context

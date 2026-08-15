@@ -48,4 +48,5 @@ until a release is cut.
 - Rebuild client reducer golden fixture from the real mock driver event log
 - Emit graph VIEWPORT_COMMAND from mock driver after search snapshot
 - Force terra-draw to select mode during run soft-lock and hide stale agent shape popups when shapes disappear
+- Document Realign clearing position overrides through upstream mutation for session continuity
 - Document session state chat/tail contract on `sessionStateResponseSchema`
