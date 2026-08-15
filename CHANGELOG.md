@@ -88,6 +88,7 @@ until a release is cut.
 
 ### Changed
 
+- Remove app header and Graph panel subtitle; show bootstrap and mutation errors in a centered canvas overlay
 - Default Ansible TLS to off for HTTP-first bring-up; document enable-TLS path
 - Move Ansible pnpm store to `/var/cache/pd-fade/pnpm`, separate from SQLite data dir
 - Drop unused `python3-certbot-nginx` package and `ansible.posix` collection from Ansible requirements
@@ -105,3 +106,4 @@ until a release is cut.
 - Force terra-draw to select mode during run soft-lock and hide stale agent shape popups when shapes disappear
 - Document Realign clearing position overrides through upstream mutation for session continuity
 - Document session state chat/tail contract on `sessionStateResponseSchema`
+- Update chat composer placeholder to "Ask me about anything"

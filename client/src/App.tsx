@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { CanvasErrorOverlay } from "./components/CanvasErrorOverlay";
 import { useSessionBootstrap } from "./hooks";
 import { useAppStore } from "./store";
 import { ChatPanel } from "./surfaces/chat/ChatPanel";
@@ -14,21 +15,9 @@ export function App() {
   const { t } = useTranslation("common");
   const activeTab = useAppStore((state) => state.uiState.activeCanvasTab);
   const bootstrapStatus = useAppStore((state) => state.uiState.bootstrapStatus);
-  const connectionStatus = useAppStore((state) => state.uiState.connectionStatus);
   const mutationError = useAppStore((state) => state.uiState.mutationError);
   const retrySessionBootstrap = useAppStore((state) => state.retrySessionBootstrap);
   const setActiveCanvasTab = useAppStore((state) => state.setActiveCanvasTab);
-
-  const statusKey =
-    bootstrapStatus === "loading"
-      ? "status.loading"
-      : bootstrapStatus === "error"
-        ? "status.error"
-        : connectionStatus === "connected"
-          ? "status.connected"
-          : connectionStatus === "reconnecting"
-            ? "status.reconnecting"
-            : "status.disconnected";
 
   const mutationErrorText = mutationError
     ? t(mutationError.key, mutationError.params)
@@ -37,23 +26,6 @@ export function App() {
   return (
     <div className="flex h-full flex-col bg-slate-100 text-slate-900">
       <SessionBootstrap />
-
-      <header className="border-b border-slate-200 bg-white px-6 py-3">
-        <h1 className="text-lg font-semibold">{t("appTitle")}</h1>
-        <p className="text-sm text-slate-500">{t(statusKey)}</p>
-        {bootstrapStatus === "error" && retrySessionBootstrap ? (
-          <button
-            type="button"
-            className="mt-2 rounded bg-slate-900 px-3 py-1.5 text-sm text-white hover:bg-slate-800"
-            onClick={() => retrySessionBootstrap()}
-          >
-            {t("status.retry")}
-          </button>
-        ) : null}
-        {mutationErrorText ? (
-          <p className="mt-1 text-sm text-red-600">{mutationErrorText}</p>
-        ) : null}
-      </header>
 
       <main className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[360px_minmax(0,1fr)]">
         <aside className="min-h-0 border-b border-slate-200 bg-white lg:border-b-0 lg:border-r">
@@ -95,13 +67,19 @@ export function App() {
             </div>
           </div>
 
-          <div className="min-h-0 flex-1 bg-white">
+          <div className="relative min-h-0 flex-1 bg-white">
             {bootstrapStatus === "ready" ? (
-              activeTab === "graph" ? (
-                <GraphPanel />
-              ) : (
-                <MapPanel />
-              )
+              <>
+                {activeTab === "graph" ? <GraphPanel /> : <MapPanel />}
+                {mutationErrorText ? (
+                  <CanvasErrorOverlay message={mutationErrorText} overlay />
+                ) : null}
+              </>
+            ) : bootstrapStatus === "error" ? (
+              <CanvasErrorOverlay
+                message={t("status.error")}
+                onRetry={retrySessionBootstrap}
+              />
             ) : (
               <div className="flex h-full items-center justify-center p-8">
                 <div className="w-full max-w-md space-y-3">
