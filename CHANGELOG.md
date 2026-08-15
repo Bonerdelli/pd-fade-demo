@@ -92,6 +92,7 @@ until a release is cut.
 
 ### Changed
 
+- Align chat composer input and Send button height; auto-grow textarea with top-pinned action button
 - Switch chat/canvas two-column layout breakpoint from `lg` (1024px) to `md` (768px)
 - Remove app header and Graph panel subtitle; show bootstrap and mutation errors in a centered canvas overlay
 - Default Ansible TLS to off for HTTP-first bring-up; document enable-TLS path

@@ -1,4 +1,4 @@
-import { useCallback, useState, type KeyboardEvent } from "react";
+import { useCallback, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutations } from "../../hooks/use-mutations.js";
 import { useRunLock } from "../../hooks/use-run-lock.js";
@@ -9,6 +9,21 @@ export function ChatComposer() {
   const { sendMessage, cancelRun } = useMutations();
   const [text, setText] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const resizeTextarea = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) {
+      return;
+    }
+
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }, []);
+
+  useLayoutEffect(() => {
+    resizeTextarea();
+  }, [resizeTextarea, text]);
 
   const handleSend = useCallback(async () => {
     const trimmed = text.trim();
@@ -47,14 +62,15 @@ export function ChatComposer() {
 
   return (
     <div className="shrink-0 border-t border-slate-200 bg-white px-4 py-3">
-      <div className="flex items-end gap-2">
+      <div className="flex items-start gap-2">
         <textarea
+          ref={textareaRef}
           value={text}
           onChange={(event) => setText(event.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          rows={2}
-          className="min-h-[2.75rem] flex-1 resize-none rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500 disabled:bg-slate-50 disabled:text-slate-500"
+          rows={1}
+          className="min-h-9 flex-1 resize-none overflow-hidden rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500 disabled:bg-slate-50 disabled:text-slate-500"
           aria-label={t("composer.inputLabel")}
         />
         {isRunning ? (

@@ -175,6 +175,17 @@ describe("Chat surface components", () => {
     expect(screen.getByText(/"payload": true/)).toBeTruthy();
   });
 
+  it("pins the composer action button to the top of the input row", () => {
+    renderWithI18n(<ChatComposer />);
+
+    const input = screen.getByLabelText(/Message input/i);
+    const row = input.parentElement;
+
+    expect(row?.className).toContain("items-start");
+    expect((input as HTMLTextAreaElement).rows).toBe(1);
+    expect(input.className).toContain("min-h-9");
+  });
+
   it("shows Stop button while a run is active", () => {
     useAppStore.setState({
       uiState: { ...initialUiState, bootstrapStatus: "ready", runStatus: "running" },
