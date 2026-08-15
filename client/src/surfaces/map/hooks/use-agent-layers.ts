@@ -122,6 +122,10 @@ export function useAgentLayers({
   const agentSignals = useAppStore((state) => state.agentState.map.signals);
 
   useEffect(() => {
+    if (mapReadyEpoch === 0) {
+      return;
+    }
+
     const map = mapRef.current;
     if (!map) {
       return;
@@ -143,6 +147,10 @@ export function useAgentLayers({
   }, [agentShapes, agentSignals, mapReadyEpoch, mapRef]);
 
   useEffect(() => {
+    if (mapReadyEpoch === 0) {
+      return;
+    }
+
     const map = mapRef.current;
     if (!map) {
       return;

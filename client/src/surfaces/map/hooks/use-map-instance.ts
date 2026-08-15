@@ -50,7 +50,22 @@ export function useMapInstance({
     });
 
     mapRef.current = map;
-    setMapReadyEpoch((epoch) => epoch + 1);
+
+    const markMapReady = () => {
+      map.resize();
+      setMapReadyEpoch((epoch) => epoch + 1);
+    };
+
+    if (map.isStyleLoaded()) {
+      markMapReady();
+    } else {
+      map.once("load", markMapReady);
+    }
+
+    const resizeObserver = new ResizeObserver(() => {
+      map.resize();
+    });
+    resizeObserver.observe(container);
 
     const markGestureStart = (event: { originalEvent?: unknown }) => {
       if (event.originalEvent) {
@@ -83,6 +98,7 @@ export function useMapInstance({
     });
 
     return () => {
+      resizeObserver.disconnect();
       map.remove();
       mapRef.current = null;
     };

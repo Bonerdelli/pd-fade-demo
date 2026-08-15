@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { I18nextProvider } from "react-i18next";
 import i18n from "../../i18n.js";
 import { MapPanel } from "./MapPanel.js";
@@ -36,6 +36,10 @@ vi.mock("maplibre-gl", () => {
 
     getZoom() {
       return 11;
+    }
+
+    resize() {
+      return undefined;
     }
 
     flyTo() {
@@ -132,6 +136,14 @@ vi.mock("../../store/index.js", () => ({
 }));
 
 describe("MapPanel", () => {
+  beforeEach(() => {
+    globalThis.ResizeObserver = class {
+      observe = vi.fn();
+      disconnect = vi.fn();
+      constructor(_callback: ResizeObserverCallback) {}
+    } as unknown as typeof ResizeObserver;
+  });
+
   it("mounts the map shell and toolbar", () => {
     render(
       <I18nextProvider i18n={i18n}>

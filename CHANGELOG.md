@@ -51,6 +51,8 @@ until a release is cut.
 
 ### Fixed
 
+- Fix blank Map tab by resizing MapLibre after layout settles and deferring draw/layer setup until map load
+- Exclude maplibre-gl from Vite dependency pre-bundling to avoid missing worker asset in dev
 - Fix doubled SSE event application from StrictMode bootstrap and leaked reconnect loops by disconnecting replaced streams and guarding in-flight session lifecycle
 - Ignore duplicate event seq in store applyEvent as a global dedup backstop
 - Flush Ansible nginx handlers before certbot webroot so ACME challenges succeed on first TLS run

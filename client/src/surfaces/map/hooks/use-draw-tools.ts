@@ -159,6 +159,10 @@ export function useDrawTools({
   );
 
   useEffect(() => {
+    if (mapReadyEpoch === 0) {
+      return;
+    }
+
     const map = mapRef.current;
     if (!map) {
       return;
