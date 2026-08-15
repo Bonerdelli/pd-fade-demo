@@ -57,6 +57,13 @@
     enabled: true
     daemon_reload: true
 
+- name: Apply nginx vhost before certificate request
+  ansible.builtin.meta: flush_handlers
+  when:
+    - pd_fade_tls_enabled | bool
+    - letsencrypt_email is defined
+    - not (pd_fade_cert_exists | default(false) | bool)
+
 - name: Obtain or renew certificate via webroot
   when:
     - pd_fade_tls_enabled | bool
@@ -84,6 +91,10 @@
         mode: "0644"
       when: certbot_webroot_result.rc == 0
       notify: Reload nginx
+
+    - name: Apply HTTPS nginx vhost after certificate issuance
+      ansible.builtin.meta: flush_handlers
+      when: certbot_webroot_result.rc == 0
 
   rescue:
     - name: Report certificate issuance failure

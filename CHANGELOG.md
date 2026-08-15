@@ -49,6 +49,7 @@ until a release is cut.
 
 ### Fixed
 
+- Flush Ansible nginx handlers before certbot webroot so ACME challenges succeed on first TLS run
 - Switch Ansible TLS to certbot webroot so renewals work while nginx holds port 80
 - Keep nginx running when Let's Encrypt issuance fails on first TLS enable
 - Restart pd-fade only when git checkout or environment file changes on redeploy
