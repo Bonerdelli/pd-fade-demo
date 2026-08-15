@@ -40,6 +40,7 @@ until a release is cut.
 - Move mutation error strings to i18n keys rendered in the app shell
 - Keep resync on `reconnecting` status during gap recovery instead of flashing `down`
 - Accept optional client `messageId` on POST messages for optimistic id alignment
+- Finalize in-flight tool cards as cancelled or error when a run ends with RUN_CANCELLED or RUN_ERROR
 
 ### Changed
 

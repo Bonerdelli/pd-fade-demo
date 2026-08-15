@@ -65,6 +65,21 @@ function appendToolArgsDelta(
   }
 }
 
+function finalizeInFlightToolCalls(
+  chat: ChatMessage[],
+  status: Extract<ChatMessage, { kind: "toolCall" }>["status"],
+): ChatMessage[] {
+  return chat.map((message) => {
+    if (message.kind !== "toolCall") {
+      return message;
+    }
+    if (message.status !== "running" && message.status !== "pending") {
+      return message;
+    }
+    return { ...message, status };
+  });
+}
+
 export function reduceEvent(state: ReducerState, event: AgentEvent): ReducerState {
   switch (event.type) {
     case "RUN_STARTED":
@@ -91,6 +106,7 @@ export function reduceEvent(state: ReducerState, event: AgentEvent): ReducerStat
     case "RUN_ERROR":
       return {
         ...state,
+        chat: finalizeInFlightToolCalls(state.chat, "error"),
         uiState: {
           ...state.uiState,
           runStatus: "error",
@@ -102,6 +118,7 @@ export function reduceEvent(state: ReducerState, event: AgentEvent): ReducerStat
     case "RUN_CANCELLED":
       return {
         ...state,
+        chat: finalizeInFlightToolCalls(state.chat, "cancelled"),
         uiState: {
           ...state.uiState,
           runStatus: "cancelled",

@@ -54,7 +54,11 @@ function getToolCallMessage(
   return JSON.parse(row.payload) as ChatMessage;
 }
 
-function markRunningToolCallsCancelled(db: Database.Database, sessionId: string): void {
+function markInFlightToolCalls(
+  db: Database.Database,
+  sessionId: string,
+  status: "cancelled" | "error",
+): void {
   const rows = db
     .prepare(`SELECT message_id, payload FROM chat_messages WHERE session_id = ?`)
     .all(sessionId) as ChatRow[];
@@ -69,7 +73,7 @@ function markRunningToolCallsCancelled(db: Database.Database, sessionId: string)
     }
     upsertChatMessage(db, sessionId, row.message_id, {
       ...message,
-      status: "cancelled",
+      status,
     });
   }
 }
@@ -155,11 +159,11 @@ export function projectChatEvent(db: Database.Database, sessionId: string, event
       break;
     }
     case "RUN_CANCELLED": {
-      markRunningToolCallsCancelled(db, sessionId);
+      markInFlightToolCalls(db, sessionId, "cancelled");
       break;
     }
     case "RUN_ERROR": {
-      markRunningToolCallsCancelled(db, sessionId);
+      markInFlightToolCalls(db, sessionId, "error");
       break;
     }
     default:

@@ -32,7 +32,7 @@ describe("reduceEvent golden tests", () => {
     expect(next.uiState.cameraCommand).toEqual({
       target: "map",
       camera: { center: [13.405, 52.52], zoom: 12.5 },
-      seq: 78,
+      seq: 79,
     });
 
     expect(next.chat.filter((message) => message.kind === "assistant")).toHaveLength(3);
@@ -139,10 +139,37 @@ describe("reduceEvent golden tests", () => {
   });
 
   it("stores run error message and run id on RUN_ERROR", () => {
-    const next = reduceEvent(createInitialReducerState(), {
+    let state = createInitialReducerState();
+    state = reduceEvent(state, {
       seq: 1,
       runId: mockRunId,
       ts: 1,
+      type: "TOOL_START",
+      toolCallId: "tc-running",
+      name: "fetch",
+    });
+    state = reduceEvent(state, {
+      seq: 2,
+      runId: mockRunId,
+      ts: 2,
+      type: "TOOL_START",
+      toolCallId: "tc-done",
+      name: "save",
+    });
+    state = reduceEvent(state, {
+      seq: 3,
+      runId: mockRunId,
+      ts: 3,
+      type: "TOOL_RESULT",
+      toolCallId: "tc-done",
+      status: "ok",
+      result: {},
+    });
+
+    const next = reduceEvent(state, {
+      seq: 4,
+      runId: mockRunId,
+      ts: 4,
       type: "RUN_ERROR",
       message: "Provider unavailable",
     });
@@ -150,6 +177,35 @@ describe("reduceEvent golden tests", () => {
     expect(next.uiState.runStatus).toBe("error");
     expect(next.uiState.currentRunId).toBe(mockRunId);
     expect(next.uiState.runErrorMessage).toBe("Provider unavailable");
+    expect(next.chat.find((message) => message.kind === "toolCall" && message.toolCallId === "tc-running")).toMatchObject({
+      status: "error",
+    });
+    expect(next.chat.find((message) => message.kind === "toolCall" && message.toolCallId === "tc-done")).toMatchObject({
+      status: "ok",
+    });
+  });
+
+  it("marks in-flight tool cards cancelled on RUN_CANCELLED", () => {
+    let state = createInitialReducerState();
+    state = reduceEvent(state, {
+      seq: 1,
+      runId: mockRunId,
+      ts: 1,
+      type: "TOOL_START",
+      toolCallId: "tc-1",
+      name: "fetch",
+    });
+
+    const next = reduceEvent(state, {
+      seq: 2,
+      runId: mockRunId,
+      ts: 2,
+      type: "RUN_CANCELLED",
+    });
+
+    expect(next.uiState.runStatus).toBe("cancelled");
+    expect(next.uiState.currentRunId).toBeNull();
+    expect(next.chat[0]).toMatchObject({ kind: "toolCall", status: "cancelled" });
   });
 });
 
@@ -176,13 +232,13 @@ describe("hydrateFromSessionResponse", () => {
       tailEvents: [
         ...tailEvents,
         {
-          seq: 136,
+          seq: 137,
           runId: mockRunId,
           ts: 1,
           type: "RUN_FINISHED",
         },
       ],
-      lastSeq: 136,
+      lastSeq: 137,
     });
 
     expect(duplicated.chat.length).toBeGreaterThanOrEqual(authoritativeChat.length);
