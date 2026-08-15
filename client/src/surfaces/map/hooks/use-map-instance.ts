@@ -40,8 +40,10 @@ export function useMapInstance({
 
     mapRef.current = map;
 
-    const markGestureStart = () => {
-      isUserGesturingRef.current = true;
+    const markGestureStart = (event: { originalEvent?: unknown }) => {
+      if (event.originalEvent) {
+        isUserGesturingRef.current = true;
+      }
     };
 
     const markGestureEnd = () => {
