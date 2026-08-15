@@ -7,6 +7,14 @@
     "mapTab": "Map"
   },
   "status": {
-    "placeholder": "Session transport not connected yet"
+    "loading": "Loading session",
+    "connected": "Connected to agent stream",
+    "reconnecting": "Reconnecting to agent stream",
+    "disconnected": "Agent stream disconnected",
+    "error": "Failed to load session"
+  },
+  "skeleton": {
+    "chat": "Restoring chat history",
+    "canvas": "Restoring canvas state"
   }
 }
