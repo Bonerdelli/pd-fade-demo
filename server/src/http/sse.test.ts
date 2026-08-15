@@ -7,7 +7,7 @@ import { get } from "node:http";
 import { describe, expect, it } from "vitest";
 import { buildServer } from "../index.js";
 import { formatSseEvent } from "./sse.js";
-import { wait, waitForRunToFinish } from "../test-helpers.js";
+import { waitForRunToFinish } from "../test-helpers.js";
 import type { AgentEvent } from "@pd-fade/shared";
 
 describe("SSE", () => {
