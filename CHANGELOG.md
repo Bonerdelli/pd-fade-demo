@@ -8,7 +8,7 @@ until a release is cut.
 
 ### Added
 
-- Architecture design document (`FE-Arch-Exercise-v2.md`)
+- `clearPositionOverrides` canvas mutation to reset graph node position overrides for Realign
 - Agent instructions (`AGENTS.md`)
 - pnpm workspace scaffolding with shared TypeScript, ESLint, Prettier and Vitest tooling
 - `@pd-fade/shared` protocol package with zod schemas for agent events, state models, chat read model and REST contracts
@@ -24,6 +24,8 @@ until a release is cut.
 - Server REST and SSE endpoints for session state, messages, canvas mutations and run cancellation
 - Deterministic mock agent driver with Berlin entity dataset and run manager with single active run per session
 - Server integration tests for event log, SSE replay, run lifecycle, canvas soft-lock and mock snapshot validation
+- Implement Map surface with MapLibre GL agent layers, terra-draw user editing, camera commands and soft-lock hints
+- Chat surface with streaming messages, tool card registry, run lifecycle UI, scroll-pinned message list and composer
 
 ### Fixed
 

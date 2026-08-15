@@ -1,4 +1,71 @@
 {
   "panelTitle": "Chat",
-  "placeholder": "Chat surface will stream assistant messages here"
+  "connection": {
+    "connected": "Connected",
+    "reconnecting": "Reconnecting",
+    "down": "Disconnected"
+  },
+  "runStatus": {
+    "thinking": "Agent is thinking",
+    "errorTitle": "Run failed",
+    "cancelled": "Run was cancelled"
+  },
+  "messageList": {
+    "label": "Conversation",
+    "empty": "Send a message to start exploring the entity graph"
+  },
+  "composer": {
+    "placeholder": "Ask about entities, signals, or the map",
+    "placeholderRunning": "Agent is working — type your next message or press Stop",
+    "inputLabel": "Message input",
+    "send": "Send",
+    "stop": "Stop",
+    "sendTooltip": "Send message",
+    "stopTooltip": "Stop the current agent run"
+  },
+  "toolCards": {
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "cancelled": "This tool call was cancelled",
+    "error": {
+      "generic": "The tool returned an error"
+    },
+    "status": {
+      "pending": "Pending",
+      "running": "Running",
+      "ok": "Done",
+      "error": "Failed",
+      "cancelled": "Cancelled"
+    },
+    "searchEntities": {
+      "title": "Entity search",
+      "query": "Query",
+      "kinds": "Kinds",
+      "city": "City",
+      "unknownQuery": "Unknown query",
+      "result": "Found {{count}} entities",
+      "summary": "Search: {{query}} — {{count}} entities",
+      "summaryRunning": "Searching: {{query}}"
+    },
+    "plotSignals": {
+      "title": "Plot signals",
+      "signals": "Signals",
+      "signalCount": "{{count}} selected",
+      "noSignals": "None selected",
+      "center": "Center",
+      "result": "Plotted {{count}} signals",
+      "summary": "Plotted {{count}} signals",
+      "summaryRunning": "Plotting {{count}} signals"
+    },
+    "fallback": {
+      "executed": "Agent executed {{toolName}}",
+      "receivingArgs": "Receiving arguments",
+      "details": "Arguments",
+      "noArgs": "No arguments",
+      "failed": "Tool execution failed",
+      "summary": "Agent executed {{toolName}}",
+      "summaryError": "{{toolName}} failed",
+      "summaryCancelled": "{{toolName}} cancelled"
+    }
+  }
 }
