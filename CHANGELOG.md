@@ -10,3 +10,4 @@ until a release is cut.
 
 - Architecture design document (`FE-Arch-Exercise-v2.md`)
 - Agent instructions (`AGENTS.md`)
+- pnpm workspace scaffolding with shared TypeScript, ESLint, Prettier and Vitest tooling
