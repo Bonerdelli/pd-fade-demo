@@ -77,6 +77,20 @@ export function useDrawTools({
     isRunLockedRef.current = isRunLocked;
   }, [isRunLocked]);
 
+  useEffect(() => {
+    if (!isRunLocked) {
+      return;
+    }
+
+    const draw = drawRef.current;
+    if (!draw) {
+      return;
+    }
+
+    activeModeRef.current = "select";
+    draw.setMode("select");
+  }, [isRunLocked]);
+
   const syncStoreToDraw = useCallback((shapes: MapShape[]) => {
     const draw = drawRef.current;
     if (!draw) {
