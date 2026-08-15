@@ -2,8 +2,10 @@ export { API_BASE, apiUrl } from "./api-base.js";
 export {
   connectSse,
   computeBackoffDelayMs,
+  createSseActivityWatchdog,
   parseSseChunk,
   reportInvalidSsePayload,
+  SSE_STALL_TIMEOUT_MS,
   type ParsedSseEvent,
   type SseConnectionHandle,
   type SseConnectionStatus,

@@ -14,6 +14,7 @@ export interface SseEventHandler {
   onGapDetected?: (lastSeq: number, incomingSeq: number) => void;
   onCursorAhead?: () => void;
   onConnectionStatusChange?: (status: SseConnectionStatus) => void;
+  onStreamStalled?: () => void;
 }
 
 export interface SseConnectOptions extends SseEventHandler {
@@ -22,6 +23,9 @@ export interface SseConnectOptions extends SseEventHandler {
   signal?: AbortSignal;
   fetchImpl?: typeof fetch;
   sleep?: (ms: number) => Promise<void>;
+  stallTimeoutMs?: number;
+  scheduleTimeout?: typeof setTimeout;
+  clearScheduledTimeout?: typeof clearTimeout;
 }
 
 export interface SseConnectionHandle {
@@ -29,8 +33,48 @@ export interface SseConnectionHandle {
   abortStream: () => void;
 }
 
+export const SSE_STALL_TIMEOUT_MS = 45_000;
+
 const MAX_BACKOFF_MS = 10_000;
 const BASE_BACKOFF_MS = 500;
+
+export interface SseActivityWatchdog {
+  touch: () => void;
+  clear: () => void;
+}
+
+export function createSseActivityWatchdog(options: {
+  timeoutMs: number;
+  onStalled: () => void;
+  scheduleTimeout?: typeof setTimeout;
+  clearScheduledTimeout?: typeof clearTimeout;
+}): SseActivityWatchdog {
+  const {
+    timeoutMs,
+    onStalled,
+    scheduleTimeout = setTimeout,
+    clearScheduledTimeout = clearTimeout,
+  } = options;
+
+  let timer: ReturnType<typeof setTimeout> | null = null;
+
+  const clear = () => {
+    if (timer !== null) {
+      clearScheduledTimeout(timer);
+      timer = null;
+    }
+  };
+
+  const touch = () => {
+    clear();
+    timer = scheduleTimeout(() => {
+      timer = null;
+      onStalled();
+    }, timeoutMs);
+  };
+
+  return { touch, clear };
+}
 
 export function parseSseChunk(buffer: string): { events: ParsedSseEvent[]; remainder: string } {
   const normalized = buffer.replace(/\r\n/g, "\n");
@@ -90,11 +134,15 @@ export async function connectSse(options: SseConnectOptions): Promise<SseConnect
     signal,
     fetchImpl = fetch,
     sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+    stallTimeoutMs = SSE_STALL_TIMEOUT_MS,
+    scheduleTimeout = setTimeout,
+    clearScheduledTimeout = clearTimeout,
     onEvent,
     onInvalidPayload,
     onGapDetected,
     onCursorAhead,
     onConnectionStatusChange,
+    onStreamStalled,
   } = options;
 
   let lastSeq = initialLastEventId ?? 0;
@@ -102,8 +150,17 @@ export async function connectSse(options: SseConnectOptions): Promise<SseConnect
   let attempt = 0;
   let closed = false;
   let streamAbortController = new AbortController();
+  let currentWatchdog: SseActivityWatchdog | null = null;
+  let activeReader: ReadableStreamDefaultReader<Uint8Array> | null = null;
+
+  const clearActivityWatchdog = () => {
+    currentWatchdog?.clear();
+    currentWatchdog = null;
+  };
 
   const abortStream = () => {
+    clearActivityWatchdog();
+    void activeReader?.cancel();
     streamAbortController.abort();
   };
 
@@ -153,8 +210,26 @@ export async function connectSse(options: SseConnectOptions): Promise<SseConnect
 
         attempt = 0;
         onConnectionStatusChange?.("connected");
+        let streamWatchdog: SseActivityWatchdog | null = null;
+        clearActivityWatchdog();
+        streamWatchdog = createSseActivityWatchdog({
+          timeoutMs: stallTimeoutMs,
+          scheduleTimeout,
+          clearScheduledTimeout,
+          onStalled: () => {
+            if (closed || streamSignal.aborted) {
+              return;
+            }
+            onStreamStalled?.();
+            onConnectionStatusChange?.("reconnecting");
+            abortStream();
+          },
+        });
+        currentWatchdog = streamWatchdog;
+        streamWatchdog.touch();
 
         const reader = response.body.getReader();
+        activeReader = reader;
         const decoder = new TextDecoder();
         let buffer = "";
 
@@ -164,6 +239,7 @@ export async function connectSse(options: SseConnectOptions): Promise<SseConnect
             break;
           }
 
+          streamWatchdog.touch();
           buffer += decoder.decode(value, { stream: true });
           const parsed = parseSseChunk(buffer);
           buffer = parsed.remainder;
@@ -209,17 +285,23 @@ export async function connectSse(options: SseConnectOptions): Promise<SseConnect
           }
         }
 
-        if (closed || streamSignal.aborted) {
+        activeReader = null;
+        clearActivityWatchdog();
+
+        if (closed) {
           return;
         }
       } catch {
-        if (closed || streamSignal.aborted) {
+        clearActivityWatchdog();
+        if (closed) {
           return;
         }
       }
 
       attempt += 1;
     }
+
+    clearActivityWatchdog();
 
     if (!closed) {
       onConnectionStatusChange?.("down");

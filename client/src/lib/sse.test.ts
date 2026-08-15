@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { computeBackoffDelayMs, connectSse, parseSseChunk } from "./sse.js";
+import { computeBackoffDelayMs, connectSse, createSseActivityWatchdog, parseSseChunk } from "./sse.js";
 
 function createStream(chunks: string[]): ReadableStream<Uint8Array> {
   let index = 0;
@@ -179,5 +179,120 @@ describe("computeBackoffDelayMs", () => {
   it("caps backoff at ten seconds with jitter", () => {
     expect(computeBackoffDelayMs(0, () => 0)).toBeGreaterThanOrEqual(500);
     expect(computeBackoffDelayMs(10, () => 1)).toBeLessThanOrEqual(10_000);
+  });
+});
+
+describe("createSseActivityWatchdog", () => {
+  it("fires after the configured silence window", () => {
+    vi.useFakeTimers();
+
+    try {
+      const onStalled = vi.fn();
+      const watchdog = createSseActivityWatchdog({
+        timeoutMs: 1_000,
+        onStalled,
+      });
+
+      watchdog.touch();
+      vi.advanceTimersByTime(999);
+      expect(onStalled).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(1);
+      expect(onStalled).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("resets the silence window on touch", () => {
+    vi.useFakeTimers();
+
+    try {
+      const onStalled = vi.fn();
+      const watchdog = createSseActivityWatchdog({
+        timeoutMs: 1_000,
+        onStalled,
+      });
+
+      watchdog.touch();
+      vi.advanceTimersByTime(800);
+      watchdog.touch();
+      vi.advanceTimersByTime(800);
+      expect(onStalled).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(200);
+      expect(onStalled).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("clears a pending timeout", () => {
+    vi.useFakeTimers();
+
+    try {
+      const onStalled = vi.fn();
+      const watchdog = createSseActivityWatchdog({
+        timeoutMs: 500,
+        onStalled,
+      });
+
+      watchdog.touch();
+      watchdog.clear();
+      vi.advanceTimersByTime(500);
+      expect(onStalled).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe("connectSse stall integration", () => {
+  it("treats heartbeat comment bytes as stream activity", async () => {
+    vi.useFakeTimers();
+
+    try {
+      const onStreamStalled = vi.fn();
+      const onEvent = vi.fn();
+      let fetchCount = 0;
+      const fetchImpl = vi.fn(async () => {
+        fetchCount += 1;
+        if (fetchCount > 1) {
+          return new Promise<Response>(() => undefined);
+        }
+      return {
+        ok: true,
+        status: 200,
+        body: createStream([
+          ": heartbeat\n\n",
+          ": heartbeat\n\n",
+          'id: 1\ndata: {"seq":1,"runId":"r1","ts":1,"type":"RUN_STARTED"}\n\n',
+        ]),
+      } as Response;
+    }) as unknown as typeof fetch;
+
+      const abortController = new AbortController();
+      const connection = await connectSse({
+        url: "/events",
+        fetchImpl,
+        signal: abortController.signal,
+        stallTimeoutMs: 100,
+        sleep: async () => undefined,
+        onEvent,
+        onStreamStalled,
+      });
+
+      await vi.waitFor(() => {
+        expect(onEvent).toHaveBeenCalledTimes(1);
+      });
+
+      vi.advanceTimersByTime(150);
+      expect(onStreamStalled).not.toHaveBeenCalled();
+
+      connection.disconnect();
+      abortController.abort();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

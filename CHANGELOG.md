@@ -8,6 +8,9 @@ until a release is cut.
 
 ### Added
 
+- Client SSE stall watchdog with 45s silence threshold and reconnect on stream stall
+- SSE transport chaos tests for disconnect resume, duplicate seq drop, and gap resync convergence
+- Unit tests for SSE activity watchdog with fake timers
 - Extract Berlin demo dataset into `server/src/agent/dataset.ts` with typed search and signal helpers shared by mock and Anthropic drivers
 - Add `AnthropicAgentDriver` with stream translator, materialized context slice system prompt and `AGENT_DRIVER=anthropic` selection via `@anthropic-ai/sdk`
 - Add unit tests for dataset, executors, translator fake stream sequences and driver factory selection without network calls
