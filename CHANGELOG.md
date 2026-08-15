@@ -45,4 +45,7 @@ until a release is cut.
 ### Changed
 
 - Export `clearPositionOverrides` from `useMutations` and remove graph standalone mutation helper
+- Rebuild client reducer golden fixture from the real mock driver event log
+- Emit graph VIEWPORT_COMMAND from mock driver after search snapshot
+- Force terra-draw to select mode during run soft-lock and hide stale agent shape popups when shapes disappear
 - Document session state chat/tail contract on `sessionStateResponseSchema`

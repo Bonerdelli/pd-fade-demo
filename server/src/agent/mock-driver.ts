@@ -162,6 +162,18 @@ export class MockAgentDriver implements AgentDriver {
       snapshot: agentState,
     });
 
+    await delay(40, signal);
+    await emit({
+      type: "VIEWPORT_COMMAND",
+      runId,
+      target: "graph",
+      camera: {
+        x: -40,
+        y: -20,
+        zoom: 0.9,
+      },
+    });
+
     const mid =
       "Found eight related entities across companies, people and locations. " +
       "Plotting geo signals next.";

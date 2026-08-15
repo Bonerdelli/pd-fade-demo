@@ -13,7 +13,7 @@ export const searchSnapshotFromMockRun = (
 )?.snapshot;
 
 export const signalsSnapshotFromMockRun = (
-  mockRunEventLog.find((event) => event.type === "STATE_SNAPSHOT" && event.seq === 77) as
+  mockRunEventLog.find((event) => event.type === "STATE_SNAPSHOT" && event.seq === 78) as
     | Extract<AgentEvent, { type: "STATE_SNAPSHOT" }>
     | undefined
 )?.snapshot;
