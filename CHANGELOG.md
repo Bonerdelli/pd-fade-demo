@@ -9,7 +9,7 @@ until a release is cut.
 ### Added
 
 - `clearPositionOverrides` canvas mutation to reset graph node position overrides for Realign
-- Agent instructions (`AGENTS.md`)
+- Architecture design document (`FE-Arch-Exercise-v2.md`)
 - pnpm workspace scaffolding with shared TypeScript, ESLint, Prettier and Vitest tooling
 - `@pd-fade/shared` protocol package with zod schemas for agent events, state models, chat read model and REST contracts
 - Shared protocol unit tests covering every event and canvas mutation schema

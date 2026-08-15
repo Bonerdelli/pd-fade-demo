@@ -7,6 +7,7 @@ import {
   postMessageRequestSchema,
   sessionStateResponseSchema,
   setPositionOverrideMutationSchema,
+  clearPositionOverridesMutationSchema,
   setSelectionMutationSchema,
   setViewportMutationSchema,
   upsertUserShapeMutationSchema,
@@ -85,6 +86,12 @@ describe("REST and canvas mutation schemas", () => {
     expectInvalid(setSelectionMutationSchema, { type: "setSelection", nodeIds: [1] });
   });
 
+  it("validates clearPositionOverrides mutation", () => {
+    expectValid(clearPositionOverridesMutationSchema, { type: "clearPositionOverrides" });
+    expectInvalid(clearPositionOverridesMutationSchema, { type: "setSelection", nodeIds: [] });
+    expectInvalid(clearPositionOverridesMutationSchema, { type: "clearPositionOverride" });
+  });
+
   it("validates setViewport mutation", () => {
     expectValid(setViewportMutationSchema, {
       type: "setViewport",
@@ -112,6 +119,9 @@ describe("REST and canvas mutation schemas", () => {
     expectValid(canvasMutationSchema, {
       type: "setSelection",
       nodeIds: [],
+    });
+    expectValid(canvasMutationSchema, {
+      type: "clearPositionOverrides",
     });
     expectInvalid(canvasMutationSchema, { type: "unknownMutation" });
     expectInvalid(canvasMutationSchema, { type: "setSelection" });

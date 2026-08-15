@@ -17,6 +17,7 @@ const BLOCKED_ON_CONFLICT: CanvasMutation["type"][] = [
   "deleteUserShape",
   "addComment",
   "setPositionOverride",
+  "clearPositionOverrides",
 ];
 
 export interface MutationStore {
@@ -37,6 +38,7 @@ export interface MutationController {
     nodeId: string,
     position: Extract<CanvasMutation, { type: "setPositionOverride" }>["position"],
   ) => void;
+  clearPositionOverrides: () => void;
   setSelection: (nodeIds: string[]) => void;
   setViewport: (mutation: Extract<CanvasMutation, { type: "setViewport" }>) => void;
   cancelRun: () => Promise<void>;
@@ -95,6 +97,8 @@ function applyCanvasMutationLocally(userState: UserState, mutation: CanvasMutati
       }
       return { ...userState, positionOverrides };
     }
+    case "clearPositionOverrides":
+      return { ...userState, positionOverrides: {} };
     case "setSelection":
       return { ...userState, selection: mutation.nodeIds };
     case "setViewport":
@@ -203,6 +207,10 @@ export function createMutationController(
 
     setPositionOverride(nodeId, position) {
       positionFlusher.push(nodeId, position);
+    },
+
+    clearPositionOverrides() {
+      void postCanvasMutation(store, { type: "clearPositionOverrides" }, fetchImpl);
     },
 
     setSelection(nodeIds) {

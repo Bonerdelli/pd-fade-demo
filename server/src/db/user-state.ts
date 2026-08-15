@@ -66,6 +66,10 @@ export function applyCanvasMutation(
       }
       break;
     }
+    case "clearPositionOverrides": {
+      state.positionOverrides = {};
+      break;
+    }
     case "setSelection": {
       state.selection = mutation.nodeIds;
       break;

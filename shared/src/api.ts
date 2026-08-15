@@ -48,6 +48,10 @@ export const setSelectionMutationSchema = z.object({
   nodeIds: z.array(z.string()),
 });
 
+export const clearPositionOverridesMutationSchema = z.object({
+  type: z.literal("clearPositionOverrides"),
+});
+
 export const setGraphViewportMutationSchema = z.object({
   type: z.literal("setViewport"),
   target: z.literal("graph"),
@@ -70,6 +74,7 @@ export const canvasMutationSchema = z.discriminatedUnion("type", [
   deleteUserShapeMutationSchema,
   addCommentMutationSchema,
   setPositionOverrideMutationSchema,
+  clearPositionOverridesMutationSchema,
   setSelectionMutationSchema,
   setViewportMutationSchema,
 ]);
