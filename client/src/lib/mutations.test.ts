@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { UserState } from "@pd-fade/shared";
 import { emptyUserState } from "../store/types.js";
 import { applyCanvasMutationLocally, createMutationController } from "./mutations.js";
+import { mutationErrors } from "./mutation-errors.js";
 
 function createTestStore(initialUserState: UserState = emptyUserState) {
   const store = {
@@ -37,9 +38,7 @@ describe("createMutationController", () => {
     });
 
     await vi.waitFor(() => {
-      expect(store.setMutationError).toHaveBeenCalledWith(
-        "Mutation blocked while agent run is active",
-      );
+      expect(store.setMutationError).toHaveBeenCalledWith(mutationErrors.blockedDuringRun());
     });
 
     expect(store.userState.map.shapes).toEqual([]);
@@ -77,6 +76,22 @@ describe("createMutationController", () => {
 });
 
 describe("applyCanvasMutationLocally", () => {
+  it("cascades comment deletion when deleting a user shape", () => {
+    const withComment = applyCanvasMutationLocally(
+      {
+        ...emptyUserState,
+        map: {
+          shapes: [{ id: "s1", kind: "point", coordinates: [0, 0] }],
+        },
+        comments: [{ id: "c1", targetShapeId: "s1", text: "note" }],
+      },
+      { type: "deleteUserShape", shapeId: "s1" },
+    );
+
+    expect(withComment.map.shapes).toHaveLength(0);
+    expect(withComment.comments).toHaveLength(0);
+  });
+
   it("upserts and deletes user shapes", () => {
     const withShape = applyCanvasMutationLocally(emptyUserState, {
       type: "upsertUserShape",

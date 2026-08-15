@@ -15,6 +15,7 @@ export function App() {
   const activeTab = useAppStore((state) => state.uiState.activeCanvasTab);
   const bootstrapStatus = useAppStore((state) => state.uiState.bootstrapStatus);
   const connectionStatus = useAppStore((state) => state.uiState.connectionStatus);
+  const mutationError = useAppStore((state) => state.uiState.mutationError);
   const setActiveCanvasTab = useAppStore((state) => state.setActiveCanvasTab);
 
   const statusKey =
@@ -28,6 +29,10 @@ export function App() {
             ? "status.reconnecting"
             : "status.disconnected";
 
+  const mutationErrorText = mutationError
+    ? t(mutationError.key, mutationError.params)
+    : null;
+
   return (
     <div className="flex h-full flex-col bg-slate-100 text-slate-900">
       <SessionBootstrap />
@@ -35,6 +40,9 @@ export function App() {
       <header className="border-b border-slate-200 bg-white px-6 py-3">
         <h1 className="text-lg font-semibold">{t("appTitle")}</h1>
         <p className="text-sm text-slate-500">{t(statusKey)}</p>
+        {mutationErrorText ? (
+          <p className="mt-1 text-sm text-red-600">{mutationErrorText}</p>
+        ) : null}
       </header>
 
       <main className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[360px_minmax(0,1fr)]">

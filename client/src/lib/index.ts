@@ -5,6 +5,7 @@ export {
   parseSseChunk,
   reportInvalidSsePayload,
   type ParsedSseEvent,
+  type SseConnectionHandle,
   type SseConnectionStatus,
   type SseConnectOptions,
 } from "./sse.js";
@@ -23,3 +24,4 @@ export {
   type MutationStore,
 } from "./mutations.js";
 export { createDebouncer, createCoalescingFlusher } from "./debounce.js";
+export { mutationErrors, type MutationError, type MutationErrorKey } from "./mutation-errors.js";

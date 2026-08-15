@@ -16,5 +16,12 @@
   "skeleton": {
     "chat": "Restoring chat history",
     "canvas": "Restoring canvas state"
+  },
+  "mutations": {
+    "blockedDuringRun": "Mutation blocked while agent run is active",
+    "messageBlockedDuringRun": "Cannot send message while agent run is active",
+    "canvasFailed": "Canvas mutation failed ({{status}})",
+    "messageFailed": "Message send failed ({{status}})",
+    "cancelFailed": "Cancel run failed ({{status}})"
   }
 }

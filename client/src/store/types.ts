@@ -7,6 +7,7 @@ import type {
   SessionStateResponse,
   UserState,
 } from "@pd-fade/shared";
+import type { MutationError } from "../lib/mutation-errors.js";
 
 export type RunStatus = "idle" | "running" | "error" | "cancelled";
 
@@ -30,7 +31,7 @@ export interface UiState {
   cameraCommand: CameraCommand | null;
   bootstrapStatus: BootstrapStatus;
   connectionStatus: ConnectionStatus;
-  mutationError: string | null;
+  mutationError: MutationError | null;
   lastSeq: number;
 }
 
@@ -46,7 +47,7 @@ export interface AppStoreState {
   setBootstrapStatus: (status: BootstrapStatus) => void;
   setConnectionStatus: (status: ConnectionStatus) => void;
   setSessionId: (sessionId: string) => void;
-  setMutationError: (message: string | null) => void;
+  setMutationError: (error: MutationError | null) => void;
   replaceUserState: (userState: UserState) => void;
   appendChatMessage: (message: ChatMessage) => void;
   removeChatMessage: (messageId: string) => void;

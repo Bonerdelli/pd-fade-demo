@@ -10,6 +10,7 @@ import {
 } from "@pd-fade/shared";
 import { apiUrl } from "./api-base.js";
 import { createCoalescingFlusher, createDebouncer } from "./debounce.js";
+import { mutationErrors, type MutationError } from "./mutation-errors.js";
 
 const BLOCKED_ON_CONFLICT: CanvasMutation["type"][] = [
   "upsertUserShape",
@@ -24,7 +25,7 @@ export interface MutationStore {
   replaceUserState: (userState: UserState) => void;
   appendChatMessage: (message: ChatMessage) => void;
   removeChatMessage: (messageId: string) => void;
-  setMutationError: (message: string | null) => void;
+  setMutationError: (error: MutationError | null) => void;
 }
 
 export interface MutationController {
@@ -76,6 +77,9 @@ function applyCanvasMutationLocally(userState: UserState, mutation: CanvasMutati
         map: {
           shapes: userState.map.shapes.filter((shape) => shape.id !== mutation.shapeId),
         },
+        comments: userState.comments.filter(
+          (comment) => comment.targetShapeId !== mutation.shapeId,
+        ),
       };
     case "addComment":
       return {
@@ -113,28 +117,28 @@ async function postCanvasMutation(
   mutation: CanvasMutation,
   fetchImplInner: typeof fetch,
 ) {
-    const sessionId = mutationStore.getSessionId();
-    if (!sessionId) {
-      return;
-    }
+  const sessionId = mutationStore.getSessionId();
+  if (!sessionId) {
+    return;
+  }
 
-    const previousUserState = mutationStore.getUserState();
-    mutationStore.replaceUserState(applyCanvasMutationLocally(previousUserState, mutation));
-    mutationStore.setMutationError(null);
+  const previousUserState = mutationStore.getUserState();
+  mutationStore.replaceUserState(applyCanvasMutationLocally(previousUserState, mutation));
+  mutationStore.setMutationError(null);
 
-    const body = postCanvasRequestSchema.parse({ mutation });
-    const response = await postWithRetry(apiUrl(sessionCanvasPath(sessionId)), body, fetchImplInner);
+  const body = postCanvasRequestSchema.parse({ mutation });
+  const response = await postWithRetry(apiUrl(sessionCanvasPath(sessionId)), body, fetchImplInner);
 
-    if (response.status === 409 && BLOCKED_ON_CONFLICT.includes(mutation.type)) {
-      mutationStore.replaceUserState(previousUserState);
-      mutationStore.setMutationError("Mutation blocked while agent run is active");
-      return;
-    }
+  if (response.status === 409 && BLOCKED_ON_CONFLICT.includes(mutation.type)) {
+    mutationStore.replaceUserState(previousUserState);
+    mutationStore.setMutationError(mutationErrors.blockedDuringRun());
+    return;
+  }
 
-    if (!response.ok) {
-      mutationStore.replaceUserState(previousUserState);
-      mutationStore.setMutationError(`Canvas mutation failed (${response.status})`);
-    }
+  if (!response.ok) {
+    mutationStore.replaceUserState(previousUserState);
+    mutationStore.setMutationError(mutationErrors.canvasFailed(response.status));
+  }
 }
 
 export function createMutationController(
@@ -170,18 +174,18 @@ export function createMutationController(
       store.appendChatMessage(message);
       store.setMutationError(null);
 
-      const body = postMessageRequestSchema.parse({ text });
+      const body = postMessageRequestSchema.parse({ text, messageId: message.id });
       const response = await postWithRetry(apiUrl(sessionMessagesPath(sessionId)), body, fetchImpl);
 
       if (response.status === 409) {
         store.removeChatMessage(message.id);
-        store.setMutationError("Cannot send message while agent run is active");
+        store.setMutationError(mutationErrors.messageBlockedDuringRun());
         return;
       }
 
       if (!response.ok) {
         store.removeChatMessage(message.id);
-        store.setMutationError(`Message send failed (${response.status})`);
+        store.setMutationError(mutationErrors.messageFailed(response.status));
       }
     },
 
@@ -234,7 +238,7 @@ export function createMutationController(
       store.setMutationError(null);
       const response = await postWithRetry(apiUrl(sessionCancelRunPath(sessionId)), {}, fetchImpl);
       if (!response.ok) {
-        store.setMutationError(`Cancel run failed (${response.status})`);
+        store.setMutationError(mutationErrors.cancelFailed(response.status));
       }
     },
 
