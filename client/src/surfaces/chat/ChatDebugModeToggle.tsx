@@ -7,8 +7,8 @@ export function ChatDebugModeToggle() {
   const setDebugMode = useAppStore((state) => state.setDebugMode);
 
   return (
-    <div className="shrink-0 border-t border-slate-100 bg-white px-4 py-2">
-      <label className="flex items-center justify-end gap-1.5 text-xs text-slate-500">
+    <div className="shrink-0 bg-white px-4 pb-2">
+      <label className="flex items-center gap-1.5 text-xs text-slate-500">
         <input
           type="checkbox"
           checked={debugMode}

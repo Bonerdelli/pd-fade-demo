@@ -104,6 +104,7 @@ until a release is cut.
 
 ### Changed
 
+- Left-align the chat debug mode toggle and drop its separator border
 - Move New chat control from canvas header to chat header; move debug mode toggle to a footer row below the composer
 - Hide tool card Expand control when expanded content would repeat the collapsed summary; registry `hasDetails` predicates per card type and debug mode
 - Hide plot_signals center coordinates in designed tool cards unless chat debug mode is on
