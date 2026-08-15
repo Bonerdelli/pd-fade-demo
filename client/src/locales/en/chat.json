@@ -19,7 +19,7 @@
     "empty": "Send a message to start exploring the entity graph"
   },
   "composer": {
-    "placeholder": "Ask about entities, signals, or the map",
+    "placeholder": "Ask me about anything",
     "placeholderRunning": "Agent is working — type your next message or press Stop",
     "inputLabel": "Message input",
     "send": "Send",
