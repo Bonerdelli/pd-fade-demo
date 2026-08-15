@@ -62,18 +62,25 @@ export class AnthropicAgentDriver implements AgentDriver {
         turnIndex,
       );
 
-      const stream = this.client.messages.stream({
-        model: resolveAnthropicModel(),
-        max_tokens: 4096,
-        system,
-        tools: anthropicToolDefinitions as Tool[],
-        messages,
-      });
+      const stream = this.client.messages.stream(
+        {
+          model: resolveAnthropicModel(),
+          max_tokens: 4096,
+          system,
+          tools: anthropicToolDefinitions as Tool[],
+          messages,
+        },
+        { signal },
+      );
+
+      const onAbort = () => {
+        stream.abort();
+      };
+      signal.addEventListener("abort", onAbort, { once: true });
 
       try {
         for await (const event of stream) {
           if (signal.aborted) {
-            stream.abort();
             throw new RunCancelledError();
           }
 
@@ -84,6 +91,12 @@ export class AnthropicAgentDriver implements AgentDriver {
           throw new RunCancelledError();
         }
         throw error;
+      } finally {
+        signal.removeEventListener("abort", onAbort);
+      }
+
+      if (signal.aborted) {
+        throw new RunCancelledError();
       }
 
       const stopReason = translator.getStopReason() ?? (await stream.finalMessage()).stop_reason;
