@@ -8,6 +8,7 @@ Bare-metal provisioning for a demo or small production VM: **build on the contro
 
 - Ansible 2.15+
 - Node.js 20+ and pnpm 10+ (`corepack enable && corepack prepare pnpm@10.28.0 --activate`)
+- `rsync` (used by `scripts/build-release-archive.sh` to pack `dist/` trees)
 - The pd-fade repository checkout (build runs from `pd_fade_repo_root`)
 
 ### Target host

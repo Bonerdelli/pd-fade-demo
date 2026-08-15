@@ -89,7 +89,6 @@
         owner: "{{ pd_fade_user }}"
         group: "{{ pd_fade_group }}"
         force: true
-      notify: Restart pd-fade
 
     - name: Remove uploaded temporary archive
       ansible.builtin.file:
@@ -104,10 +103,6 @@
   ansible.builtin.set_fact:
     pd_fade_release_deployed: false
   when: not (pd_fade_release_upload_required | bool)
-
-- name: Apply service restart after new release
-  ansible.builtin.meta: flush_handlers
-  when: pd_fade_release_deployed | default(false) | bool
 
 - name: Prune old releases
   ansible.builtin.import_tasks: prune-releases.yml

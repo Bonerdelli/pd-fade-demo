@@ -56,6 +56,7 @@ until a release is cut.
 
 ### Fixed
 
+- Defer Ansible pd-fade service restart until after the release symlink exists on first provision
 - Include client package manifest in Ansible release archives for pnpm workspace lockfile verification
 - Read Ansible release metadata from a controller JSON file instead of parsing build script stdout
 - Install systemd unit before Ansible release deploy so first-provision restart handlers succeed

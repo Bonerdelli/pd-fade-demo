@@ -33,7 +33,7 @@
     owner: root
     group: "{{ pd_fade_group }}"
     mode: "0640"
-  notify: Restart pd-fade
+  register: pd_fade_env_deploy
 
 - name: Deploy systemd unit
   ansible.builtin.template:
@@ -42,10 +42,12 @@
     owner: root
     group: root
     mode: "0644"
-  notify: Reload systemd
+  register: pd_fade_unit_deploy
 
-- name: Reload systemd after unit file is present
-  ansible.builtin.meta: flush_handlers
+- name: Reload systemd after unit file change
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: pd_fade_unit_deploy.changed | bool
 
 - name: Build release archive on controller
   ansible.builtin.import_tasks: build-local.yml
@@ -53,15 +55,19 @@
 - name: Deploy release to target host
   ansible.builtin.import_tasks: deploy-release.yml
 
-- name: Enable and start pd-fade service
+- name: Apply pd-fade service state after deploy
   ansible.builtin.systemd:
     name: "{{ pd_fade_systemd_unit }}"
     enabled: true
-    state: started
-    daemon_reload: true
-
-- name: Apply service restart after environment changes
-  ansible.builtin.meta: flush_handlers
+    state: "{{ 'restarted' if pd_fade_service_restart_required else 'started' }}"
+    daemon_reload: false
+  vars:
+    pd_fade_service_restart_required: >-
+      {{
+        (pd_fade_release_deployed | default(false) | bool)
+        or (pd_fade_env_deploy.changed | default(false) | bool)
+        or (pd_fade_unit_deploy.changed | default(false) | bool)
+      }}
 
 - name: Verify pd-fade health endpoint
   ansible.builtin.import_tasks: healthcheck.yml
