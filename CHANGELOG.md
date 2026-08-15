@@ -15,3 +15,7 @@ until a release is cut.
 - Shared protocol unit tests covering every event and canvas mutation schema
 - `@pd-fade/client` Vite + React + Tailwind skeleton with i18n namespaces and Zustand store stub
 - `@pd-fade/server` Fastify skeleton with health endpoint and placeholder modules for HTTP, DB and agent layers
+
+### Fixed
+
+- Allow native builds for `better-sqlite3` and `esbuild` under pnpm 10
