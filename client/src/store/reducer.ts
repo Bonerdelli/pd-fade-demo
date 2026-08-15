@@ -1,6 +1,5 @@
-import type { AgentEvent, ChatMessage } from "@pd-fade/shared";
+import type { AgentEvent, AgentState, ChatMessage, SessionStateResponse } from "@pd-fade/shared";
 import { applyPatch } from "fast-json-patch";
-import type { AgentState } from "@pd-fade/shared";
 import type { UiState } from "./types.js";
 import { emptyAgentState, emptyUserState, initialUiState } from "./types.js";
 
@@ -203,4 +202,25 @@ export function createInitialReducerState(): ReducerState {
 
 export function foldEvents(state: ReducerState, events: AgentEvent[]): ReducerState {
   return events.reduce(reduceEvent, state);
+}
+
+export function hydrateFromSessionResponse(response: SessionStateResponse): ReducerState {
+  const folded = foldEvents(
+    {
+      ...createInitialReducerState(),
+      agentState: response.snapshot,
+      userState: response.userState,
+      chat: [],
+      uiState: {
+        ...initialUiState,
+        bootstrapStatus: "loading",
+      },
+    },
+    response.tailEvents,
+  );
+
+  return {
+    ...folded,
+    chat: response.chat,
+  };
 }

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { AgentEvent, ChatMessage, SessionStateResponse, UserState } from "@pd-fade/shared";
-import { createInitialReducerState, foldEvents, reduceEvent } from "./reducer.js";
+import { createInitialReducerState, hydrateFromSessionResponse, reduceEvent } from "./reducer.js";
+import type { MutationError } from "../lib/mutation-errors.js";
 import type { AppStoreState, BootstrapStatus, ConnectionStatus, ViewportTarget } from "./types.js";
 
 const initial = createInitialReducerState();
@@ -37,26 +38,14 @@ export const useAppStore = create<AppStoreState>((set) => ({
   },
 
   hydrateSession: (response: SessionStateResponse) => {
-    const folded = foldEvents(
-      {
-        ...createInitialReducerState(),
-        agentState: response.snapshot,
-        userState: response.userState,
-        chat: response.chat,
-        uiState: {
-          ...initial.uiState,
-          bootstrapStatus: "loading",
-        },
-      },
-      response.tailEvents,
-    );
+    const hydrated = hydrateFromSessionResponse(response);
 
     set({
-      agentState: folded.agentState,
-      userState: folded.userState,
-      chat: folded.chat,
+      agentState: hydrated.agentState,
+      userState: hydrated.userState,
+      chat: hydrated.chat,
       uiState: {
-        ...folded.uiState,
+        ...hydrated.uiState,
         bootstrapStatus: "ready",
         lastSeq: response.lastSeq,
       },
@@ -85,9 +74,9 @@ export const useAppStore = create<AppStoreState>((set) => ({
     set({ sessionId });
   },
 
-  setMutationError: (message: string | null) => {
+  setMutationError: (error: MutationError | null) => {
     set((state) => ({
-      uiState: { ...state.uiState, mutationError: message },
+      uiState: { ...state.uiState, mutationError: error },
     }));
   },
 

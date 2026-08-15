@@ -3,49 +3,47 @@ import type { UserState } from "@pd-fade/shared";
 import {
   createInitialReducerState,
   foldEvents,
+  hydrateFromSessionResponse,
   reduceEvent,
 } from "./reducer.js";
-import { emptyAgentState } from "./types.js";
+import { emptyAgentState, emptyUserState } from "./types.js";
 import {
+  buildAuthoritativeMockChat,
+  buildHydrateTailFromMockRun,
   emptySnapshotEvent,
   mockRunEventLog,
   mockRunId,
   populatedAgentSnapshot,
+  signalsSnapshotFromMockRun,
+  stateDeltaFixtureEvent,
   userStateFixture,
 } from "./fixtures/mock-run.js";
 
 describe("reduceEvent golden tests", () => {
-  it("folds a full mock run event log into the expected state shape", () => {
+  it("folds the realistic mock driver event log into the expected state shape", () => {
     const initial = createInitialReducerState();
     const next = foldEvents(initial, mockRunEventLog);
 
     expect(next.uiState.runStatus).toBe("idle");
     expect(next.uiState.currentRunId).toBeNull();
-    expect(next.agentState.graph.nodes).toHaveLength(2);
-    expect(next.agentState.graph.nodes[1]).toEqual({
-      id: "n2",
-      label: "Beta",
-      kind: "entity",
-    });
-    expect(next.agentState.map.shapes[0]?.label).toBe("HQ");
+    expect(next.agentState.graph.nodes).toHaveLength(8);
+    expect(next.agentState.map.signals).toHaveLength(3);
+    expect(next.agentState.map.shapes).toHaveLength(3);
     expect(next.uiState.cameraCommand).toEqual({
-      target: "graph",
-      camera: { x: 100, y: 200, zoom: 1.5 },
-      seq: 9,
+      target: "map",
+      camera: { center: [13.405, 52.52], zoom: 12.5 },
+      seq: 78,
     });
 
-    expect(next.chat).toEqual([
-      { kind: "assistant", id: "assistant-1", text: "Hello world" },
-      {
-        kind: "toolCall",
-        id: "tool-1",
-        toolCallId: "tool-1",
-        name: "searchGraph",
-        status: "ok",
-        args: { query: "alpha" },
-        result: { matches: 1 },
-      },
-    ]);
+    expect(next.chat.filter((message) => message.kind === "assistant")).toHaveLength(3);
+    expect(next.chat.filter((message) => message.kind === "toolCall")).toHaveLength(2);
+    expect(next.chat.some((message) => message.kind === "toolCall" && message.name === "search_entities")).toBe(
+      true,
+    );
+    expect(next.chat.some((message) => message.kind === "toolCall" && message.name === "plot_signals")).toBe(
+      true,
+    );
+    expect(next.agentState).toEqual(signalsSnapshotFromMockRun);
   });
 
   it("never mutates userState on STATE_SNAPSHOT", () => {
@@ -66,19 +64,7 @@ describe("reduceEvent golden tests", () => {
       agentState: populatedAgentSnapshot,
     };
 
-    const next = reduceEvent(initial, {
-      seq: 20,
-      runId: null,
-      ts: 1,
-      type: "STATE_DELTA",
-      patch: [
-        {
-          op: "replace",
-          path: "/graph/nodes/0/label",
-          value: "Updated",
-        },
-      ],
-    });
+    const next = reduceEvent(initial, stateDeltaFixtureEvent);
 
     expect(next.agentState.graph.nodes[0]?.label).toBe("Updated");
   });
@@ -164,5 +150,56 @@ describe("reduceEvent golden tests", () => {
     expect(next.uiState.runStatus).toBe("error");
     expect(next.uiState.currentRunId).toBe(mockRunId);
     expect(next.uiState.runErrorMessage).toBe("Provider unavailable");
+  });
+});
+
+describe("hydrateFromSessionResponse", () => {
+  it("uses server chat as authoritative and still applies tail agent projections", () => {
+    const authoritativeChat = buildAuthoritativeMockChat();
+    const tailEvents = buildHydrateTailFromMockRun();
+
+    const duplicated = foldEvents(
+      {
+        ...createInitialReducerState(),
+        agentState: emptyAgentState,
+        userState: emptyUserState,
+        chat: authoritativeChat,
+        uiState: createInitialReducerState().uiState,
+      },
+      tailEvents,
+    );
+
+    const hydrated = hydrateFromSessionResponse({
+      snapshot: emptyAgentState,
+      userState: emptyUserState,
+      chat: authoritativeChat,
+      tailEvents: [
+        ...tailEvents,
+        {
+          seq: 136,
+          runId: mockRunId,
+          ts: 1,
+          type: "RUN_FINISHED",
+        },
+      ],
+      lastSeq: 136,
+    });
+
+    expect(duplicated.chat.length).toBeGreaterThanOrEqual(authoritativeChat.length);
+    const duplicatedSummary = duplicated.chat.find(
+      (message) => message.kind === "assistant" && message.id.includes("assistant-summary"),
+    );
+    if (duplicatedSummary?.kind === "assistant") {
+      const authoritativeSummary = authoritativeChat.find(
+        (message) => message.kind === "assistant" && message.id.includes("assistant-summary"),
+      );
+      if (authoritativeSummary?.kind === "assistant") {
+        expect(duplicatedSummary.text.length).toBeGreaterThan(authoritativeSummary.text.length);
+      }
+    }
+
+    expect(hydrated.chat).toEqual(authoritativeChat);
+    expect(hydrated.uiState.runStatus).toBe("idle");
+    expect(hydrated.agentState).toEqual(emptyAgentState);
   });
 });

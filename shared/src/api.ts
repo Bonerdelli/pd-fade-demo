@@ -6,6 +6,7 @@ import { agentStateSchema, mapShapeSchema, userStateSchema } from "./state.js";
 
 export const postMessageRequestSchema = z.object({
   text: z.string().min(1),
+  messageId: z.string().optional(),
 });
 
 export const postMessageResponseSchema = z.object({
@@ -81,6 +82,14 @@ export const postCanvasResponseSchema = z.object({
   accepted: z.literal(true),
 });
 
+/**
+ * Session bootstrap payload returned by GET /session/:id/state.
+ *
+ * Contract: `chat` is the server-authoritative, fully materialized read model up to
+ * `lastSeq`. Clients must apply `tailEvents` only for non-chat projections
+ * (agentState, run status, camera commands) and then set `chat` from this field —
+ * never re-project chat by folding TEXT_DELTA / TOOL_* events from `tailEvents`.
+ */
 export const sessionStateResponseSchema = z.object({
   snapshot: agentStateSchema,
   userState: userStateSchema,
