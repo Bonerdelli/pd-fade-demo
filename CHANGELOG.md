@@ -8,6 +8,7 @@ until a release is cut.
 
 ### Added
 
+- Ansible optional SSH deploy key for private git repository checkout
 - Ansible provisioning for demo/production VMs (Node.js 20, pnpm via corepack, systemd, nginx, optional TLS)
 - Root README pointer to `ansible/README.md`
 - Anthropic demo system prompt module with tool choreography, protocol boundary, and user-context instructions
@@ -47,6 +48,10 @@ until a release is cut.
 
 ### Fixed
 
+- Switch Ansible TLS to certbot webroot so renewals work while nginx holds port 80
+- Keep nginx running when Let's Encrypt issuance fails on first TLS enable
+- Restart pd-fade only when git checkout or environment file changes on redeploy
+- Run NodeSource setup script only when the APT source is not yet configured
 - Obtain Let's Encrypt certificate before deploying TLS nginx vhost on first provision
 - Fix tool card name i18n lookup to use the `toolCards.toolNames` namespace path
 - Sync hydrated user map shapes into terra-draw after deferred map load setup
@@ -78,6 +83,9 @@ until a release is cut.
 
 ### Changed
 
+- Default Ansible TLS to off for HTTP-first bring-up; document enable-TLS path
+- Move Ansible pnpm store to `/var/cache/pd-fade/pnpm`, separate from SQLite data dir
+- Drop unused `python3-certbot-nginx` package and `ansible.posix` collection from Ansible requirements
 - Add optional `reasonCode` on RUN_ERROR events with server restart and driver crash reason codes
 - Resolve run error banner copy from `reasonCode` with human-readable message fallback
 - Localize tool card header names via chat i18n mapping with raw-name fallback
