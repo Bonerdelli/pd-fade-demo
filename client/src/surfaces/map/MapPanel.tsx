@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import type { MapCamera } from "@pd-fade/shared";
 import { AgentMovedIndicator } from "../../components/AgentMovedIndicator.js";
 import { RunLockHint } from "../../components/RunLockHint.js";
@@ -12,7 +11,6 @@ import { useDrawTools, type DrawToolMode } from "./hooks/use-draw-tools.js";
 import { useMapInstance } from "./hooks/use-map-instance.js";
 
 export function MapPanel() {
-  const { t } = useTranslation("map");
   const containerRef = useRef<HTMLDivElement>(null);
   const isProgrammaticMoveRef = useRef(false);
   const isUserGesturingRef = useRef(false);
@@ -117,38 +115,30 @@ export function MapPanel() {
   );
 
   return (
-    <section className="flex h-full flex-col">
-      <header className="border-b border-slate-200 px-4 py-2">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-          {t("panelTitle")}
-        </h2>
-      </header>
+    <section className="relative h-full min-h-0">
+      <div ref={containerRef} className="absolute inset-0" data-testid="map-container" />
 
-      <div className="relative min-h-0 flex-1">
-        <div ref={containerRef} className="absolute inset-0" data-testid="map-container" />
+      <MapToolbar
+        activeMode={drawMode}
+        disabled={isRunLocked}
+        canDelete={hasSelection}
+        onModeChange={handleModeChange}
+        onDelete={deleteSelected}
+      />
 
-        <MapToolbar
-          activeMode={drawMode}
+      <AgentMovedIndicator visible={showAgentMoved} namespace="map" />
+
+      {isRunLocked ? <RunLockHint namespace="map" /> : null}
+
+      {visibleAgentShape ? (
+        <AgentShapePopup
+          shapeId={visibleAgentShape.shapeId}
+          label={visibleAgentShape.label}
           disabled={isRunLocked}
-          canDelete={hasSelection}
-          onModeChange={handleModeChange}
-          onDelete={deleteSelected}
+          onClose={() => setSelectedAgentShape(null)}
+          onAddComment={handleAddComment}
         />
-
-        <AgentMovedIndicator visible={showAgentMoved} namespace="map" />
-
-        {isRunLocked ? <RunLockHint namespace="map" /> : null}
-
-        {visibleAgentShape ? (
-          <AgentShapePopup
-            shapeId={visibleAgentShape.shapeId}
-            label={visibleAgentShape.label}
-            disabled={isRunLocked}
-            onClose={() => setSelectedAgentShape(null)}
-            onAddComment={handleAddComment}
-          />
-        ) : null}
-      </div>
+      ) : null}
     </section>
   );
 }
