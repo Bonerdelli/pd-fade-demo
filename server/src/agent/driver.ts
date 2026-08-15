@@ -87,6 +87,11 @@ export async function emitToolCall(
     name,
   });
 
+  const postToolStartDelayMs = Number(process.env.MOCK_DRIVER_POST_TOOL_START_DELAY_MS ?? 0);
+  if (postToolStartDelayMs > 0) {
+    await delay(postToolStartDelayMs, signal);
+  }
+
   const argsJson = JSON.stringify(args);
   const chunkSize = Math.max(1, Math.ceil(argsJson.length / 3));
   for (let index = 0; index < argsJson.length; index += chunkSize) {
