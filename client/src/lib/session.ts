@@ -92,6 +92,10 @@ export function createSessionController(options: SessionControllerOptions): Sess
         setConnectionStatus("reconnecting");
         void resync();
       },
+      onCursorAhead: () => {
+        setConnectionStatus("reconnecting");
+        void resync();
+      },
       fetchImpl,
     });
   };

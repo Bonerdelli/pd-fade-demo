@@ -12,6 +12,7 @@ export interface SseEventHandler {
   onEvent: (event: AgentEvent) => void;
   onInvalidPayload?: (raw: string, error: unknown) => void;
   onGapDetected?: (lastSeq: number, incomingSeq: number) => void;
+  onCursorAhead?: () => void;
   onConnectionStatusChange?: (status: SseConnectionStatus) => void;
 }
 
@@ -92,6 +93,7 @@ export async function connectSse(options: SseConnectOptions): Promise<SseConnect
     onEvent,
     onInvalidPayload,
     onGapDetected,
+    onCursorAhead,
     onConnectionStatusChange,
   } = options;
 
@@ -142,6 +144,10 @@ export async function connectSse(options: SseConnectOptions): Promise<SseConnect
         });
 
         if (!response.ok || !response.body) {
+          if (response.status === 409) {
+            onCursorAhead?.();
+            return;
+          }
           throw new Error(`SSE request failed with status ${response.status}`);
         }
 

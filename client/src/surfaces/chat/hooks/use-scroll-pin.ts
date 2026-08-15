@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import type { ChatMessage } from "@pd-fade/shared";
 import { isPinnedToBottom, scrollToBottom } from "../lib/scroll-pin.js";
 
@@ -12,6 +12,15 @@ export function useScrollPin(messages: ChatMessage[]) {
       return;
     }
     pinnedRef.current = isPinnedToBottom(element);
+  }, []);
+
+  useLayoutEffect(() => {
+    const element = containerRef.current;
+    if (!element) {
+      return;
+    }
+    scrollToBottom(element);
+    pinnedRef.current = true;
   }, []);
 
   useEffect(() => {

@@ -120,6 +120,33 @@ describe("connectSse", () => {
     abortController.abort();
   });
 
+  it("triggers cursor-ahead callback when the server rejects a stale cursor", async () => {
+    const onCursorAhead = vi.fn();
+    const abortController = new AbortController();
+
+    const fetchImpl = vi.fn(async () => ({
+      ok: false,
+      status: 409,
+      body: null,
+    })) as unknown as typeof fetch;
+
+    await connectSse({
+      url: "/events",
+      lastEventId: 100,
+      fetchImpl,
+      signal: abortController.signal,
+      sleep: async () => undefined,
+      onEvent: vi.fn(),
+      onCursorAhead,
+    });
+
+    await vi.waitFor(() => {
+      expect(onCursorAhead).toHaveBeenCalledTimes(1);
+    });
+
+    abortController.abort();
+  });
+
   it("silently drops duplicate and old seq values", async () => {
     const onEvent = vi.fn();
     const abortController = new AbortController();

@@ -11,6 +11,10 @@ export function RunStatusBanner() {
   const showThinking = shouldShowThinkingIndicator(runStatus, chat);
   const showError = runStatus === "error" && runErrorMessage !== null;
   const showCancelled = runStatus === "cancelled";
+  const localizedError =
+    runErrorMessage !== null
+      ? t(`runStatus.errors.${runErrorMessage}`, { defaultValue: runErrorMessage })
+      : null;
 
   if (!showThinking && !showError && !showCancelled) {
     return null;
@@ -34,7 +38,7 @@ export function RunStatusBanner() {
           role="alert"
         >
           <p className="font-medium">{t("runStatus.errorTitle")}</p>
-          <p className="mt-1">{runErrorMessage}</p>
+          <p className="mt-1">{localizedError}</p>
         </div>
       ) : null}
       {showCancelled ? (

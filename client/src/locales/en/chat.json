@@ -8,7 +8,10 @@
   "runStatus": {
     "thinking": "Agent is thinking",
     "errorTitle": "Run failed",
-    "cancelled": "Run was cancelled"
+    "cancelled": "Run was cancelled",
+    "errors": {
+      "server_restarted": "The server restarted while this run was in progress"
+    }
   },
   "messageList": {
     "label": "Conversation",
