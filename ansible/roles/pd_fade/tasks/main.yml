@@ -43,6 +43,53 @@
     'Already up to date' not in pnpm_install.stdout
     and 'Lockfile is up to date' not in pnpm_install.stdout
 
+- name: Resolve checked-out git revision
+  ansible.builtin.command: git rev-parse HEAD
+  args:
+    chdir: "{{ pd_fade_root }}"
+  become: true
+  become_user: "{{ pd_fade_user }}"
+  register: pd_fade_git_rev
+  changed_when: false
+
+- name: Stat build stamp file
+  ansible.builtin.stat:
+    path: "{{ pd_fade_build_stamp_path }}"
+  register: pd_fade_build_stamp_stat
+
+- name: Stat client build output
+  ansible.builtin.stat:
+    path: "{{ pd_fade_root }}/client/dist/index.html"
+  register: pd_fade_client_dist_stat
+
+- name: Stat server build output
+  ansible.builtin.stat:
+    path: "{{ pd_fade_root }}/server/dist/index.js"
+  register: pd_fade_server_dist_stat
+
+- name: Read build stamp revision
+  ansible.builtin.slurp:
+    src: "{{ pd_fade_build_stamp_path }}"
+  register: pd_fade_build_stamp_slurp
+  when: pd_fade_build_stamp_stat.stat.exists
+
+- name: Decide whether application build is required
+  ansible.builtin.set_fact:
+    pd_fade_build_required: >-
+      {{
+        pd_fade_git_checkout.changed | bool
+        or not pd_fade_client_dist_stat.stat.exists
+        or not pd_fade_server_dist_stat.stat.exists
+        or not pd_fade_build_stamp_stat.stat.exists
+        or (
+          pd_fade_build_stamp_stat.stat.exists
+          and (
+            pd_fade_build_stamp_slurp.content | b64decode | trim
+            != pd_fade_git_rev.stdout | trim
+          )
+        )
+      }}
+
 - name: Build client and server
   ansible.builtin.command:
     cmd: pnpm build
@@ -50,7 +97,17 @@
   become: true
   become_user: "{{ pd_fade_user }}"
   environment: "{{ pd_fade_pnpm_environment }}"
-  when: pd_fade_git_checkout.changed | bool
+  when: pd_fade_build_required | bool
+  notify: Restart pd-fade
+
+- name: Record built git revision
+  ansible.builtin.copy:
+    dest: "{{ pd_fade_build_stamp_path }}"
+    content: "{{ pd_fade_git_rev.stdout | trim }}\n"
+    owner: "{{ pd_fade_user }}"
+    group: "{{ pd_fade_group }}"
+    mode: "0644"
+  when: pd_fade_build_required | bool
 
 - name: Ensure environment file directory exists
   ansible.builtin.file:

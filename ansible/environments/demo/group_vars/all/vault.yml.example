@@ -15,3 +15,6 @@ vault_pd_fade_git_deploy_key: |
   -----BEGIN OPENSSH PRIVATE KEY-----
   CHANGE_ME
   -----END OPENSSH PRIVATE KEY-----
+
+# Alternative to deploy key: HTTPS token embedded in pd_fade_repo_url
+# vault_pd_fade_git_token: "CHANGE_ME"

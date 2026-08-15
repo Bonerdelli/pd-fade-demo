@@ -1,6 +1,7 @@
 ---
 pd_fade_systemd_unit: pd-fade
 pd_fade_pnpm_store_dir: /var/cache/pd-fade/pnpm
+pd_fade_build_stamp_path: "{{ pd_fade_root }}/.ansible-build-rev"
 pd_fade_git_deploy_key_enabled: false
 pd_fade_git_ssh_dir: "{{ pd_fade_data_dir }}/.ssh"
 pd_fade_git_ssh_key_path: "{{ pd_fade_git_ssh_dir }}/deploy_key"

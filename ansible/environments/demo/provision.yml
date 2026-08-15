@@ -3,10 +3,11 @@
 #
 # Full run (from ansible/):
 #   ansible-galaxy install -r requirements.yml
-#   ansible-playbook environments/demo/provision.yml --ask-vault-pass
+#   ansible-playbook environments/demo/provision.yml
+#   # add --ask-vault-pass (or --vault-password-file) only when vault.yml exists
 #
 # Redeploy app only:
-#   ansible-playbook environments/demo/provision.yml --tags pd_fade --ask-vault-pass
+#   ansible-playbook environments/demo/provision.yml --tags pd_fade
 
 - name: Provision pd-fade host
   hosts: pd_fade_servers

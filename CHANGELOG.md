@@ -50,6 +50,8 @@ until a release is cut.
 ### Fixed
 
 - Flush Ansible nginx handlers before certbot webroot so ACME challenges succeed on first TLS run
+- Make Ansible git known_hosts management idempotent via the known_hosts module
+- Rebuild pd-fade on retry when dist outputs or build stamp lag behind the checked-out revision
 - Switch Ansible TLS to certbot webroot so renewals work while nginx holds port 80
 - Keep nginx running when Let's Encrypt issuance fails on first TLS enable
 - Restart pd-fade only when git checkout or environment file changes on redeploy
