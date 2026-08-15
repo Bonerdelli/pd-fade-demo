@@ -9,6 +9,7 @@ until a release is cut.
 ### Added
 
 - `clearPositionOverrides` canvas mutation to reset graph node position overrides for Realign
+- Graph surface with React Flow entity nodes, position overrides, Realign, camera commands and run soft-lock
 - Architecture design document (`FE-Arch-Exercise-v2.md`)
 - pnpm workspace scaffolding with shared TypeScript, ESLint, Prettier and Vitest tooling
 - `@pd-fade/shared` protocol package with zod schemas for agent events, state models, chat read model and REST contracts

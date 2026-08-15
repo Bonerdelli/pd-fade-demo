@@ -259,3 +259,10 @@ export function createMutationController(
 }
 
 export { applyCanvasMutationLocally, postWithRetry, BLOCKED_ON_CONFLICT };
+
+export function submitClearPositionOverrides(
+  store: MutationStore,
+  fetchImpl: typeof fetch = fetch,
+): void {
+  void postCanvasMutation(store, { type: "clearPositionOverrides" }, fetchImpl);
+}

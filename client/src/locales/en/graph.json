@@ -1,4 +1,20 @@
 {
   "panelTitle": "Graph",
-  "placeholder": "Graph canvas placeholder"
+  "emptyState": "The agent has not built a graph yet",
+  "realign": {
+    "label": "Realign",
+    "tooltip": "Reset node positions to the agent layout"
+  },
+  "runLock": {
+    "hint": "Agent is working — node dragging is paused"
+  },
+  "camera": {
+    "agentMovedView": "Agent moved the view"
+  },
+  "nodeKind": {
+    "company": "Company",
+    "person": "Person",
+    "location": "Location",
+    "default": "Entity"
+  }
 }
