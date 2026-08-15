@@ -1,13 +1,13 @@
 import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useMutations, useRunLock } from "../../hooks/index.js";
+import type { MapCamera } from "@pd-fade/shared";
+import { AgentMovedIndicator } from "../../components/AgentMovedIndicator.js";
+import { RunLockHint } from "../../components/RunLockHint.js";
+import { useCameraCommand, useMutations, useRunLock } from "../../hooks/index.js";
 import { useAppStore } from "../../store/index.js";
-import { AgentMovedIndicator } from "./components/AgentMovedIndicator.js";
 import { AgentShapePopup } from "./components/AgentShapePopup.js";
 import { MapToolbar } from "./components/MapToolbar.js";
-import { RunLockHint } from "./components/RunLockHint.js";
 import { useAgentLayers } from "./hooks/use-agent-layers.js";
-import { useCameraCommand } from "./hooks/use-camera-command.js";
 import { useDrawTools, type DrawToolMode } from "./hooks/use-draw-tools.js";
 import { useMapInstance } from "./hooks/use-map-instance.js";
 
@@ -17,6 +17,9 @@ export function MapPanel() {
   const isProgrammaticMoveRef = useRef(false);
   const isUserGesturingRef = useRef(false);
   const initialViewport = useAppStore((state) => state.userState.viewports.map);
+  const agentShapeIds = useAppStore((state) =>
+    new Set(state.agentState.map.shapes.map((shape) => shape.id)),
+  );
   const isRunLocked = useRunLock();
   const { upsertUserShape, deleteUserShape, addComment, setViewport } = useMutations();
 
@@ -26,8 +29,14 @@ export function MapPanel() {
     label: string;
   } | null>(null);
 
+  const toolbarMode: DrawToolMode = isRunLocked ? "select" : activeMode;
+  const visibleAgentShape =
+    selectedAgentShape && agentShapeIds.has(selectedAgentShape.shapeId)
+      ? selectedAgentShape
+      : null;
+
   const handleUserViewportChange = useCallback(
-    (camera: { center: [number, number]; zoom: number }) => {
+    (camera: MapCamera) => {
       setViewport({
         type: "setViewport",
         target: "map",
@@ -64,8 +73,24 @@ export function MapPanel() {
     deleteUserShape,
   });
 
+  const applyMapCamera = useCallback(
+    (camera: MapCamera) => {
+      const map = mapRef.current;
+      if (!map) {
+        return;
+      }
+      map.flyTo({
+        center: camera.center,
+        zoom: camera.zoom,
+        essential: true,
+      });
+    },
+    [mapRef],
+  );
+
   const { showAgentMoved } = useCameraCommand({
-    mapRef,
+    target: "map",
+    applyCamera: applyMapCamera,
     isProgrammaticMoveRef,
     isUserGesturingRef,
   });
@@ -80,16 +105,16 @@ export function MapPanel() {
 
   const handleAddComment = useCallback(
     (text: string) => {
-      if (!selectedAgentShape) {
+      if (!visibleAgentShape) {
         return;
       }
       addComment({
         id: crypto.randomUUID(),
-        targetShapeId: selectedAgentShape.shapeId,
+        targetShapeId: visibleAgentShape.shapeId,
         text,
       });
     },
-    [addComment, selectedAgentShape],
+    [addComment, visibleAgentShape],
   );
 
   return (
@@ -104,21 +129,21 @@ export function MapPanel() {
         <div ref={containerRef} className="absolute inset-0" data-testid="map-container" />
 
         <MapToolbar
-          activeMode={activeMode}
+          activeMode={toolbarMode}
           disabled={isRunLocked}
           canDelete={hasSelection}
           onModeChange={handleModeChange}
           onDelete={deleteSelected}
         />
 
-        <AgentMovedIndicator visible={showAgentMoved} />
+        <AgentMovedIndicator visible={showAgentMoved} namespace="map" />
 
-        {isRunLocked ? <RunLockHint /> : null}
+        {isRunLocked ? <RunLockHint namespace="map" /> : null}
 
-        {selectedAgentShape ? (
+        {visibleAgentShape ? (
           <AgentShapePopup
-            shapeId={selectedAgentShape.shapeId}
-            label={selectedAgentShape.label}
+            shapeId={visibleAgentShape.shapeId}
+            label={visibleAgentShape.label}
             disabled={isRunLocked}
             onClose={() => setSelectedAgentShape(null)}
             onAddComment={handleAddComment}

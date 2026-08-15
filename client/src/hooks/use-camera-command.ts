@@ -1,28 +1,33 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
-import { useReactFlow } from "@xyflow/react";
-import { useAppStore } from "../../../store/index.js";
-import { AGENT_MOVED_INDICATOR_MS, CAMERA_ANIMATION_MS } from "../lib/constants.js";
+import { AGENT_MOVED_INDICATOR_MS } from "../lib/camera-constants.js";
 import {
   shouldApplyCameraCommand,
   shouldConsumeCameraCommandSeq,
 } from "../lib/camera-command.js";
+import { useAppStore } from "../store/index.js";
+import type { ViewportTarget } from "../store/types.js";
 
-export interface UseGraphCameraCommandOptions {
+export interface UseCameraCommandOptions<TCamera> {
+  target: ViewportTarget;
+  applyCamera: (camera: TCamera) => void;
   isProgrammaticMoveRef: RefObject<boolean>;
   isUserGesturingRef: RefObject<boolean>;
+  indicatorMs?: number;
 }
 
-export function useGraphCameraCommand({
+export function useCameraCommand<TCamera>({
+  target,
+  applyCamera,
   isProgrammaticMoveRef,
   isUserGesturingRef,
-}: UseGraphCameraCommandOptions) {
+  indicatorMs = AGENT_MOVED_INDICATOR_MS,
+}: UseCameraCommandOptions<TCamera>) {
   const cameraCommand = useAppStore((state) => state.uiState.cameraCommand);
-  const { setViewport } = useReactFlow();
   const lastConsumedSeqRef = useRef(0);
   const [showAgentMoved, setShowAgentMoved] = useState(false);
 
   useEffect(() => {
-    if (!shouldConsumeCameraCommandSeq(cameraCommand, lastConsumedSeqRef.current)) {
+    if (!shouldConsumeCameraCommandSeq(cameraCommand, target, lastConsumedSeqRef.current)) {
       return;
     }
 
@@ -30,27 +35,35 @@ export function useGraphCameraCommand({
     lastConsumedSeqRef.current = cameraCommand.seq;
 
     if (
-      !shouldApplyCameraCommand(cameraCommand, previousConsumedSeq, isUserGesturingRef.current)
+      !shouldApplyCameraCommand(
+        cameraCommand,
+        target,
+        previousConsumedSeq,
+        isUserGesturingRef.current,
+      )
     ) {
       return;
     }
 
-    const camera = cameraCommand.camera;
     isProgrammaticMoveRef.current = true;
-    void setViewport(
-      { x: camera.x, y: camera.y, zoom: camera.zoom },
-      { duration: CAMERA_ANIMATION_MS },
-    );
+    applyCamera(cameraCommand.camera as TCamera);
 
     setShowAgentMoved(true);
     const timeout = window.setTimeout(() => {
       setShowAgentMoved(false);
-    }, AGENT_MOVED_INDICATOR_MS);
+    }, indicatorMs);
 
     return () => {
       window.clearTimeout(timeout);
     };
-  }, [cameraCommand, isProgrammaticMoveRef, isUserGesturingRef, setViewport]);
+  }, [
+    applyCamera,
+    cameraCommand,
+    indicatorMs,
+    isProgrammaticMoveRef,
+    isUserGesturingRef,
+    target,
+  ]);
 
   return { showAgentMoved };
 }

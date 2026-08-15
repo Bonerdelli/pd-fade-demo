@@ -8,6 +8,7 @@ until a release is cut.
 
 ### Added
 
+- Shared camera command helpers, `useCameraCommand` hook and surface-agnostic indicator components for graph and map
 - `clearPositionOverrides` canvas mutation to reset graph node position overrides for Realign
 - Graph surface with React Flow entity nodes, position overrides, Realign, camera commands and run soft-lock
 - Architecture design document (`FE-Arch-Exercise-v2.md`)

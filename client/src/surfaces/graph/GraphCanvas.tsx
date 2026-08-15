@@ -5,21 +5,21 @@ import {
   MiniMap,
   ReactFlow,
   ReactFlowProvider,
+  useReactFlow,
   type OnMove,
   type OnSelectionChangeParams,
   type OnNodeDrag,
   type Viewport,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useMutations, useRunLock } from "../../hooks/index.js";
+import { AgentMovedIndicator } from "../../components/AgentMovedIndicator.js";
+import { RunLockHint } from "../../components/RunLockHint.js";
+import { useCameraCommand, useMutations, useRunLock } from "../../hooks/index.js";
+import { GRAPH_CAMERA_ANIMATION_MS } from "../../lib/camera-constants.js";
 import { useAppStore } from "../../store/index.js";
-import { AgentMovedIndicator } from "./components/AgentMovedIndicator.js";
 import { EntityNode } from "./components/EntityNode.js";
 import { GraphEmptyState } from "./components/GraphEmptyState.js";
 import { GraphToolbar } from "./components/GraphToolbar.js";
-import { RunLockHint } from "./components/RunLockHint.js";
-import { useClearPositionOverrides } from "./hooks/use-clear-position-overrides.js";
-import { useGraphCameraCommand } from "./hooks/use-graph-camera-command.js";
 import { useGraphElements } from "./hooks/use-graph-elements.js";
 import { hasLayoutDivergence } from "./lib/positions.js";
 
@@ -31,8 +31,8 @@ function GraphCanvasInner() {
   const selection = useAppStore((state) => state.userState.selection);
   const savedViewport = useAppStore((state) => state.userState.viewports.graph);
   const isRunLocked = useRunLock();
-  const { setPositionOverride, setSelection, setViewport } = useMutations();
-  const clearPositionOverrides = useClearPositionOverrides();
+  const { clearPositionOverrides, setPositionOverride, setSelection, setViewport } = useMutations();
+  const { setViewport: setReactFlowViewport } = useReactFlow();
 
   const isProgrammaticMoveRef = useRef(false);
   const isUserGesturingRef = useRef(false);
@@ -43,7 +43,19 @@ function GraphCanvasInner() {
     [graph.layout, positionOverrides],
   );
 
-  const { showAgentMoved } = useGraphCameraCommand({
+  const applyGraphCamera = useCallback(
+    (camera: { x: number; y: number; zoom: number }) => {
+      void setReactFlowViewport(
+        { x: camera.x, y: camera.y, zoom: camera.zoom },
+        { duration: GRAPH_CAMERA_ANIMATION_MS },
+      );
+    },
+    [setReactFlowViewport],
+  );
+
+  const { showAgentMoved } = useCameraCommand({
+    target: "graph",
+    applyCamera: applyGraphCamera,
     isProgrammaticMoveRef,
     isUserGesturingRef,
   });
@@ -65,8 +77,10 @@ function GraphCanvasInner() {
     [isUserGesturingRef, setPositionOverride],
   );
 
-  const handleMoveStart = useCallback<OnMove>(() => {
-    isUserGesturingRef.current = true;
+  const handleMoveStart = useCallback<OnMove>((event) => {
+    if (event) {
+      isUserGesturingRef.current = true;
+    }
   }, [isUserGesturingRef]);
 
   const handleMoveEnd = useCallback<OnMove>(
@@ -129,9 +143,13 @@ function GraphCanvasInner() {
         />
       </ReactFlow>
 
-      <GraphToolbar showRealign={showRealign} onRealign={clearPositionOverrides} />
-      <AgentMovedIndicator visible={showAgentMoved} />
-      {isRunLocked ? <RunLockHint /> : null}
+      <GraphToolbar
+        showRealign={showRealign}
+        disabled={isRunLocked}
+        onRealign={clearPositionOverrides}
+      />
+      <AgentMovedIndicator visible={showAgentMoved} namespace="graph" />
+      {isRunLocked ? <RunLockHint namespace="graph" /> : null}
     </div>
   );
 }

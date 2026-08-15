@@ -1,3 +1,3 @@
 export const AGENT_MOVED_INDICATOR_MS = 3000;
 
-export const CAMERA_ANIMATION_MS = 800;
+export const GRAPH_CAMERA_ANIMATION_MS = 800;

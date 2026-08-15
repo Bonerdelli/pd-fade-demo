@@ -94,6 +94,7 @@ vi.mock("terra-draw-maplibre-gl-adapter", () => ({
 
 vi.mock("../../hooks/index.js", () => ({
   useRunLock: () => false,
+  useCameraCommand: () => ({ showAgentMoved: false }),
   useMutations: () => ({
     upsertUserShape: vi.fn(),
     deleteUserShape: vi.fn(),

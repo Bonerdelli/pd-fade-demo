@@ -2,10 +2,11 @@ import { useTranslation } from "react-i18next";
 
 export interface AgentMovedIndicatorProps {
   visible: boolean;
+  namespace: "graph" | "map";
 }
 
-export function AgentMovedIndicator({ visible }: AgentMovedIndicatorProps) {
-  const { t } = useTranslation("graph");
+export function AgentMovedIndicator({ visible, namespace }: AgentMovedIndicatorProps) {
+  const { t } = useTranslation(namespace);
 
   if (!visible) {
     return null;

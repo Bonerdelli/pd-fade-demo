@@ -21,5 +21,3 @@ export const AGENT_LAYER_IDS = [
   AGENT_SHAPES_POINT_LAYER_ID,
   AGENT_SIGNALS_LAYER_ID,
 ] as const;
-
-export const AGENT_MOVED_INDICATOR_MS = 3000;
