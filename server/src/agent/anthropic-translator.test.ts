@@ -4,6 +4,10 @@ import { describe, expect, it } from "vitest";
 import { createDatabase } from "../db/database.js";
 import { SessionStore } from "../db/session-store.js";
 import { AnthropicStreamTranslator } from "./anthropic-translator.js";
+import {
+  focusToolStreamEvents,
+  searchEntitiesToolStreamEvents,
+} from "./anthropic-stream-fixtures.js";
 import type { AppendEventInput } from "../db/session-store.js";
 
 async function collectTranslatorEvents(
@@ -39,60 +43,10 @@ describe("AnthropicStreamTranslator", () => {
     const store = new SessionStore(db);
     const initialAgentState = store.getAgentState("translator-session");
 
-    const streamEvents: MessageStreamEvent[] = [
-      {
-        type: "content_block_start",
-        index: 0,
-        content_block: { type: "text", text: "", citations: null },
-      },
-      {
-        type: "content_block_delta",
-        index: 0,
-        delta: { type: "text_delta", text: "Searching" },
-      },
-      {
-        type: "content_block_delta",
-        index: 0,
-        delta: { type: "text_delta", text: " Berlin" },
-      },
-      { type: "content_block_stop", index: 0 },
-      {
-        type: "content_block_start",
-        index: 1,
-        content_block: {
-          type: "tool_use",
-          id: "toolu_search",
-          name: "search_entities",
-          input: {},
-        },
-      },
-      {
-        type: "content_block_delta",
-        index: 1,
-        delta: { type: "input_json_delta", partial_json: '{"query":"berlin"' },
-      },
-      {
-        type: "content_block_delta",
-        index: 1,
-        delta: { type: "input_json_delta", partial_json: ',"kinds":["company"]}' },
-      },
-      { type: "content_block_stop", index: 1 },
-      {
-        type: "message_delta",
-        delta: {
-          stop_reason: "tool_use",
-          stop_sequence: null,
-          container: null,
-          stop_details: null,
-        },
-        usage: {
-          input_tokens: 1,
-          output_tokens: 1,
-          cache_creation_input_tokens: 0,
-          cache_read_input_tokens: 0,
-        },
-      },
-    ];
+    const streamEvents = searchEntitiesToolStreamEvents(
+      "toolu_search",
+      '{"query":"berlin","kinds":["company"]}',
+    );
 
     const { emitted, agentState, translator } = await collectTranslatorEvents(
       streamEvents,
@@ -102,9 +56,7 @@ describe("AnthropicStreamTranslator", () => {
     const types = emitted.map((event) => event.type);
     expect(types).toEqual([
       "TEXT_DELTA",
-      "TEXT_DELTA",
       "TOOL_START",
-      "TOOL_ARGS",
       "TOOL_ARGS",
       "TOOL_RESULT",
       "STATE_SNAPSHOT",
@@ -116,7 +68,7 @@ describe("AnthropicStreamTranslator", () => {
       delta: "Searching",
     });
 
-    expect(emitted[2]).toMatchObject({
+    expect(emitted[1]).toMatchObject({
       type: "TOOL_START",
       toolCallId: "toolu_search",
       name: "search_entities",
@@ -138,26 +90,10 @@ describe("AnthropicStreamTranslator", () => {
     const store = new SessionStore(db);
     const initialAgentState = store.getAgentState("focus-translator");
 
-    const streamEvents: MessageStreamEvent[] = [
-      {
-        type: "content_block_start",
-        index: 0,
-        content_block: {
-          type: "tool_use",
-          id: "toolu_focus",
-          name: "focus",
-          input: {},
-        },
-      },
-      {
-        type: "content_block_delta",
-        index: 0,
-        delta: { type: "input_json_delta", partial_json: '{"target":"map"}' },
-      },
-      { type: "content_block_stop", index: 0 },
-    ];
-
-    const { emitted } = await collectTranslatorEvents(streamEvents, initialAgentState);
+    const { emitted } = await collectTranslatorEvents(
+      focusToolStreamEvents("toolu_focus"),
+      initialAgentState,
+    );
 
     expect(emitted.map((event) => event.type)).toEqual([
       "TOOL_START",

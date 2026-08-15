@@ -40,6 +40,9 @@ until a release is cut.
 
 ### Fixed
 
+- Abort Anthropic SDK streams promptly on run cancellation via signal listener and RequestOptions.signal
+- Add Anthropic driver-level tests for multi-turn loop, cancellation, executor errors and API failures
+- Type Anthropic stream test fixtures against SDK event shapes in `anthropic-stream-fixtures.ts`
 - Strengthen full-fidelity reload E2E with independent live SSE folding and explicit session-state field assertions
 - Add startup reconciliation test for multiple orphaned runs across sessions
 - Fix SSE snapshot-anchor replay test to derive the compaction cursor from tail events instead of tailEvents
