@@ -15,6 +15,10 @@ until a release is cut.
 - Shared protocol unit tests covering every event and canvas mutation schema
 - `@pd-fade/client` Vite + React + Tailwind skeleton with i18n namespaces and Zustand store stub
 - `@pd-fade/server` Fastify skeleton with health endpoint and placeholder modules for HTTP, DB and agent layers
+- SQLite session store with append-only event log, snapshot compaction anchors, user state persistence and materialized chat read model
+- Server REST and SSE endpoints for session state, messages, canvas mutations and run cancellation
+- Deterministic mock agent driver with Berlin entity dataset and run manager with single active run per session
+- Server integration tests for event log, SSE replay, run lifecycle, canvas soft-lock and mock snapshot validation
 
 ### Fixed
 
