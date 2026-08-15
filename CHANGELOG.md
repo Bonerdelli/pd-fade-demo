@@ -43,6 +43,7 @@ until a release is cut.
 
 ### Fixed
 
+- Fix tool card name i18n lookup to use the `toolCards.toolNames` namespace path
 - Sync hydrated user map shapes into terra-draw after deferred map load setup
 - Clear historical viewport commands on session hydrate and skip replay on surface remount
 - Wire SSE stall watchdog through session controller and add bootstrap retry on load failure

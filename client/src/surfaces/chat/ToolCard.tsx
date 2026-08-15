@@ -85,7 +85,7 @@ export function ToolCard({ message, isExpanded, onToggle }: ToolCardProps) {
           {statusLabel}
         </span>
         <span className="truncate text-xs font-medium uppercase tracking-wide text-slate-500">
-          {t(`toolNames.${message.name}`, { defaultValue: message.name })}
+          {t(`toolCards.toolNames.${message.name}`, { defaultValue: message.name })}
         </span>
         <button
           type="button"
