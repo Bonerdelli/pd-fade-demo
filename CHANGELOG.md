@@ -44,5 +44,5 @@ until a release is cut.
 
 ### Changed
 
-- Rebuild client reducer golden fixture from the real mock driver event log
+- Export `clearPositionOverrides` from `useMutations` and remove graph standalone mutation helper
 - Document session state chat/tail contract on `sessionStateResponseSchema`

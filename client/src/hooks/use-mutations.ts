@@ -32,6 +32,7 @@ export function useMutations() {
       setPositionOverride: controller.setPositionOverride,
       setSelection: controller.setSelection,
       setViewport: controller.setViewport,
+      clearPositionOverrides: controller.clearPositionOverrides,
       cancelRun: controller.cancelRun,
     }),
     [controller, sessionId],
