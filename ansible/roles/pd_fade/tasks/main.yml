@@ -1,4 +1,16 @@
 ---
+- name: Ensure pnpm store directory exists
+  ansible.builtin.file:
+    path: "{{ pd_fade_pnpm_store_dir }}"
+    state: directory
+    owner: "{{ pd_fade_user }}"
+    group: "{{ pd_fade_group }}"
+    mode: "0750"
+
+- name: Configure private git credentials
+  ansible.builtin.import_tasks: git_credentials.yml
+  when: pd_fade_git_deploy_key_enabled | bool
+
 - name: Ensure application checkout directory exists
   ansible.builtin.file:
     path: "{{ pd_fade_root }}"
@@ -12,24 +24,24 @@
     repo: "{{ pd_fade_repo_url }}"
     dest: "{{ pd_fade_root }}"
     version: "{{ pd_fade_repo_version }}"
-    accept_hostkey: true
+    accept_hostkey: "{{ not (pd_fade_git_deploy_key_enabled | bool) }}"
   become: true
   become_user: "{{ pd_fade_user }}"
+  environment: "{{ pd_fade_git_environment }}"
+  register: pd_fade_git_checkout
   notify: Restart pd-fade
 
 - name: Install workspace dependencies
   ansible.builtin.command:
-    cmd: pnpm install --frozen-lockfile
+    cmd: pnpm install --frozen-lockfile --store-dir {{ pd_fade_pnpm_store_dir }}
     chdir: "{{ pd_fade_root }}"
   become: true
   become_user: "{{ pd_fade_user }}"
-  environment:
-    HOME: "{{ pd_fade_data_dir }}"
+  environment: "{{ pd_fade_pnpm_environment }}"
   register: pnpm_install
   changed_when: >-
     'Already up to date' not in pnpm_install.stdout
     and 'Lockfile is up to date' not in pnpm_install.stdout
-  notify: Restart pd-fade
 
 - name: Build client and server
   ansible.builtin.command:
@@ -37,11 +49,8 @@
     chdir: "{{ pd_fade_root }}"
   become: true
   become_user: "{{ pd_fade_user }}"
-  environment:
-    HOME: "{{ pd_fade_data_dir }}"
-  register: pnpm_build
-  changed_when: pnpm_build.rc == 0
-  notify: Restart pd-fade
+  environment: "{{ pd_fade_pnpm_environment }}"
+  when: pd_fade_git_checkout.changed | bool
 
 - name: Ensure environment file directory exists
   ansible.builtin.file:
@@ -67,9 +76,7 @@
     owner: root
     group: root
     mode: "0644"
-  notify:
-    - Reload systemd
-    - Restart pd-fade
+  notify: Reload systemd
 
 - name: Enable and start pd-fade service
   ansible.builtin.systemd:

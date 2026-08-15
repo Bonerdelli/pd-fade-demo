@@ -9,12 +9,15 @@ pd_fade_user: pd-fade
 pd_fade_group: pd-fade
 pd_fade_root: /opt/pd-fade
 pd_fade_data_dir: /var/lib/pd-fade
+pd_fade_pnpm_store_dir: /var/cache/pd-fade/pnpm
 pd_fade_env_file: /etc/pd-fade/env
 pd_fade_systemd_unit: pd-fade
 
 # Git source — point at your fork or mirror; branch/tag/commit via pd_fade_repo_version
 pd_fade_repo_url: "https://github.com/example/pd-fade.git"
 pd_fade_repo_version: main
+# Private repos: set pd_fade_git_deploy_key_enabled: true, use git@… URL, vault_pd_fade_git_deploy_key
+pd_fade_git_deploy_key_enabled: false
 
 # Runtime (also templated into EnvironmentFile; server `pnpm start` does not load .env)
 pd_fade_server_port: 3001
@@ -32,7 +35,8 @@ pd_fade_pnpm_version: "10.28.0"
 
 ### Nginx / TLS ###
 root_domain: demo.example.com
-pd_fade_tls_enabled: true
+# Start false for HTTP-only bring-up; set true after DNS points at the host
+pd_fade_tls_enabled: false
 letsencrypt_email: "ops@{{ root_domain }}"
 # SSE proxy read timeout for /api/session/*/events
 pd_fade_sse_proxy_read_timeout: 86400s

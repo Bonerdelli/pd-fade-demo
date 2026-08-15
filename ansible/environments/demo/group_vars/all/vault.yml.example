@@ -1,8 +1,17 @@
 ---
-# Copy to vault.yml, fill secrets, then encrypt:
+# Copy to vault.yml when you need secrets, then encrypt:
 #   ansible-vault encrypt environments/demo/group_vars/all/vault.yml
+#
+# vault.yml is optional for mock-only stands (vars use default('') fallbacks).
+# Pass --ask-vault-pass only when vault.yml exists and is encrypted.
 #
 # Or create ansible/.vault_pass (chmod 600) and pass --vault-password-file .vault_pass
 
 # Required when pd_fade_agent_driver: anthropic
 vault_anthropic_api_key: "CHANGE_ME"
+
+# Required when pd_fade_git_deploy_key_enabled: true (private repo over SSH)
+vault_pd_fade_git_deploy_key: |
+  -----BEGIN OPENSSH PRIVATE KEY-----
+  CHANGE_ME
+  -----END OPENSSH PRIVATE KEY-----
