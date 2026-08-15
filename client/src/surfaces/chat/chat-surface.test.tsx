@@ -151,6 +151,58 @@ describe("Chat surface components", () => {
     expect(screen.queryByText(/Arguments/i)).toBeNull();
   });
 
+  it("hides plot signals center coordinates when debug mode is off", () => {
+    useAppStore.setState({
+      uiState: { ...initialUiState, bootstrapStatus: "ready", debugMode: false },
+    });
+
+    renderWithI18n(
+      <ToolCard
+        message={{
+          kind: "toolCall",
+          id: "tc-plot-hidden",
+          toolCallId: "tc-plot-hidden",
+          name: "plot_signals",
+          status: "ok",
+          args: { signalIds: ["s1", "s2", "s3"], center: [13.405, 52.52] },
+          result: { plotted: 3 },
+        }}
+        isExpanded={true}
+        onToggle={() => undefined}
+      />,
+    );
+
+    expect(screen.getByText(/3 selected/i)).toBeTruthy();
+    expect(screen.getByText(/Plotted 3 signals/i)).toBeTruthy();
+    expect(screen.queryByText(/13\.405/)).toBeNull();
+    expect(screen.queryByText(/Center:/i)).toBeNull();
+  });
+
+  it("shows plot signals center coordinates when debug mode is on", () => {
+    useAppStore.setState({
+      uiState: { ...initialUiState, bootstrapStatus: "ready", debugMode: true },
+    });
+
+    renderWithI18n(
+      <ToolCard
+        message={{
+          kind: "toolCall",
+          id: "tc-plot-visible",
+          toolCallId: "tc-plot-visible",
+          name: "plot_signals",
+          status: "ok",
+          args: { signalIds: ["s1", "s2", "s3"], center: [13.405, 52.52] },
+          result: { plotted: 3 },
+        }}
+        isExpanded={true}
+        onToggle={() => undefined}
+      />,
+    );
+
+    expect(screen.getByText(/13\.405, 52\.52/)).toBeTruthy();
+    expect(screen.getByText(/Center:/i)).toBeTruthy();
+  });
+
   it("shows raw fallback tool args when debug mode is on", () => {
     useAppStore.setState({
       uiState: { ...initialUiState, bootstrapStatus: "ready", debugMode: true },

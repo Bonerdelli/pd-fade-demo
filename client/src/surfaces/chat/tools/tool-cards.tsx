@@ -89,6 +89,7 @@ export function SearchEntitiesSummary({ argsResult, result, status }: ToolCardSu
 
 export function PlotSignalsCard({ argsResult, result, status }: ToolCardContentProps) {
   const { t } = useTranslation("chat");
+  const debugMode = useAppStore((state) => state.uiState.debugMode);
 
   const args = argsResult.kind === "parsed" ? argsResult.value : {};
   const signalIds = readStringArray(args.signalIds);
@@ -112,7 +113,7 @@ export function PlotSignalsCard({ argsResult, result, status }: ToolCardContentP
               : t("toolCards.plotSignals.noSignals")}
           </dd>
         </div>
-        {center ? (
+        {debugMode && center ? (
           <div>
             <dt className="inline font-medium text-slate-700">{t("toolCards.plotSignals.center")}: </dt>
             <dd className="inline font-mono text-xs">

@@ -92,6 +92,7 @@ until a release is cut.
 
 ### Changed
 
+- Hide plot_signals center coordinates in designed tool cards unless chat debug mode is on
 - Align chat composer input and Send button height; auto-grow textarea with top-pinned action button
 - Switch chat/canvas two-column layout breakpoint from `lg` (1024px) to `md` (768px)
 - Remove app header and Graph panel subtitle; show bootstrap and mutation errors in a centered canvas overlay
