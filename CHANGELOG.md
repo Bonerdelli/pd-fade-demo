@@ -54,6 +54,7 @@ until a release is cut.
 
 ### Fixed
 
+- Fix tool card Expand click doing nothing for non-latest cards by retaining manual expanded state in `useToolCardExpandedState`
 - Fix blank Map tab by resizing MapLibre after layout settles and deferring draw/layer setup until map load
 - Exclude maplibre-gl from Vite dependency pre-bundling to avoid missing worker asset in dev
 - Clear `connectSse` mock call history between session controller unit tests

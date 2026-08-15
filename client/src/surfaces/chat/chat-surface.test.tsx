@@ -258,6 +258,67 @@ describe("Chat surface components", () => {
     expect(screen.getByText(/Expand/i)).toBeTruthy();
   });
 
+  it("expands tool card content when Expand is clicked", async () => {
+    const user = userEvent.setup();
+    useAppStore.setState({
+      uiState: { ...initialUiState, bootstrapStatus: "ready", debugMode: true },
+      chat: [
+        {
+          kind: "toolCall",
+          id: "tc-plot-old",
+          toolCallId: "tc-plot-old",
+          name: "plot_signals",
+          status: "ok",
+          args: { signalIds: ["s1", "s2", "s3"], center: [13.405, 52.52] },
+          result: { plotted: 3 },
+        },
+        {
+          kind: "toolCall",
+          id: "tc-search-latest",
+          toolCallId: "tc-search-latest",
+          name: "search_entities",
+          status: "ok",
+          args: { query: "berlin", kinds: ["company"], city: "Berlin" },
+          result: { matchCount: 8, entities: [], edges: [] },
+        },
+      ],
+    });
+
+    renderWithI18n(<MessageList />);
+
+    expect(screen.queryByText(/13\.405, 52\.52/)).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: /Expand/i }));
+
+    expect(screen.getByText(/13\.405, 52\.52/)).toBeTruthy();
+    expect(screen.getAllByRole("button", { name: /Collapse/i }).length).toBeGreaterThan(0);
+  });
+
+  it("keeps no-details plot card static without Expand", () => {
+    useAppStore.setState({
+      uiState: { ...initialUiState, bootstrapStatus: "ready", debugMode: false },
+    });
+
+    renderWithI18n(
+      <ToolCard
+        message={{
+          kind: "toolCall",
+          id: "tc-plot-static",
+          toolCallId: "tc-plot-static",
+          name: "plot_signals",
+          status: "ok",
+          args: { signalIds: ["s1", "s2", "s3"], center: [13.405, 52.52] },
+          result: { plotted: 3 },
+        }}
+        isExpanded={false}
+        onToggle={() => undefined}
+      />,
+    );
+
+    expect(screen.getByText(/Plotted 3 signals/i)).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /Expand/i })).toBeNull();
+  });
+
   it("shows expand control for errored fallback tool cards", () => {
     renderWithI18n(
       <ToolCard

@@ -7,21 +7,9 @@ import {
 
 function pruneManualExpanded(
   manualExpanded: Record<string, boolean>,
-  latestToolCallId: string | null,
+  _latestToolCallId: string | null,
 ): Record<string, boolean> {
-  const pruned: Record<string, boolean> = {};
-
-  for (const [toolCallId, expanded] of Object.entries(manualExpanded)) {
-    if (toolCallId === latestToolCallId) {
-      pruned[toolCallId] = expanded;
-      continue;
-    }
-    if (expanded === false) {
-      pruned[toolCallId] = false;
-    }
-  }
-
-  return pruned;
+  return { ...manualExpanded };
 }
 
 export function useToolCardExpandedState(chat: ChatMessage[]) {
