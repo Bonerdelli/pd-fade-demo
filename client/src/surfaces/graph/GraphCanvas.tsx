@@ -2,7 +2,6 @@ import { useCallback, useMemo, useRef } from "react";
 import {
   Background,
   Controls,
-  MiniMap,
   ReactFlow,
   ReactFlowProvider,
   useReactFlow,
@@ -136,11 +135,6 @@ function GraphCanvasInner() {
       >
         <Background gap={20} size={1} color="#e2e8f0" />
         <Controls showInteractive={false} className="!border-slate-200 !shadow-sm" />
-        <MiniMap
-          nodeStrokeWidth={3}
-          className="!border-slate-200 !bg-white !shadow-sm"
-          maskColor="rgba(148, 163, 184, 0.15)"
-        />
       </ReactFlow>
 
       <GraphToolbar

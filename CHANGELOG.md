@@ -113,3 +113,7 @@ until a release is cut.
 - Document Realign clearing position overrides through upstream mutation for session continuity
 - Document session state chat/tail contract on `sessionStateResponseSchema`
 - Update chat composer placeholder to "Ask me about anything"
+
+### Removed
+
+- React Flow MiniMap from the graph canvas (non-functional in current setup)
