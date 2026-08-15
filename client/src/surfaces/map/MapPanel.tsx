@@ -44,7 +44,7 @@ export function MapPanel() {
     [setViewport],
   );
 
-  const mapRef = useMapInstance({
+  const { mapRef, mapReadyEpoch } = useMapInstance({
     containerRef,
     initialViewport,
     onUserViewportChange: handleUserViewportChange,
@@ -61,11 +61,13 @@ export function MapPanel() {
 
   useAgentLayers({
     mapRef,
+    mapReadyEpoch,
     onAgentShapeClick: handleAgentShapeClick,
   });
 
   const { drawMode, setDrawMode, deleteSelected, hasSelection } = useDrawTools({
     mapRef,
+    mapReadyEpoch,
     isRunLocked,
     upsertUserShape,
     deleteUserShape,

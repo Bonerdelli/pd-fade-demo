@@ -70,6 +70,7 @@ describe("useDrawTools", () => {
     renderHook(() =>
       useDrawTools({
         mapRef,
+        mapReadyEpoch: 1,
         isRunLocked: false,
         upsertUserShape: vi.fn(),
         deleteUserShape: vi.fn(),

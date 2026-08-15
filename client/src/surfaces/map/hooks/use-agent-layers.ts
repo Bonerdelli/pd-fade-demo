@@ -1,5 +1,6 @@
 import { useEffect, type RefObject } from "react";
 import type { GeoJSONSource, Map, MapMouseEvent } from "maplibre-gl";
+import type { MapShape, Signal } from "@pd-fade/shared";
 import { useAppStore } from "../../../store/index.js";
 import {
   AGENT_LAYER_IDS,
@@ -20,7 +21,14 @@ export interface AgentShapeSelection {
 
 export interface UseAgentLayersOptions {
   mapRef: RefObject<Map | null>;
+  mapReadyEpoch: number;
   onAgentShapeClick: (selection: AgentShapeSelection) => void;
+}
+
+function queryableAgentShapeLayers(map: Map): string[] {
+  return AGENT_LAYER_IDS.filter(
+    (layerId) => layerId !== AGENT_SIGNALS_LAYER_ID && Boolean(map.getLayer(layerId)),
+  );
 }
 
 function ensureAgentLayers(map: Map) {
@@ -95,7 +103,21 @@ function ensureAgentLayers(map: Map) {
   }
 }
 
-export function useAgentLayers({ mapRef, onAgentShapeClick }: UseAgentLayersOptions) {
+export function syncAgentLayerData(map: Map, agentShapes: MapShape[], agentSignals: Signal[]) {
+  ensureAgentLayers(map);
+
+  const shapesSource = map.getSource(AGENT_SHAPES_SOURCE_ID) as GeoJSONSource | undefined;
+  shapesSource?.setData(agentShapesToCollection(agentShapes));
+
+  const signalsSource = map.getSource(AGENT_SIGNALS_SOURCE_ID) as GeoJSONSource | undefined;
+  signalsSource?.setData(signalsToCollection(agentSignals));
+}
+
+export function useAgentLayers({
+  mapRef,
+  mapReadyEpoch,
+  onAgentShapeClick,
+}: UseAgentLayersOptions) {
   const agentShapes = useAppStore((state) => state.agentState.map.shapes);
   const agentSignals = useAppStore((state) => state.agentState.map.signals);
 
@@ -106,21 +128,19 @@ export function useAgentLayers({ mapRef, onAgentShapeClick }: UseAgentLayersOpti
     }
 
     const syncLayers = () => {
-      ensureAgentLayers(map);
-
-      const shapesSource = map.getSource(AGENT_SHAPES_SOURCE_ID) as GeoJSONSource | undefined;
-      shapesSource?.setData(agentShapesToCollection(agentShapes));
-
-      const signalsSource = map.getSource(AGENT_SIGNALS_SOURCE_ID) as GeoJSONSource | undefined;
-      signalsSource?.setData(signalsToCollection(agentSignals));
+      if (!map.isStyleLoaded()) {
+        return;
+      }
+      syncAgentLayerData(map, agentShapes, agentSignals);
     };
 
-    if (map.isStyleLoaded()) {
-      syncLayers();
-    } else {
-      map.once("load", syncLayers);
-    }
-  }, [agentShapes, agentSignals, mapRef]);
+    syncLayers();
+    map.on("load", syncLayers);
+
+    return () => {
+      map.off("load", syncLayers);
+    };
+  }, [agentShapes, agentSignals, mapReadyEpoch, mapRef]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -129,9 +149,12 @@ export function useAgentLayers({ mapRef, onAgentShapeClick }: UseAgentLayersOpti
     }
 
     const handleClick = (event: MapMouseEvent) => {
-      const features = map.queryRenderedFeatures(event.point, {
-        layers: [...AGENT_LAYER_IDS].filter((layerId) => layerId !== AGENT_SIGNALS_LAYER_ID),
-      });
+      const layers = queryableAgentShapeLayers(map);
+      if (layers.length === 0) {
+        return;
+      }
+
+      const features = map.queryRenderedFeatures(event.point, { layers });
 
       const feature = features[0];
       if (!feature?.properties?.shapeId) {
@@ -149,5 +172,5 @@ export function useAgentLayers({ mapRef, onAgentShapeClick }: UseAgentLayersOpti
     return () => {
       map.off("click", handleClick);
     };
-  }, [mapRef, onAgentShapeClick]);
+  }, [mapReadyEpoch, mapRef, onAgentShapeClick]);
 }

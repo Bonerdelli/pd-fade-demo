@@ -1,4 +1,4 @@
-import { useEffect, useRef, type RefObject } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { Map, type Map as MapInstance } from "maplibre-gl";
 import type { MapCamera } from "@pd-fade/shared";
 import { DEFAULT_MAP_CAMERA, MAP_STYLE_URL } from "../lib/constants.js";
@@ -13,15 +13,26 @@ export interface UseMapInstanceOptions {
   isUserGesturingRef: RefObject<boolean>;
 }
 
+export interface UseMapInstanceResult {
+  mapRef: RefObject<MapInstance | null>;
+  mapReadyEpoch: number;
+}
+
 export function useMapInstance({
   containerRef,
   initialViewport,
   onUserViewportChange,
   isProgrammaticMoveRef,
   isUserGesturingRef,
-}: UseMapInstanceOptions) {
+}: UseMapInstanceOptions): UseMapInstanceResult {
   const mapRef = useRef<MapInstance | null>(null);
   const initialViewportRef = useRef(initialViewport);
+  const onUserViewportChangeRef = useRef(onUserViewportChange);
+  const [mapReadyEpoch, setMapReadyEpoch] = useState(0);
+
+  useEffect(() => {
+    onUserViewportChangeRef.current = onUserViewportChange;
+  }, [onUserViewportChange]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -39,6 +50,7 @@ export function useMapInstance({
     });
 
     mapRef.current = map;
+    setMapReadyEpoch((epoch) => epoch + 1);
 
     const markGestureStart = (event: { originalEvent?: unknown }) => {
       if (event.originalEvent) {
@@ -64,7 +76,7 @@ export function useMapInstance({
       }
 
       const center = map.getCenter();
-      onUserViewportChange({
+      onUserViewportChangeRef.current({
         center: [center.lng, center.lat],
         zoom: map.getZoom(),
       });
@@ -74,7 +86,7 @@ export function useMapInstance({
       map.remove();
       mapRef.current = null;
     };
-  }, [containerRef, isProgrammaticMoveRef, isUserGesturingRef, onUserViewportChange]);
+  }, [containerRef, isProgrammaticMoveRef, isUserGesturingRef]);
 
-  return mapRef;
+  return { mapRef, mapReadyEpoch };
 }

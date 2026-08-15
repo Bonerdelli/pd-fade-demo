@@ -16,6 +16,7 @@ export type DrawToolMode = "select" | "point" | "polygon";
 
 export interface UseDrawToolsOptions {
   mapRef: RefObject<Map | null>;
+  mapReadyEpoch: number;
   isRunLocked: boolean;
   upsertUserShape: (shape: MapShape) => void;
   deleteUserShape: (shapeId: string) => void;
@@ -59,6 +60,7 @@ function terraDrawModeForTool(mode: DrawToolMode): string {
 
 export function useDrawTools({
   mapRef,
+  mapReadyEpoch,
   isRunLocked,
   upsertUserShape,
   deleteUserShape,
@@ -272,7 +274,7 @@ export function useDrawTools({
       selectedFeatureIdRef.current = null;
       setHasSelection(false);
     };
-  }, [deleteUserShape, mapRef, publishFeature, syncStoreToDraw]);
+  }, [deleteUserShape, mapReadyEpoch, mapRef, publishFeature, syncStoreToDraw]);
 
   useEffect(() => {
     if (syncingFromDrawRef.current) {
