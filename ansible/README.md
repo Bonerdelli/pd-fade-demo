@@ -1,6 +1,6 @@
 # pd-fade Ansible provisioning
 
-Bare-metal provisioning for a demo or small production VM: **build on the controller**, ship a release archive, install production deps on the target (native modules compiled for Linux), **systemd** for the Fastify server, **nginx** for the built client SPA and `/api` reverse proxy with SSE-friendly settings. No Docker and **no git** on the target host.
+Bare-metal provisioning for a demo or small production VM: **build on the controller**, ship a release archive, install production deps on the target (native modules compiled for Linux), **systemd** for the Fastify server, **nginx** for the built client SPA and `/api` reverse proxy with SSE-friendly settings. Origin is **HTTP-only**; HTTPS is terminated at Cloudflare. No Docker, no git, and no Let's Encrypt on the target host.
 
 ## Requirements
 
@@ -16,7 +16,7 @@ Bare-metal provisioning for a demo or small production VM: **build on the contro
 - Debian or Ubuntu
 - SSH access as root (or a user with sudo)
 - Node.js 20+ and pnpm 10+ (installed by the `nodejs` role — used for `pnpm install --prod` only)
-- DNS `A` record for `root_domain` when TLS is enabled
+- DNS for `root_domain` pointed at Cloudflare (orange-cloud proxy); origin nginx listens on port 80
 - **No git required**
 
 ```bash
@@ -63,15 +63,11 @@ ansible-playbook environments/demo/provision.yml
 ansible-playbook environments/demo/provision.yml --ask-vault-pass
 ```
 
-Runs: base → nodejs → **local build + release deploy** → nginx (+ optional Let's Encrypt).
+Runs: base → nodejs → **local build + release deploy** → nginx (HTTP origin).
 
-### HTTP-only first bring-up, then TLS
+### HTTPS via Cloudflare
 
-`pd_fade_tls_enabled` defaults to **false**.
-
-1. Provision with defaults, verify at `http://<root_domain>/`.
-2. Point DNS at the host.
-3. Set `pd_fade_tls_enabled: true` and re-run (full playbook or `--tags nginx`).
+nginx serves HTTP on port 80. Point the Cloudflare DNS record at the origin and keep the proxy (orange cloud) on. Use **Flexible** SSL/TLS mode so Cloudflare talks HTTP to the origin (no certificate on the VM). Visitors still get HTTPS at the edge.
 
 ## Redeploy application
 
@@ -138,7 +134,7 @@ ansible-playbook environments/demo/provision.yml --tags pd_fade \
 
 - `/api/` → upstream with `/api` stripped
 - SSE: `proxy_buffering off`, `gzip off`, long read timeout
-- TLS: certbot webroot; ACME path excluded from HTTPS redirect
+- HTTP origin only; `X-Forwarded-Proto` is passed through from Cloudflare
 
 ## Syntax check
 
@@ -149,6 +145,6 @@ ansible-playbook environments/demo/provision.yml --syntax-check
 ## Reference patterns
 
 - **pyro-platform/iac:** controller-side build, target-side prod install, health probes after restart
-- **kjam-pomogu-org-iac:** inventory layout, nginx/TLS, vault examples
+- **kjam-pomogu-org-iac:** inventory layout, nginx vhost, vault examples
 
 **Skipped:** target git checkout, shipping cross-platform `node_modules`, Docker, Postgres/Redis

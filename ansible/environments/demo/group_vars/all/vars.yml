@@ -33,10 +33,8 @@ pd_fade_anthropic_api_key: "{{ vault_anthropic_api_key | default('') }}"
 nodejs_major_version: "20"
 pd_fade_pnpm_version: "10.28.0"
 
-### Nginx / TLS ###
+### Nginx (HTTP origin; HTTPS at Cloudflare) ###
 root_domain: demo.example.com
-# Start false for HTTP-only bring-up; set true after DNS points at the host
-pd_fade_tls_enabled: false
-letsencrypt_email: "ops@{{ root_domain }}"
+
 # SSE proxy read timeout for /api/session/*/events
 pd_fade_sse_proxy_read_timeout: 86400s

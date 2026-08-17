@@ -111,6 +111,7 @@ until a release is cut.
 
 ### Changed
 
+- Serve Ansible nginx as HTTP-only origin; terminate HTTPS at Cloudflare
 - Rework Ansible app deploy to controller-side build and release archives (no git on target)
 - Left-align the chat debug mode toggle and drop its separator border
 - Move New chat control from canvas header to chat header; move debug mode toggle to a footer row below the composer
@@ -140,5 +141,6 @@ until a release is cut.
 
 ### Removed
 
+- Let's Encrypt / certbot from Ansible nginx (TLS flags, webroot ACME, renewal cron)
 - Ansible target-host git checkout deploy path (deploy keys, repo URL vars, on-host build)
 - React Flow MiniMap from the graph canvas (non-functional in current setup)

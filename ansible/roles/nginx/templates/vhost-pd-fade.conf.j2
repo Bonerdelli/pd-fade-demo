@@ -1,12 +1,18 @@
-# pd-fade: static SPA + API reverse proxy (SSE-friendly events endpoint)
-{% macro acme_challenge_location() %}
-    location ^~ /.well-known/acme-challenge/ {
-        root {{ certbot_webroot_path }};
-        default_type "text/plain";
-    }
-{% endmacro %}
+# pd-fade: static SPA + API reverse proxy (SSE-friendly events endpoint).
+# Origin is HTTP-only; HTTPS is terminated at Cloudflare.
 
-{% macro app_locations() %}
+server {
+    listen 80;
+    server_name {{ root_domain }};
+
+    root {{ pd_fade_current_link }}/client/dist;
+    index index.html;
+
+    set $forwarded_proto $scheme;
+    if ($http_x_forwarded_proto != "") {
+        set $forwarded_proto $http_x_forwarded_proto;
+    }
+
     location ~ ^/api/session/[^/]+/events$ {
         rewrite ^/api/(.*) /$1 break;
         proxy_pass http://127.0.0.1:{{ pd_fade_server_port }};
@@ -14,7 +20,7 @@
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Proto $forwarded_proto;
         proxy_set_header Connection "";
         proxy_buffering off;
         proxy_cache off;
@@ -29,49 +35,11 @@
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Proto $forwarded_proto;
         proxy_read_timeout 300s;
     }
 
     location / {
         try_files $uri $uri/ /index.html;
     }
-{% endmacro %}
-
-{% if pd_fade_tls_enabled | bool and pd_fade_cert_exists | default(false) | bool %}
-server {
-    listen 443 ssl http2;
-    server_name {{ root_domain }};
-
-    ssl_certificate     /etc/letsencrypt/live/{{ root_domain }}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/{{ root_domain }}/privkey.pem;
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_prefer_server_ciphers on;
-    add_header Strict-Transport-Security "max-age=63072000" always;
-
-    root {{ pd_fade_current_link }}/client/dist;
-    index index.html;
-
-    {{ app_locations() }}
-}
-{% endif %}
-
-server {
-    listen 80;
-    server_name {{ root_domain }};
-
-{% if pd_fade_tls_enabled | bool %}
-    {{ acme_challenge_location() }}
-{% endif %}
-
-{% if pd_fade_tls_enabled | bool and pd_fade_cert_exists | default(false) | bool %}
-    location / {
-        return 301 https://$host$request_uri;
-    }
-{% else %}
-    root {{ pd_fade_current_link }}/client/dist;
-    index index.html;
-
-    {{ app_locations() }}
-{% endif %}
 }
