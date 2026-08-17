@@ -24,10 +24,16 @@
 
 - name: Enable corepack
   ansible.builtin.command: corepack enable
+  environment:
+    CI: "true"
+    COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
   changed_when: false
 
 - name: Activate pnpm via corepack
   ansible.builtin.command: "corepack prepare pnpm@{{ pd_fade_pnpm_version }} --activate"
+  environment:
+    CI: "true"
+    COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
   register: corepack_pnpm
   changed_when: "'Already downloaded' not in corepack_pnpm.stdout"
 

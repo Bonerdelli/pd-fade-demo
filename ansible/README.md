@@ -30,7 +30,7 @@ Collections install into `ansible/.collections` (see `ansible.cfg`).
 ## Deploy flow
 
 1. **Controller:** `pnpm install --frozen-lockfile && pnpm build`, then pack `server/dist`, `shared/dist`, `client/dist`, workspace manifests into `pd-fade-<release-id>.tar.gz` (see `scripts/build-release-archive.sh`; Ansible invokes this automatically).
-2. **Target:** upload archive → unpack under `{{ pd_fade_releases_dir }}/<release-id>` → `pnpm install --frozen-lockfile --prod --filter @pd-fade/server...` (rebuilds **better-sqlite3** for Linux) → atomically point `{{ pd_fade_current_link }}` symlink → restart systemd → probe `/health`.
+2. **Target:** upload archive → unpack under `{{ pd_fade_releases_dir }}/<release-id>` → `pnpm install --frozen-lockfile --prod --filter @pd-fade/server...` as root (Corepack is already prepared; installing as the app user hangs on Corepack's download prompt) → `chown` the release → atomically point `{{ pd_fade_current_link }}` symlink → restart systemd → probe `/health`.
 3. **Idempotency:** if the archive SHA-256 matches `.release-checksum` in the current release, upload and restart are skipped.
 
 ### Why not ship `node_modules` from macOS?
