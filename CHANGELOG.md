@@ -56,6 +56,7 @@ until a release is cut.
 
 ### Fixed
 
+- Re-sync agent map overlays on style.load so mock snapshot shapes and signals paint after the basemap style finishes loading
 - Switch map basemap to a bundled Carto raster style so streets paint without vector tile workers that only show the positron gray background
 - Size the MapLibre canvas to its container, clear style terrain, and switch to OpenFreeMap positron so the basemap paints streets instead of a flat background
 - Point MapLibre 6 at a Vite-bundled worker URL so the map tab no longer hangs on a missing `maplibre-gl-worker.mjs`

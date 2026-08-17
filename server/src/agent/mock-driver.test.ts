@@ -34,6 +34,14 @@ describe("MockAgentDriver", () => {
       expect(parsed.graph.nodes.length).toBeGreaterThanOrEqual(6);
     }
 
+    const searchSnapshot = agentStateSchema.parse(snapshots[0]);
+    expect(searchSnapshot.map.shapes).toHaveLength(3);
+    expect(searchSnapshot.map.signals).toHaveLength(0);
+
+    const plottedSnapshot = agentStateSchema.parse(snapshots[snapshots.length - 1]);
+    expect(plottedSnapshot.map.shapes).toHaveLength(3);
+    expect(plottedSnapshot.map.signals).toHaveLength(3);
+
     db.close();
   });
 });

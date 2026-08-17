@@ -140,9 +140,11 @@ export function useAgentLayers({
 
     syncLayers();
     map.on("load", syncLayers);
+    map.on("style.load", syncLayers);
 
     return () => {
       map.off("load", syncLayers);
+      map.off("style.load", syncLayers);
     };
   }, [agentShapes, agentSignals, mapReadyEpoch, mapRef]);
 

@@ -39,6 +39,7 @@ describe("useAgentLayers", () => {
   it("re-syncs agent overlay data when the map instance epoch changes", () => {
     const shapesSetData = vi.fn();
     const signalsSetData = vi.fn();
+    let styleLoadHandler: (() => void) | null = null;
     const sourceStore = new globalThis.Map<string, { setData: ReturnType<typeof vi.fn> }>([
       [AGENT_SHAPES_SOURCE_ID, { setData: shapesSetData }],
       [AGENT_SIGNALS_SOURCE_ID, { setData: signalsSetData }],
@@ -59,7 +60,11 @@ describe("useAgentLayers", () => {
         }
       }),
       addLayer: vi.fn(),
-      on: vi.fn(),
+      on: vi.fn((event: string, handler: () => void) => {
+        if (event === "style.load") {
+          styleLoadHandler = handler;
+        }
+      }),
       off: vi.fn(),
       queryRenderedFeatures: vi.fn(() => []),
     } as unknown as Map;
@@ -82,6 +87,16 @@ describe("useAgentLayers", () => {
     signalsSetData.mockClear();
 
     rerender({ mapReadyEpoch: 2 });
+
+    expect(shapesSetData).toHaveBeenCalled();
+    expect(signalsSetData).toHaveBeenCalled();
+
+    shapesSetData.mockClear();
+    signalsSetData.mockClear();
+
+    act(() => {
+      styleLoadHandler?.();
+    });
 
     expect(shapesSetData).toHaveBeenCalled();
     expect(signalsSetData).toHaveBeenCalled();
