@@ -114,6 +114,7 @@ until a release is cut.
 - Add hydrate E2E coverage for cancelled runs with cancelled in-flight tool cards
 - Fix server `dev` script so tsx `watch` is a subcommand and `--env-file` still loads `.env`
 - Keep map overlays and terra-draw attached after map clicks by stabilizing map instance lifecycle and re-syncing layers on map ready epoch changes
+- Stop Map tab React #185 crash by deriving agent shape ids from a stable Zustand snapshot instead of allocating a new Set in the selector
 
 ### Changed
 

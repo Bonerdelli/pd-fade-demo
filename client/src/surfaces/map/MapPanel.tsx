@@ -7,6 +7,7 @@ import { useAppStore } from "../../store/index.js";
 import { AgentShapePopup } from "./components/AgentShapePopup.js";
 import { MapToolbar } from "./components/MapToolbar.js";
 import { useAgentLayers } from "./hooks/use-agent-layers.js";
+import { useAgentShapeIds } from "./hooks/use-agent-shape-ids.js";
 import { useDrawTools, type DrawToolMode } from "./hooks/use-draw-tools.js";
 import { useMapInstance } from "./hooks/use-map-instance.js";
 
@@ -15,9 +16,7 @@ export function MapPanel() {
   const isProgrammaticMoveRef = useRef(false);
   const isUserGesturingRef = useRef(false);
   const initialViewport = useAppStore((state) => state.userState.viewports.map);
-  const agentShapeIds = useAppStore((state) =>
-    new Set(state.agentState.map.shapes.map((shape) => shape.id)),
-  );
+  const agentShapeIds = useAgentShapeIds();
   const isRunLocked = useRunLock();
   const { upsertUserShape, deleteUserShape, addComment, setViewport } = useMutations();
 

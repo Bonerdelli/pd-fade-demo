@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "../../../store/index.js";
+import { useAgentShapeIds } from "../hooks/use-agent-shape-ids.js";
 
 export interface AgentShapePopupProps {
   shapeId: string;
@@ -20,9 +21,7 @@ export function AgentShapePopup({
   const { t } = useTranslation("map");
   const [draft, setDraft] = useState("");
   const comments = useAppStore((state) => state.userState.comments);
-  const agentShapeIds = useAppStore((state) =>
-    new Set(state.agentState.map.shapes.map((shape) => shape.id)),
-  );
+  const agentShapeIds = useAgentShapeIds();
 
   const shapeComments = useMemo(
     () =>
