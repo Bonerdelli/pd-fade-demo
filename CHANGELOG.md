@@ -56,6 +56,7 @@ until a release is cut.
 
 ### Fixed
 
+- Pin target pnpm via Corepack to 10.28.0 so Node 20 hosts do not download pnpm 11
 - Defer Ansible pd-fade service restart until after the release symlink exists on first provision
 - Include client package manifest in Ansible release archives for pnpm workspace lockfile verification
 - Read Ansible release metadata from a controller JSON file instead of parsing build script stdout

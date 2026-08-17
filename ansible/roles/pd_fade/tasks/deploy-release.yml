@@ -56,7 +56,8 @@
     - name: Install production dependencies on target (native modules rebuilt for Linux)
       ansible.builtin.command:
         argv:
-          - pnpm
+          - corepack
+          - "pnpm@{{ pd_fade_pnpm_version }}"
           - install
           - --frozen-lockfile
           - --prod
@@ -70,6 +71,7 @@
       become_user: "{{ pd_fade_user }}"
       environment:
         HOME: "{{ pd_fade_data_dir }}"
+        COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
       register: pd_fade_target_pnpm_install
       changed_when: true
 

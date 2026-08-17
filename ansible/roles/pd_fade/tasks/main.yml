@@ -18,6 +18,14 @@
     - "{{ pd_fade_app_base }}"
     - "{{ pd_fade_releases_dir }}"
 
+- name: Ensure app-user Ansible tmp directory exists
+  ansible.builtin.file:
+    path: "{{ pd_fade_data_dir }}/.ansible/tmp"
+    state: directory
+    owner: "{{ pd_fade_user }}"
+    group: "{{ pd_fade_group }}"
+    mode: "0700"
+
 - name: Ensure environment file directory exists
   ansible.builtin.file:
     path: "{{ pd_fade_env_file | dirname }}"
