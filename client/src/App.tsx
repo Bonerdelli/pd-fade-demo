@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { CanvasErrorOverlay } from "./components/CanvasErrorOverlay";
 import { CanvasSurfaceErrorBoundary } from "./components/CanvasSurfaceErrorBoundary";
+import { PANEL_HEADER_BUTTON_CLASS, PanelHeader } from "./components/PanelHeader";
 import { useSessionBootstrap } from "./hooks";
 import { useAppStore } from "./store";
 import { ChatPanel } from "./surfaces/chat/ChatPanel";
@@ -47,33 +48,31 @@ export function App() {
         </aside>
 
         <section className="flex min-h-0 flex-col">
-          <div className="flex items-center gap-2 border-b border-slate-200 bg-white px-4 py-2">
-            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              {t("layout.canvasPanel")}
-            </span>
-            <div className="ml-auto flex items-center gap-2">
+          <PanelHeader
+            title={t("layout.canvasPanel")}
+            actions={
               <div className="flex gap-1">
-              <button
-                type="button"
-                className={`rounded px-3 py-1 text-sm ${
-                  activeTab === "graph" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"
-                }`}
-                onClick={() => setActiveCanvasTab("graph")}
-              >
-                {t("layout.graphTab")}
-              </button>
-              <button
-                type="button"
-                className={`rounded px-3 py-1 text-sm ${
-                  activeTab === "map" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"
-                }`}
-                onClick={() => setActiveCanvasTab("map")}
-              >
-                {t("layout.mapTab")}
-              </button>
+                <button
+                  type="button"
+                  className={`${PANEL_HEADER_BUTTON_CLASS} ${
+                    activeTab === "graph" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"
+                  }`}
+                  onClick={() => setActiveCanvasTab("graph")}
+                >
+                  {t("layout.graphTab")}
+                </button>
+                <button
+                  type="button"
+                  className={`${PANEL_HEADER_BUTTON_CLASS} ${
+                    activeTab === "map" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"
+                  }`}
+                  onClick={() => setActiveCanvasTab("map")}
+                >
+                  {t("layout.mapTab")}
+                </button>
               </div>
-            </div>
-          </div>
+            }
+          />
 
           <div className="relative min-h-0 flex-1 bg-white">
             {bootstrapStatus === "ready" ? (

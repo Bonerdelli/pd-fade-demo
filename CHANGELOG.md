@@ -149,6 +149,7 @@ until a release is cut.
 - Document session state chat/tail contract on `sessionStateResponseSchema`
 - Update chat composer placeholder to "Ask me about anything"
 - Hide the chat header connection status badge (Connected / Disconnected / Reconnecting) to stop flicker distraction; SSE connection state is unchanged
+- Equalize chat and canvas header row height, padding, and New chat / Graph / Map button size
 
 ### Removed
 
