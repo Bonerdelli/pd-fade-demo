@@ -1,0 +1,42 @@
+---
+# Small VMs OOM while compiling better-sqlite3 (cc1 Killed). A 1G swapfile is enough.
+- name: Provision swap file
+  when:
+    - pd_fade_swap_mb | int > 0
+    - (ansible_memory_mb.swap.total | default(0) | int) < (pd_fade_swap_mb | int)
+  block:
+    - name: Stat swap file
+      ansible.builtin.stat:
+        path: "{{ pd_fade_swap_path }}"
+      register: pd_fade_swap_stat
+
+    - name: Allocate swap file
+      ansible.builtin.command:
+        argv:
+          - fallocate
+          - -l
+          - "{{ pd_fade_swap_mb }}M"
+          - "{{ pd_fade_swap_path }}"
+      when: not pd_fade_swap_stat.stat.exists
+
+    - name: Restrict swap file permissions
+      ansible.builtin.file:
+        path: "{{ pd_fade_swap_path }}"
+        owner: root
+        group: root
+        mode: "0600"
+
+    - name: Format swap file
+      ansible.builtin.command:
+        argv:
+          - mkswap
+          - "{{ pd_fade_swap_path }}"
+      when: not pd_fade_swap_stat.stat.exists
+
+    - name: Enable and persist swap file
+      ansible.builtin.mount:
+        src: "{{ pd_fade_swap_path }}"
+        path: none
+        fstype: swap
+        opts: sw
+        state: present

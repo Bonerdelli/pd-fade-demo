@@ -54,24 +54,81 @@
         group: "{{ pd_fade_group }}"
 
     - name: Install production dependencies on target (native modules rebuilt for Linux)
-      ansible.builtin.command:
-        argv:
-          - corepack
-          - "pnpm@{{ pd_fade_pnpm_version }}"
-          - install
-          - --frozen-lockfile
-          - --prod
-          - --filter
-          - "@pd-fade/server..."
-          - --store-dir
-          - "{{ pd_fade_pnpm_store_dir }}"
-      args:
-        chdir: "{{ pd_fade_releases_dir }}/{{ pd_fade_release_id }}"
-      environment:
-        CI: "true"
-        COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
-      register: pd_fade_target_pnpm_install
-      changed_when: true
+      block:
+        - name: Run pnpm install for the server workspace
+          ansible.builtin.command:
+            argv:
+              - timeout
+              - --signal=KILL
+              - "{{ pd_fade_pnpm_install_timeout_sec }}"
+              - corepack
+              - "pnpm@{{ pd_fade_pnpm_version }}"
+              - install
+              - --frozen-lockfile
+              - --prod
+              - --filter
+              - "@pd-fade/server..."
+              - --store-dir
+              - "{{ pd_fade_pnpm_store_dir }}"
+              - --reporter=append-only
+          args:
+            chdir: "{{ pd_fade_releases_dir }}/{{ pd_fade_release_id }}"
+          environment:
+            CI: "true"
+            COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+            JOBS: "1"
+            MAKEFLAGS: "-j1"
+            npm_config_jobs: "1"
+          register: pd_fade_target_pnpm_install
+          changed_when: true
+
+      rescue:
+        - name: Collect kernel log for OOM traces
+          ansible.builtin.command:
+            argv:
+              - dmesg
+              - -T
+          register: pd_fade_dmesg
+          changed_when: false
+          failed_when: false
+
+        - name: Remove failed release tree so the next run retries cleanly
+          ansible.builtin.file:
+            path: "{{ pd_fade_releases_dir }}/{{ pd_fade_release_id }}"
+            state: absent
+
+        - name: Remove leftover upload archive
+          ansible.builtin.file:
+            path: "/tmp/pd-fade-{{ pd_fade_release_id }}.tar.gz"
+            state: absent
+
+        - name: Fail with pnpm install diagnostics
+          ansible.builtin.fail:
+            msg: |
+              pnpm install failed for release {{ pd_fade_release_id }}.
+              rc={{ ansible_failed_result.rc | default('unknown') }}
+              (rc 124 = timed out after {{ pd_fade_pnpm_install_timeout_sec }}s)
+
+              --- stdout (tail) ---
+              {{ (ansible_failed_result.stdout | default('(empty)'))[-4000:] }}
+
+              --- stderr (tail) ---
+              {{ (ansible_failed_result.stderr | default('(empty)'))[-4000:] }}
+
+              --- dmesg OOM ---
+              {{
+                (
+                  pd_fade_dmesg.stdout_lines
+                  | default([])
+                  | select('search', 'Out of memory|Killed process|oom-kill|cc1')
+                  | list
+                )[-20:]
+                | join('\n')
+                | default('(none)', true)
+              }}
+
+              If cc/cc1 was Killed, the VM ran out of RAM compiling better-sqlite3.
+              Re-run the playbook so the base role can enable swap, or use a host with >=1GB RAM.
 
     - name: Restore release ownership after pnpm install
       ansible.builtin.command:

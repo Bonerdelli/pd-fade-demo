@@ -13,6 +13,9 @@
     update_cache: true
     cache_valid_time: 3600
 
+- name: Provision swap for native module compiles
+  ansible.builtin.import_tasks: swap.yml
+
 - name: Set timezone
   community.general.timezone:
     name: "{{ timezone }}"

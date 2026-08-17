@@ -16,6 +16,7 @@ pd_fade_release_meta_file: "{{ pd_fade_local_build_dir }}/release-meta.json"
 pd_fade_skip_local_build: false
 pd_fade_health_retries: 10
 pd_fade_health_delay: 2
+pd_fade_pnpm_install_timeout_sec: 900
 pd_fade_server_port: 3001
 pd_fade_db_path: "{{ pd_fade_data_dir }}/sessions.db"
 pd_fade_agent_driver: mock

@@ -13,7 +13,7 @@ Bare-metal provisioning for a demo or small production VM: **build on the contro
 
 ### Target host
 
-- Debian or Ubuntu
+- Debian or Ubuntu, **>=1GB RAM recommended** (compiling `better-sqlite3` OOMs on 512MB without swap)
 - SSH access as root (or a user with sudo)
 - Node.js 20+ and pnpm 10+ (installed by the `nodejs` role — used for `pnpm install --prod` only)
 - DNS for `root_domain` pointed at Cloudflare (orange-cloud proxy); origin nginx listens on port 80
@@ -30,7 +30,7 @@ Collections install into `ansible/.collections` (see `ansible.cfg`).
 ## Deploy flow
 
 1. **Controller:** `pnpm install --frozen-lockfile && pnpm build`, then pack `server/dist`, `shared/dist`, `client/dist`, workspace manifests into `pd-fade-<release-id>.tar.gz` (see `scripts/build-release-archive.sh`; Ansible invokes this automatically).
-2. **Target:** upload archive → unpack under `{{ pd_fade_releases_dir }}/<release-id>` → `pnpm install --frozen-lockfile --prod --filter @pd-fade/server...` as root (Corepack is already prepared; installing as the app user hangs on Corepack's download prompt) → `chown` the release → atomically point `{{ pd_fade_current_link }}` symlink → restart systemd → probe `/health`.
+2. **Target:** upload archive → unpack under `{{ pd_fade_releases_dir }}/<release-id>` → `pnpm install --frozen-lockfile --prod --filter @pd-fade/server...` as root with `JOBS=1` (compiles **better-sqlite3** for Linux) → `chown` the release → atomically point `{{ pd_fade_current_link }}` symlink → restart systemd → probe `/health`. A failed install prints stdout/stderr plus dmesg OOM traces and deletes the broken release tree so the next run retries cleanly.
 3. **Idempotency:** if the archive SHA-256 matches `.release-checksum` in the current release, upload and restart are skipped.
 
 ### Why not ship `node_modules` from macOS?
@@ -118,6 +118,7 @@ ansible-playbook environments/demo/provision.yml --tags pd_fade \
 | systemd | `pd-fade.service` — `WorkingDirectory={{ pd_fade_current_link }}/server` |
 | Static client | nginx serves `{{ pd_fade_current_link }}/client/dist` |
 | API | nginx proxies `/api/*` → server port |
+| Swap | `/swapfile` (1G) when the host has less than 1G swap — needed to compile `better-sqlite3` |
 
 ### Environment variables
 

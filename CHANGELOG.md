@@ -56,6 +56,8 @@ until a release is cut.
 
 ### Fixed
 
+- Add a 1G swapfile during Ansible base provision so `better-sqlite3` can compile on small VMs
+- Surface pnpm install failures with stdout/stderr, dmesg OOM traces, and a clean retry (remove broken release)
 - Run target `pnpm install` as root so Corepack does not hang on a download prompt under `become_user`
 - Pin target pnpm via Corepack to 10.28.0 so Node 20 hosts do not download pnpm 11
 - Defer Ansible pd-fade service restart until after the release symlink exists on first provision
