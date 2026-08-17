@@ -16,9 +16,6 @@ pd_fade_pnpm_store_dir: /var/cache/pd-fade/pnpm
 pd_fade_env_file: /etc/pd-fade/env
 pd_fade_systemd_unit: pd-fade
 
-# Controller paths (repo root relative to environments/demo/provision.yml)
-pd_fade_repo_root: "{{ playbook_dir }}/../../.."
-
 # Runtime (also templated into EnvironmentFile; server `pnpm start` does not load .env)
 pd_fade_server_port: 3001
 pd_fade_db_path: "{{ pd_fade_data_dir }}/sessions.db"

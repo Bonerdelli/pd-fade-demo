@@ -111,6 +111,7 @@ until a release is cut.
 
 ### Changed
 
+- Drop redundant `pd_fade_repo_root` from Ansible group_vars (controller path stays a role default)
 - Serve Ansible nginx as HTTP-only origin; terminate HTTPS at Cloudflare
 - Rework Ansible app deploy to controller-side build and release archives (no git on target)
 - Left-align the chat debug mode toggle and drop its separator border
