@@ -1,6 +1,6 @@
 import type { MapCamera } from "@pd-fade/shared";
 
-export const MAP_STYLE_URL = "https://demotiles.maplibre.org/style.json";
+export const MAP_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
 
 export const DEFAULT_MAP_CAMERA: MapCamera = {
   center: [13.405, 52.52],
