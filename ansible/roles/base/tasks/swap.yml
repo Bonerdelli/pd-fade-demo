@@ -1,14 +1,32 @@
 ---
-# Small VMs OOM while compiling better-sqlite3 (cc1 Killed). A 1G swapfile is enough.
+# Small VMs OOM while compiling better-sqlite3 (cc1 Killed).
+# mount state=present only writes fstab — swapon must be called explicitly.
 - name: Provision swap file
-  when:
-    - pd_fade_swap_mb | int > 0
-    - (ansible_memory_mb.swap.total | default(0) | int) < (pd_fade_swap_mb | int)
+  when: pd_fade_swap_mb | int > 0
   block:
     - name: Stat swap file
       ansible.builtin.stat:
         path: "{{ pd_fade_swap_path }}"
       register: pd_fade_swap_stat
+
+    - name: Disable undersized swap file before recreate
+      ansible.builtin.command:
+        argv:
+          - swapoff
+          - "{{ pd_fade_swap_path }}"
+      when:
+        - pd_fade_swap_stat.stat.exists
+        - (pd_fade_swap_stat.stat.size | default(0) | int) < (pd_fade_swap_mb | int * 1024 * 1024)
+      failed_when: false
+      changed_when: false
+
+    - name: Remove undersized swap file
+      ansible.builtin.file:
+        path: "{{ pd_fade_swap_path }}"
+        state: absent
+      when:
+        - pd_fade_swap_stat.stat.exists
+        - (pd_fade_swap_stat.stat.size | default(0) | int) < (pd_fade_swap_mb | int * 1024 * 1024)
 
     - name: Allocate swap file
       ansible.builtin.command:
@@ -17,7 +35,8 @@
           - -l
           - "{{ pd_fade_swap_mb }}M"
           - "{{ pd_fade_swap_path }}"
-      when: not pd_fade_swap_stat.stat.exists
+        creates: "{{ pd_fade_swap_path }}"
+      register: pd_fade_swap_allocated
 
     - name: Restrict swap file permissions
       ansible.builtin.file:
@@ -31,12 +50,33 @@
         argv:
           - mkswap
           - "{{ pd_fade_swap_path }}"
-      when: not pd_fade_swap_stat.stat.exists
+      when: pd_fade_swap_allocated is changed
 
-    - name: Enable and persist swap file
+    - name: Enable swap file
+      ansible.builtin.command:
+        argv:
+          - swapon
+          - "{{ pd_fade_swap_path }}"
+      register: pd_fade_swapon
+      changed_when: pd_fade_swapon.rc == 0
+      failed_when:
+        - pd_fade_swapon.rc != 0
+        - "'already enabled' not in (pd_fade_swapon.stderr | default(''))"
+
+    - name: Persist swap file in fstab
       ansible.builtin.mount:
         src: "{{ pd_fade_swap_path }}"
         path: none
         fstype: swap
         opts: sw
         state: present
+
+    - name: Verify swap is active
+      ansible.builtin.command:
+        argv:
+          - swapon
+          - --show=NAME
+          - --noheadings
+      register: pd_fade_swap_active
+      changed_when: false
+      failed_when: pd_fade_swap_path not in pd_fade_swap_active.stdout

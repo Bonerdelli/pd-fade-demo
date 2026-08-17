@@ -118,7 +118,7 @@ ansible-playbook environments/demo/provision.yml --tags pd_fade \
 | systemd | `pd-fade.service` — `WorkingDirectory={{ pd_fade_current_link }}/server` |
 | Static client | nginx serves `{{ pd_fade_current_link }}/client/dist` |
 | API | nginx proxies `/api/*` → server port |
-| Swap | `/swapfile` (1G) when the host has less than 1G swap — needed to compile `better-sqlite3` |
+| Swap | `/swapfile` (2G), activated with `swapon` (not just fstab) — needed to compile `better-sqlite3` |
 
 ### Environment variables
 

@@ -56,6 +56,7 @@ until a release is cut.
 
 ### Fixed
 
+- Actually enable the Ansible swapfile with `swapon` (fstab-only `state: present` left it inactive) and prefer glibc prebuilds for better-sqlite3
 - Add a 1G swapfile during Ansible base provision so `better-sqlite3` can compile on small VMs
 - Surface pnpm install failures with stdout/stderr, dmesg OOM traces, and a clean retry (remove broken release)
 - Run target `pnpm install` as root so Corepack does not hang on a download prompt under `become_user`

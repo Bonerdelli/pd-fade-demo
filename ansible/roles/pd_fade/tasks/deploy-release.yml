@@ -53,6 +53,18 @@
         owner: "{{ pd_fade_user }}"
         group: "{{ pd_fade_group }}"
 
+    - name: Report memory before native module install
+      ansible.builtin.command:
+        argv:
+          - free
+          - -h
+      register: pd_fade_free_before_install
+      changed_when: false
+
+    - name: Show memory before native module install
+      ansible.builtin.debug:
+        var: pd_fade_free_before_install.stdout_lines
+
     - name: Install production dependencies on target (native modules rebuilt for Linux)
       block:
         - name: Run pnpm install for the server workspace
@@ -79,6 +91,8 @@
             JOBS: "1"
             MAKEFLAGS: "-j1"
             npm_config_jobs: "1"
+            LIBC: glibc
+            npm_config_libc: glibc
           register: pd_fade_target_pnpm_install
           changed_when: true
 
@@ -128,7 +142,7 @@
               }}
 
               If cc/cc1 was Killed, the VM ran out of RAM compiling better-sqlite3.
-              Re-run the playbook so the base role can enable swap, or use a host with >=1GB RAM.
+              Confirm `swapon --show` lists {{ pd_fade_swap_path | default('/swapfile') }} and re-run.
 
     - name: Restore release ownership after pnpm install
       ansible.builtin.command:
