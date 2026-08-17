@@ -110,7 +110,7 @@ Reducer golden tests replay recorded mock-run event logs. Transport tests cover 
 - **Graph layout at scale** — no clustering or virtualization for large entity counts; React Flow renders all nodes.
 - **No rAF batching of deltas** — text and tool-arg streaming apply reducer updates as events arrive.
 - **Malformed SSE telemetry stub** — invalid payloads are dropped with `console.warn`; `reportInvalidSsePayload` is a no-op hook for future observability.
-- **Map basemap dependency** — tiles load from `tiles.openfreemap.org` (positron style); offline or blocked network yields a blank basemap (user/agent overlays still render).
+- **Map basemap dependency** — streets load from Carto raster tiles (`basemaps.cartocdn.com`) via a bundled MapLibre style in `client/public/map/`; offline or blocked network yields a blank basemap (user/agent overlays still render).
 - **Server start without env file** — `pnpm start` on the server does not load `.env`; only `pnpm dev` passes `--env-file=.env` (Anthropic key, driver selection, mock delays).
 - **MapLibre re-created on tab switch** — switching Graph ↔ Map unmounts the inactive canvas; the map instance and terra-draw adapter are torn down and recreated (documented debt, not fixed in this demo).
 - **Camera commands are consumed once** — historical `VIEWPORT_COMMAND` events are never replayed on reload or canvas remount (user viewports stay absolute across session boundaries). The trade-off: a camera flight that happens while the target canvas is unmounted is skipped, along with its “agent moved the view” indicator.
