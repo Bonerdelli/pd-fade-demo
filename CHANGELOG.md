@@ -148,6 +148,7 @@ until a release is cut.
 - Document Realign clearing position overrides through upstream mutation for session continuity
 - Document session state chat/tail contract on `sessionStateResponseSchema`
 - Update chat composer placeholder to "Ask me about anything"
+- Hide the chat header connection status badge (Connected / Disconnected / Reconnecting) to stop flicker distraction; SSE connection state is unchanged
 
 ### Removed
 

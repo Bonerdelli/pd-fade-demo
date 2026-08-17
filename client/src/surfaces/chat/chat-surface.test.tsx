@@ -130,6 +130,9 @@ describe("Chat surface components", () => {
     await user.click(screen.getByRole("button", { name: "New chat" }));
 
     expect(startNewSession).toHaveBeenCalledOnce();
+    expect(screen.queryByText("Connected")).toBeNull();
+    expect(screen.queryByText("Disconnected")).toBeNull();
+    expect(screen.queryByText("Reconnecting")).toBeNull();
   });
 
   it("renders debug mode toggle below the composer", async () => {
