@@ -116,10 +116,9 @@ until a release is cut.
 - Fix server `dev` script so tsx `watch` is a subcommand and `--env-file` still loads `.env`
 - Keep map overlays and terra-draw attached after map clicks by stabilizing map instance lifecycle and re-syncing layers on map ready epoch changes
 - Stop Map tab React #185 crash by deriving agent shape ids from a stable Zustand snapshot instead of allocating a new Set in the selector
+- Apply graph node selection optimistically in the client store while debouncing only the upstream canvas POST
 
 ### Changed
-
-- Align `FE-Arch-Exercise-v2.md` with the implemented demo (snapshot-anchor strategy, chat read model, four store slices, dual-side run lock, resilience details) and drop superseded v1 alternatives
 - Slim Ansible demo group_vars to domain and agent driver; move shared defaults into roles
 - Point Ansible demo inventory at `157.230.124.0` and `root_domain` at fade.kjam.net
 - Drop redundant `pd_fade_repo_root` from Ansible group_vars (controller path stays a role default)

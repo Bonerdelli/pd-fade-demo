@@ -73,6 +73,57 @@ describe("createMutationController", () => {
 
     controller.dispose();
   });
+
+  it("applies selection locally immediately and debounces upstream POST", async () => {
+    vi.useFakeTimers();
+
+    const store = createTestStore();
+    const fetchImpl = vi.fn(async () => ({ ok: true, status: 200 } as Response));
+    const controller = createMutationController(store, fetchImpl);
+
+    controller.setSelection(["node-1"]);
+    expect(store.userState.selection).toEqual(["node-1"]);
+    expect(fetchImpl).not.toHaveBeenCalled();
+
+    controller.setSelection(["node-2"]);
+    expect(store.userState.selection).toEqual(["node-2"]);
+    expect(fetchImpl).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(300);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    expect(fetchImpl).toHaveBeenCalledWith(
+      expect.stringContaining("/canvas"),
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          mutation: { type: "setSelection", nodeIds: ["node-2"] },
+        }),
+      }),
+    );
+
+    controller.dispose();
+    vi.useRealTimers();
+  });
+
+  it("rolls back debounced selection when upstream POST fails", async () => {
+    vi.useFakeTimers();
+
+    const store = createTestStore();
+    const fetchImpl = vi.fn(async () => ({ ok: false, status: 400 } as Response));
+    const controller = createMutationController(store, fetchImpl);
+
+    controller.setSelection(["node-1"]);
+    expect(store.userState.selection).toEqual(["node-1"]);
+
+    await vi.advanceTimersByTimeAsync(300);
+    await vi.waitFor(() => {
+      expect(fetchImpl).toHaveBeenCalledTimes(1);
+    });
+    expect(store.userState.selection).toEqual([]);
+
+    controller.dispose();
+    vi.useRealTimers();
+  });
 });
 
 describe("applyCanvasMutationLocally", () => {

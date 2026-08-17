@@ -116,31 +116,39 @@ function applyCanvasMutationLocally(userState: UserState, mutation: CanvasMutati
   }
 }
 
+interface PostCanvasMutationOptions {
+  skipLocalApply?: boolean;
+  rollbackState?: UserState;
+}
+
 async function postCanvasMutation(
   mutationStore: MutationStore,
   mutation: CanvasMutation,
   fetchImplInner: typeof fetch,
+  options?: PostCanvasMutationOptions,
 ) {
   const sessionId = mutationStore.getSessionId();
   if (!sessionId) {
     return;
   }
 
-  const previousUserState = mutationStore.getUserState();
-  mutationStore.replaceUserState(applyCanvasMutationLocally(previousUserState, mutation));
+  const rollbackState = options?.rollbackState ?? mutationStore.getUserState();
+  if (!options?.skipLocalApply) {
+    mutationStore.replaceUserState(applyCanvasMutationLocally(rollbackState, mutation));
+  }
   mutationStore.setMutationError(null);
 
   const body = postCanvasRequestSchema.parse({ mutation });
   const response = await postWithRetry(apiUrl(sessionCanvasPath(sessionId)), body, fetchImplInner);
 
   if (response.status === 409 && BLOCKED_ON_CONFLICT.includes(mutation.type)) {
-    mutationStore.replaceUserState(previousUserState);
+    mutationStore.replaceUserState(rollbackState);
     mutationStore.setMutationError(mutationErrors.blockedDuringRun());
     return;
   }
 
   if (!response.ok) {
-    mutationStore.replaceUserState(previousUserState);
+    mutationStore.replaceUserState(rollbackState);
     mutationStore.setMutationError(mutationErrors.canvasFailed(response.status));
   }
 }
@@ -160,6 +168,7 @@ export function createMutationController(
   });
 
   let pendingSelection: string[] | null = null;
+  let selectionRollbackState: UserState | null = null;
   let pendingViewport: Extract<CanvasMutation, { type: "setViewport" }> | null = null;
 
   return {
@@ -214,14 +223,33 @@ export function createMutationController(
     },
 
     setSelection(nodeIds) {
+      if (pendingSelection === null) {
+        selectionRollbackState = store.getUserState();
+      }
+
+      store.replaceUserState(
+        applyCanvasMutationLocally(store.getUserState(), {
+          type: "setSelection",
+          nodeIds,
+        }),
+      );
+      store.setMutationError(null);
+
       pendingSelection = nodeIds;
       selectionDebouncer.schedule(() => {
         if (pendingSelection === null) {
           return;
         }
         const nextSelection = pendingSelection;
+        const rollbackState = selectionRollbackState ?? store.getUserState();
         pendingSelection = null;
-        void postCanvasMutation(store, { type: "setSelection", nodeIds: nextSelection }, fetchImpl);
+        selectionRollbackState = null;
+        void postCanvasMutation(
+          store,
+          { type: "setSelection", nodeIds: nextSelection },
+          fetchImpl,
+          { skipLocalApply: true, rollbackState },
+        );
       });
     },
 
@@ -252,6 +280,8 @@ export function createMutationController(
 
     dispose() {
       selectionDebouncer.cancel();
+      pendingSelection = null;
+      selectionRollbackState = null;
       viewportDebouncer.cancel();
       positionFlusher.cancel();
     },
