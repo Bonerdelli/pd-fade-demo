@@ -10,6 +10,10 @@ const mockRemove = vi.fn();
 let loadHandler: (() => void) | null = null;
 let resizeObserverCallback: ResizeObserverCallback | null = null;
 
+vi.mock("../lib/setup-maplibre-worker.js", () => ({
+  setupMaplibreWorker: vi.fn(),
+}));
+
 vi.mock("maplibre-gl", () => {
   class MockMap {
     isStyleLoaded() {

@@ -2,8 +2,11 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import { Map, type Map as MapInstance } from "maplibre-gl";
 import type { MapCamera } from "@pd-fade/shared";
 import { DEFAULT_MAP_CAMERA, MAP_STYLE_URL } from "../lib/constants.js";
+import { setupMaplibreWorker } from "../lib/setup-maplibre-worker.js";
 
 import "maplibre-gl/dist/maplibre-gl.css";
+
+setupMaplibreWorker();
 
 export interface UseMapInstanceOptions {
   containerRef: RefObject<HTMLDivElement | null>;

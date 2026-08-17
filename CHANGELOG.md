@@ -56,6 +56,7 @@ until a release is cut.
 
 ### Fixed
 
+- Point MapLibre 6 at a Vite-bundled worker URL so the map tab no longer hangs on a missing `maplibre-gl-worker.mjs`
 - Actually enable the Ansible swapfile with `swapon` (fstab-only `state: present` left it inactive) and prefer glibc prebuilds for better-sqlite3
 - Add a 1G swapfile during Ansible base provision so `better-sqlite3` can compile on small VMs
 - Surface pnpm install failures with stdout/stderr, dmesg OOM traces, and a clean retry (remove broken release)

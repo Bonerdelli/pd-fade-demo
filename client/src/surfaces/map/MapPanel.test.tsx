@@ -4,6 +4,10 @@ import { I18nextProvider } from "react-i18next";
 import i18n from "../../i18n.js";
 import { MapPanel } from "./MapPanel.js";
 
+vi.mock("./lib/setup-maplibre-worker.js", () => ({
+  setupMaplibreWorker: vi.fn(),
+}));
+
 vi.mock("maplibre-gl", () => {
   const listeners = new Map<string, Set<(...args: unknown[]) => void>>();
 
