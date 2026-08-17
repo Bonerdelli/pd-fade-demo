@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
-import { Map, type Map as MapInstance } from "maplibre-gl";
+import { Map, type ErrorEvent, type Map as MapInstance } from "maplibre-gl";
 import type { MapCamera } from "@pd-fade/shared";
 import { DEFAULT_MAP_CAMERA, MAP_STYLE_URL } from "../lib/constants.js";
 import { setupMaplibreWorker } from "../lib/setup-maplibre-worker.js";
 
 import "maplibre-gl/dist/maplibre-gl.css";
+import "../map.css";
 
 setupMaplibreWorker();
 
@@ -19,6 +20,31 @@ export interface UseMapInstanceOptions {
 export interface UseMapInstanceResult {
   mapRef: RefObject<MapInstance | null>;
   mapReadyEpoch: number;
+  mapErrorKey: string | null;
+}
+
+function resizeMapToContainer(map: MapInstance, container: HTMLElement) {
+  const { clientWidth, clientHeight } = container;
+  if (clientWidth > 0 && clientHeight > 0) {
+    map.resize();
+  }
+}
+
+function scheduleResizeAfterLayout(map: MapInstance, container: HTMLElement) {
+  requestAnimationFrame(() => {
+    resizeMapToContainer(map, container);
+    requestAnimationFrame(() => {
+      resizeMapToContainer(map, container);
+    });
+  });
+}
+
+function disableStyleTerrain(map: MapInstance) {
+  if (typeof map.setTerrain !== "function") {
+    return;
+  }
+
+  map.setTerrain(null);
 }
 
 export function useMapInstance({
@@ -32,6 +58,7 @@ export function useMapInstance({
   const initialViewportRef = useRef(initialViewport);
   const onUserViewportChangeRef = useRef(onUserViewportChange);
   const [mapReadyEpoch, setMapReadyEpoch] = useState(0);
+  const [mapErrorKey, setMapErrorKey] = useState<string | null>(null);
 
   useEffect(() => {
     onUserViewportChangeRef.current = onUserViewportChange;
@@ -55,8 +82,17 @@ export function useMapInstance({
     mapRef.current = map;
 
     const markMapReady = () => {
-      map.resize();
+      disableStyleTerrain(map);
+      scheduleResizeAfterLayout(map, container);
       setMapReadyEpoch((epoch) => epoch + 1);
+    };
+
+    const handleMapError = (event: ErrorEvent) => {
+      const message = event.error?.message ?? "";
+      if (message.includes("Expected number, found null")) {
+        return;
+      }
+      setMapErrorKey("basemap.loadFailed");
     };
 
     if (map.isStyleLoaded()) {
@@ -65,8 +101,14 @@ export function useMapInstance({
       map.once("load", markMapReady);
     }
 
+    map.on("style.load", () => {
+      disableStyleTerrain(map);
+    });
+
+    map.on("error", handleMapError);
+
     const resizeObserver = new ResizeObserver(() => {
-      map.resize();
+      resizeMapToContainer(map, container);
     });
     resizeObserver.observe(container);
 
@@ -107,5 +149,5 @@ export function useMapInstance({
     };
   }, [containerRef, isProgrammaticMoveRef, isUserGesturingRef]);
 
-  return { mapRef, mapReadyEpoch };
+  return { mapRef, mapReadyEpoch, mapErrorKey };
 }

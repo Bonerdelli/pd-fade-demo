@@ -1,6 +1,9 @@
 {
   "panelTitle": "Map",
   "loading": "Loading map",
+  "basemap": {
+    "loadFailed": "Map basemap failed to load. Check your network connection and try again."
+  },
   "toolbar": {
     "select": "Select",
     "point": "Point",

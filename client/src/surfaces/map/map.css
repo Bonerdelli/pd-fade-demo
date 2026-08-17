@@ -1,0 +1,7 @@
+[data-testid="map-container"],
+[data-testid="map-container"] .maplibregl-map,
+[data-testid="map-container"] .maplibregl-canvas-container,
+[data-testid="map-container"] .maplibregl-canvas {
+  width: 100%;
+  height: 100%;
+}

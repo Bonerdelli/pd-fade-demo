@@ -56,6 +56,7 @@ until a release is cut.
 
 ### Fixed
 
+- Size the MapLibre canvas to its container, clear style terrain, and switch to OpenFreeMap positron so the basemap paints streets instead of a flat background
 - Point MapLibre 6 at a Vite-bundled worker URL so the map tab no longer hangs on a missing `maplibre-gl-worker.mjs`
 - Switch map basemap from demotiles to OpenFreeMap liberty so HTTPS stands show streets instead of an empty pale background
 - Actually enable the Ansible swapfile with `swapon` (fstab-only `state: present` left it inactive) and prefer glibc prebuilds for better-sqlite3

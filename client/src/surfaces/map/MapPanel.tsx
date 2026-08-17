@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { MapCamera } from "@pd-fade/shared";
 import { AgentMovedIndicator } from "../../components/AgentMovedIndicator.js";
+import { CanvasErrorOverlay } from "../../components/CanvasErrorOverlay.js";
 import { RunLockHint } from "../../components/RunLockHint.js";
 import { useCameraCommand, useMutations, useRunLock } from "../../hooks/index.js";
 import { useAppStore } from "../../store/index.js";
@@ -12,6 +14,7 @@ import { useDrawTools, type DrawToolMode } from "./hooks/use-draw-tools.js";
 import { useMapInstance } from "./hooks/use-map-instance.js";
 
 export function MapPanel() {
+  const { t } = useTranslation("map");
   const containerRef = useRef<HTMLDivElement>(null);
   const isProgrammaticMoveRef = useRef(false);
   const isUserGesturingRef = useRef(false);
@@ -41,7 +44,7 @@ export function MapPanel() {
     [setViewport],
   );
 
-  const { mapRef, mapReadyEpoch } = useMapInstance({
+  const { mapRef, mapReadyEpoch, mapErrorKey } = useMapInstance({
     containerRef,
     initialViewport,
     onUserViewportChange: handleUserViewportChange,
@@ -115,7 +118,11 @@ export function MapPanel() {
 
   return (
     <section className="relative h-full min-h-0">
-      <div ref={containerRef} className="absolute inset-0" data-testid="map-container" />
+      <div ref={containerRef} className="h-full w-full min-h-0" data-testid="map-container" />
+
+      {mapErrorKey ? (
+        <CanvasErrorOverlay message={t(mapErrorKey)} overlay />
+      ) : null}
 
       <MapToolbar
         activeMode={drawMode}
