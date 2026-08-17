@@ -113,6 +113,7 @@ until a release is cut.
 
 ### Changed
 
+- Align `FE-Arch-Exercise-v2.md` with the implemented demo (snapshot-anchor strategy, chat read model, four store slices, dual-side run lock, resilience details) and drop superseded v1 alternatives
 - Slim Ansible demo group_vars to domain and agent driver; move shared defaults into roles
 - Point Ansible demo inventory at `157.230.124.0` and `root_domain` at fade.kjam.net
 - Drop redundant `pd_fade_repo_root` from Ansible group_vars (controller path stays a role default)
