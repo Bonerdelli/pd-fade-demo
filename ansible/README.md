@@ -39,8 +39,8 @@ Collections install into `ansible/.collections` (see `ansible.cfg`).
 
 ## Inventory
 
-1. Copy or edit `environments/demo/inventory.yml` — set `ansible_host`, `ansible_user`, and SSH key if needed.
-2. Edit `environments/demo/group_vars/all/vars.yml` — at minimum `root_domain` and `pd_fade_agent_driver`.
+1. Edit `environments/demo/inventory.yml` — `ansible_host`, `ansible_user`, and SSH key if needed.
+2. Edit `environments/demo/group_vars/all/vars.yml` — `root_domain` and `pd_fade_agent_driver`. Paths, users, and ports come from role defaults.
 3. **Secrets (optional):** `vault.yml` is only required for `pd_fade_agent_driver: anthropic`. Mock-only stands skip vault and do not need `--ask-vault-pass`.
 
 When you need secrets, copy `vault.yml.example` to `vault.yml`, fill values, then encrypt:

@@ -111,6 +111,8 @@ until a release is cut.
 
 ### Changed
 
+- Slim Ansible demo group_vars to domain and agent driver; move shared defaults into roles
+- Point Ansible demo inventory at `157.230.124.0` and `root_domain` at fade.kjam.net
 - Drop redundant `pd_fade_repo_root` from Ansible group_vars (controller path stays a role default)
 - Serve Ansible nginx as HTTP-only origin; terminate HTTPS at Cloudflare
 - Rework Ansible app deploy to controller-side build and release archives (no git on target)
@@ -142,6 +144,7 @@ until a release is cut.
 
 ### Removed
 
+- Unused Ansible `locale` and `pd_fade_app_name` variables
 - Let's Encrypt / certbot from Ansible nginx (TLS flags, webroot ACME, renewal cron)
 - Ansible target-host git checkout deploy path (deploy keys, repo URL vars, on-host build)
 - React Flow MiniMap from the graph canvas (non-functional in current setup)

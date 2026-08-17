@@ -1,13 +1,23 @@
 ---
 pd_fade_systemd_unit: pd-fade
+pd_fade_user: pd-fade
+pd_fade_group: pd-fade
 pd_fade_app_base: /opt/pd-fade
 pd_fade_releases_dir: "{{ pd_fade_app_base }}/releases"
 pd_fade_current_link: "{{ pd_fade_app_base }}/current"
 pd_fade_release_keep: 5
+pd_fade_data_dir: /var/lib/pd-fade
+pd_fade_env_file: /etc/pd-fade/env
+pd_fade_pnpm_store_dir: /var/cache/pd-fade/pnpm
+pd_fade_pnpm_version: "10.28.0"
 pd_fade_repo_root: "{{ playbook_dir }}/../../.."
 pd_fade_local_build_dir: "{{ playbook_dir }}/../../.build"
 pd_fade_release_meta_file: "{{ pd_fade_local_build_dir }}/release-meta.json"
-pd_fade_pnpm_store_dir: /var/cache/pd-fade/pnpm
 pd_fade_skip_local_build: false
 pd_fade_health_retries: 10
 pd_fade_health_delay: 2
+pd_fade_server_port: 3001
+pd_fade_db_path: "{{ pd_fade_data_dir }}/sessions.db"
+pd_fade_agent_driver: mock
+pd_fade_anthropic_model: claude-sonnet-4-20250514
+pd_fade_anthropic_api_key: "{{ vault_anthropic_api_key | default('') }}"

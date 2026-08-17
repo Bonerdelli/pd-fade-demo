@@ -8,3 +8,9 @@ pd_fade_base_prereq_packages:
 pd_fade_base_packages:
   - build-essential
   - python3
+
+timezone: UTC
+pd_fade_user: pd-fade
+pd_fade_group: pd-fade
+pd_fade_data_dir: /var/lib/pd-fade
+pd_fade_app_base: /opt/pd-fade

@@ -1,37 +1,5 @@
 ---
-### Host ###
-timezone: UTC
-locale: en_US.UTF-8
+# Demo environment overrides. Paths, users, and ports live in role defaults.
 
-### pd-fade application ###
-pd_fade_app_name: pd-fade
-pd_fade_user: pd-fade
-pd_fade_group: pd-fade
-pd_fade_app_base: /opt/pd-fade
-pd_fade_releases_dir: "{{ pd_fade_app_base }}/releases"
-pd_fade_current_link: "{{ pd_fade_app_base }}/current"
-pd_fade_release_keep: 5
-pd_fade_data_dir: /var/lib/pd-fade
-pd_fade_pnpm_store_dir: /var/cache/pd-fade/pnpm
-pd_fade_env_file: /etc/pd-fade/env
-pd_fade_systemd_unit: pd-fade
-
-# Runtime (also templated into EnvironmentFile; server `pnpm start` does not load .env)
-pd_fade_server_port: 3001
-pd_fade_db_path: "{{ pd_fade_data_dir }}/sessions.db"
 pd_fade_agent_driver: mock
-pd_fade_anthropic_model: claude-sonnet-4-20250514
-# Optional mock delay for server-restart demos; leave empty to omit from env file
-pd_fade_mock_driver_post_tool_start_delay_ms: ""
-
-pd_fade_anthropic_api_key: "{{ vault_anthropic_api_key | default('') }}"
-
-### Node.js / pnpm ###
-nodejs_major_version: "20"
-pd_fade_pnpm_version: "10.28.0"
-
-### Nginx (HTTP origin; HTTPS at Cloudflare) ###
-root_domain: demo.example.com
-
-# SSE proxy read timeout for /api/session/*/events
-pd_fade_sse_proxy_read_timeout: 86400s
+root_domain: fade.kjam.net
